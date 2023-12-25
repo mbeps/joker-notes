@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useScrollTop } from "../hooks/useScrollTop";
+import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { Button } from "@/components/ui/button";
