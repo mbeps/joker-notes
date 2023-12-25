@@ -1,16 +1,21 @@
 "use client";
 
-import React from "react";
+import { Spinner } from "@/components/Spinner/Spinner";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Button } from "@/components/ui/button";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
+import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { useConvexAuth } from "convex/react";
+import Link from "next/link";
+import React from "react";
 import Logo from "./Logo";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = () => {
   const scrolled = useScrollTop();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
   return (
     <div
@@ -29,10 +34,27 @@ const Navbar: React.FC<NavbarProps> = () => {
           items-center 
           gap-x-2"
       >
-        <Button variant="ghost" size="sm">
-          Log in
-        </Button>
-
+        {isLoading && <Spinner />}
+        {!isAuthenticated && !isLoading && (
+          <>
+            <SignInButton mode="modal">
+              <Button variant="ghost" size="sm">
+                Log in
+              </Button>
+            </SignInButton>
+            <SignInButton mode="modal">
+              <Button size="sm">Get Motion free</Button>
+            </SignInButton>
+          </>
+        )}
+        {isAuthenticated && !isLoading && (
+          <>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/documents">Enter Motion</Link>
+            </Button>
+            <UserButton afterSignOutUrl="/" />
+          </>
+        )}
         <ThemeToggle />
       </div>
     </div>
