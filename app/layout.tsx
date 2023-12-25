@@ -18,17 +18,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ConvexClientProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          storageKey="motion-theme"
-        >
-          <body className={inter.className}>{children}</body>
-        </ThemeProvider>
-      </ConvexClientProvider>
+      <body className={inter.className}>
+        <ConvexClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="motion-theme"
+          >
+            {children}
+          </ThemeProvider>
+        </ConvexClientProvider>
+      </body>
     </html>
   );
 }
