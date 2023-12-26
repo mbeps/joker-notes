@@ -5,6 +5,7 @@ import { ChevronsLeft, MenuIcon } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import UserItem from "./UserItem";
 
 type NavigationProps = {};
 
@@ -134,13 +135,13 @@ const Navigation: React.FC<NavigationProps> = () => {
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        {/* <div>
+        <div>
           <UserItem />
-          <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
+          {/* <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
-          <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
+          <Item onClick={handleCreate} label="New page" icon={PlusCircle} /> */}
         </div>
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <DocumentList />
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
           <Popover>
