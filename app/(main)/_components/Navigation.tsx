@@ -1,11 +1,16 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import UserItem from "./UserItem";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import DocumentList from "./DocumentList";
+import { Item } from "./Item";
 
 type NavigationProps = {};
 
@@ -16,7 +21,7 @@ const Navigation: React.FC<NavigationProps> = () => {
   const params = useParams();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  // const create = useMutation(api.documents.create);
+  const create = useMutation(api.documents.create);
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
@@ -102,18 +107,17 @@ const Navigation: React.FC<NavigationProps> = () => {
     }
   };
 
-  // TODO: create new document
-  // const handleCreate = () => {
-  //   const promise = create({ title: "Untitled" }).then((documentId) =>
-  //     router.push(`/documents/${documentId}`),
-  //   );
+  const handleCreate = () => {
+    const promise = create({ title: "Untitled" }).then((documentId) =>
+      router.push(`/documents/${documentId}`),
+    );
 
-  //   toast.promise(promise, {
-  //     loading: "Creating a new note...",
-  //     success: "New note created!",
-  //     error: "Failed to create a new note.",
-  //   });
-  // };
+    toast.promise(promise, {
+      loading: "Creating a new note...",
+      success: "New note created!",
+      error: "Failed to create a new note.",
+    });
+  };
 
   return (
     <>
@@ -137,14 +141,14 @@ const Navigation: React.FC<NavigationProps> = () => {
         </div>
         <div>
           <UserItem />
-          {/* <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
-          <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
-          <Item onClick={handleCreate} label="New page" icon={PlusCircle} /> */}
+          {/* <Item label="Search" icon={Search} isSearch onClick={search.onOpen} /> */}
+          {/* <Item label="Settings" icon={Settings} onClick={settings.onOpen} /> */}
+          <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
-        {/* <div className="mt-4">
+        <div className="mt-4">
           <DocumentList />
-          <Item onClick={handleCreate} icon={Plus} label="Add a page" />
-          <Popover>
+          {/* <Item onClick={handleCreate} icon={Plus} label="Add a page" /> */}
+          {/* <Popover>
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
@@ -154,8 +158,8 @@ const Navigation: React.FC<NavigationProps> = () => {
             >
               <TrashBox />
             </PopoverContent>
-          </Popover>
-        </div> */}
+          </Popover> */}
+        </div>
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
@@ -187,4 +191,5 @@ const Navigation: React.FC<NavigationProps> = () => {
     </>
   );
 };
+
 export default Navigation;
