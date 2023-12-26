@@ -147,7 +147,7 @@ const Navigation: React.FC<NavigationProps> = () => {
         </div>
         <div className="mt-4">
           <DocumentList />
-          {/* <Item onClick={handleCreate} icon={Plus} label="Add a page" /> */}
+          <Item onClick={handleCreate} icon={Plus} label="Add a page" />
           {/* <Popover>
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
