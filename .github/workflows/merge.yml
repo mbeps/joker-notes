@@ -2,7 +2,7 @@ name: Merging
 
 on:
   pull_request:
-    branches: 
+    branches:
       - main
 
 permissions:
@@ -14,6 +14,8 @@ env:
   NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+  EDGE_STORE_ACCESS_KEY: ${{ secrets.EDGE_STORE_ACCESS_KEY }}
+  EDGE_STORE_SECRET_KEY: ${{ secrets.EDGE_STORE_SECRET_KEY }}
 
 jobs:
   lint:
@@ -92,5 +94,5 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
-      - name: Build 
+      - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
