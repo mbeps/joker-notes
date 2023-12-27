@@ -289,6 +289,7 @@ export const update = mutation({
 
     const userId = identity.subject;
 
+    // keeps id the same and updates the rest
     const { id, ...rest } = args;
 
     const existingDocument = await ctx.db.get(args.id);
