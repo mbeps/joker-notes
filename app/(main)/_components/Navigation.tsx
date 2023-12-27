@@ -1,7 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search } from "lucide-react";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  Plus,
+  PlusCircle,
+  Search,
+  Trash,
+} from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -11,6 +18,12 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import DocumentList from "./DocumentList";
 import { Item } from "./Item";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import TrashBox from "./TrashBox";
 
 type NavigationProps = {};
 
@@ -148,7 +161,7 @@ const Navigation: React.FC<NavigationProps> = () => {
         <div className="mt-4">
           <DocumentList />
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
-          {/* <Popover>
+          <Popover>
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
@@ -158,7 +171,7 @@ const Navigation: React.FC<NavigationProps> = () => {
             >
               <TrashBox />
             </PopoverContent>
-          </Popover> */}
+          </Popover>
         </div>
         <div
           onMouseDown={handleMouseDown}
