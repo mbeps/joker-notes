@@ -24,13 +24,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import TrashBox from "./TrashBox";
+import { useSearch } from "@/hooks/useSearch";
 
 type NavigationProps = {};
 
 const Navigation: React.FC<NavigationProps> = () => {
   const router = useRouter();
   // const settings = useSettings();
-  // const search = useSearch();
+  const search = useSearch();
   const params = useParams();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -154,7 +155,7 @@ const Navigation: React.FC<NavigationProps> = () => {
         </div>
         <div>
           <UserItem />
-          {/* <Item label="Search" icon={Search} isSearch onClick={search.onOpen} /> */}
+          <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           {/* <Item label="Settings" icon={Settings} onClick={settings.onOpen} /> */}
           <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>

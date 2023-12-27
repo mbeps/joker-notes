@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ConvexClientProvider } from "@/providers/ConvexProvider";
 import { Toaster } from "sonner";
+import SearchCommand from "@/components/Search/SearchCommand";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             storageKey="motion-theme"
           >
             <Toaster />
+            <SearchCommand />
             {children}
           </ThemeProvider>
         </ConvexClientProvider>
