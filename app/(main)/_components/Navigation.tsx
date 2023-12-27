@@ -1,36 +1,38 @@
 "use client";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { api } from "@/convex/_generated/api";
+import { useSearch } from "@/hooks/useSearch";
+import { useSettings } from "@/hooks/useSettings";
 import { cn } from "@/lib/utils";
+import { useMutation } from "convex/react";
 import {
   ChevronsLeft,
   MenuIcon,
   Plus,
   PlusCircle,
   Search,
+  Settings,
   Trash,
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { ElementRef, useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import UserItem from "./UserItem";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 import DocumentList from "./DocumentList";
 import { Item } from "./Item";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import TrashBox from "./TrashBox";
-import { useSearch } from "@/hooks/useSearch";
+import UserItem from "./UserItem";
 
 type NavigationProps = {};
 
 const Navigation: React.FC<NavigationProps> = () => {
   const router = useRouter();
-  // const settings = useSettings();
+  const settings = useSettings();
   const search = useSearch();
   const params = useParams();
   const pathname = usePathname();
@@ -156,7 +158,7 @@ const Navigation: React.FC<NavigationProps> = () => {
         <div>
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
-          {/* <Item label="Settings" icon={Settings} onClick={settings.onOpen} /> */}
+          <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
           <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">

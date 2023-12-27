@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { ModalProvider } from "@/providers/ModalProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             storageKey="motion-theme"
           >
             <Toaster />
+            <ModalProvider />
             {children}
           </ThemeProvider>
         </ConvexClientProvider>
