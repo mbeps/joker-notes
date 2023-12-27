@@ -27,6 +27,7 @@ import DocumentList from "./DocumentList";
 import { Item } from "./Item";
 import TrashBox from "./TrashBox";
 import UserItem from "./UserItem";
+import Navbar from "./Navbar";
 
 type NavigationProps = {};
 
@@ -190,19 +191,19 @@ const Navigation: React.FC<NavigationProps> = () => {
           isMobile && "left-0 w-full",
         )}
       >
-        {/* {!!params.documentId ? (
+        {!!params.documentId ? (
           <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
-        ) : ( */}
-        <nav className="bg-transparent px-3 py-2 w-full">
-          {isCollapsed && (
-            <MenuIcon
-              onClick={resetWidth}
-              role="button"
-              className="h-6 w-6 text-muted-foreground"
-            />
-          )}
-        </nav>
-        {/* )} */}
+        ) : (
+          <nav className="bg-transparent px-3 py-2 w-full">
+            {isCollapsed && (
+              <MenuIcon
+                onClick={resetWidth}
+                role="button"
+                className="h-6 w-6 text-muted-foreground"
+              />
+            )}
+          </nav>
+        )}
       </div>
     </>
   );
