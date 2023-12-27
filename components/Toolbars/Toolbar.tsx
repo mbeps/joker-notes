@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { api } from "@/convex/_generated/api";
 import IconPicker from "../Icon/IconPicker";
 import TextareaAutosize from "react-textarea-autosize";
+import { useCoverImage } from "@/hooks/useCoverImage";
 
 interface ToolbarProps {
   initialData: Doc<"documents">;
@@ -21,6 +22,8 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
 
   const update = useMutation(api.documents.update);
   const removeIcon = useMutation(api.documents.removeIcon);
+
+  const coverImage = useCoverImage();
 
   const enableInput = () => {
     if (preview) return;
@@ -97,6 +100,17 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
             </Button>
           </IconPicker>
         )}
+        {!initialData.coverImage && !preview && (
+          <Button
+            onClick={coverImage.onOpen}
+            className="text-muted-foreground text-xs"
+            variant="outline"
+            size="sm"
+          >
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Add cover
+          </Button>
+        )}
       </div>
       {isEditing && !preview ? (
         <TextareaAutosize
@@ -104,27 +118,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
           onBlur={disableInput}
           onKeyDown={onKeyDown}
           value={value}
-          onChange={(event) => onInput(event.target.value)}
-          className="
-						text-5xl
-						bg-transparent
-						font-bold
-						break-words
-						outline-none
-						text-[#3F3F3F] dark:text-[#CFCFCF]
-						resize-none
-						"
+          onChange={(e) => onInput(e.target.value)}
+          className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none"
         />
       ) : (
         <div
           onClick={enableInput}
-          className="
-						pb-[11.5px]
-						text-5xl font-bold
-						break-words
-						outline-none
-						text-[#3F3F3F] dark:text-[#CFCFCF]
-						"
+          className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF]"
         >
           {initialData.title}
         </div>
@@ -132,4 +132,5 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
     </div>
   );
 };
+
 export default Toolbar;
