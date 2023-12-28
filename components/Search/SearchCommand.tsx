@@ -17,13 +17,28 @@ import {
 } from "../ui/command";
 
 const SearchCommand: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useUser(); // Clerk user currently logged in
   const router = useRouter();
+  /**
+   * List of documents that match the search query.
+   * This calls the documents.getSearch API from the Convex API.
+   * This only returns documents that the user has access to, and are not archived (in trash).
+   */
   const documents = useQuery(api.documents.getSearch);
   const [isMounted, setIsMounted] = useState(false);
 
+  /**
+   * The toggle function is used to toggle the search dialog.
+   * This is used to open and close the search dialog.
+   */
   const toggle = useSearch((store) => store.toggle);
+  /**
+   * The isOpen state is used to determine whether the search dialog is open.
+   */
   const isOpen = useSearch((store) => store.isOpen);
+  /**
+   * The onClose function is used to close the search dialog.
+   */
   const onClose = useSearch((store) => store.onClose);
 
   // prevents hydration by preventing server rendering
@@ -31,6 +46,7 @@ const SearchCommand: React.FC = () => {
     setIsMounted(true);
   }, []);
 
+  // keyboard shortcut
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
@@ -43,11 +59,17 @@ const SearchCommand: React.FC = () => {
     return () => document.removeEventListener("keydown", down);
   }, [toggle]);
 
+  /**
+   * The onSelect function is used to select a document from the search results.
+   * This is used to navigate to the document page.
+   * @param id (string) - The document ID
+   */
   const onSelect = (id: string) => {
     router.push(`/documents/${id}`);
     onClose();
   };
 
+  // prevents hydration by preventing server rendering
   if (!isMounted) {
     return null;
   }

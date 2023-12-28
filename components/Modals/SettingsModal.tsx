@@ -6,6 +6,12 @@ import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { ThemeToggle } from "../ui/ThemeToggle";
 
+/**
+ * Settings modal component to change settings.
+ * The settings modal can change:;
+ * - The current theme
+ * @returns (React.FC) - settings modal component
+ */
 const SettingsModal: React.FC = () => {
   const settings = useSettings();
 
