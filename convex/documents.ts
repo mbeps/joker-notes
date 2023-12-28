@@ -10,8 +10,9 @@ import { Doc, Id } from "./_generated/dataModel";
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
- * 
+ *
  * @param id (string) - document ID to archive
+ * @see https://docs.convex.dev/functions
  */
 export const archive = mutation({
   args: { id: v.id("documents") },
@@ -31,7 +32,7 @@ export const archive = mutation({
      * Extracts the user ID from the identity from the currently logged in user.
      * This identity is provided by Clerk.
      */
-    const userId = identity.subject; 
+    const userId = identity.subject;
 
     /**
      * Fetches the currently opened document from the database.
@@ -88,8 +89,9 @@ export const archive = mutation({
  * 1. The user must be authenticated.
  * 2. The documents must belong to the user.
  * 3. The documents must not be archived (in trash).
- * 
+ *
  * @param parentDocument (string) - ID of the parent document
+ * @see https://docs.convex.dev/functions
  */
 export const getSidebar = query({
   args: {
@@ -136,9 +138,10 @@ export const getSidebar = query({
  * Requirements to create a document:
  * 1. The user must be authenticated.
  * 2. The document must have a title.
- * 
+ *
  * @param title (string) - title of the document
  * @param parentDocument (string?) - ID of the parent document
+ * @see https://docs.convex.dev/functions
  */
 export const create = mutation({
   args: {
@@ -150,7 +153,7 @@ export const create = mutation({
      * Fetches the currently logged in user.
      * This user is provided by Clerk and is stored in the identity within Convex.
      */
-    const identity = await ctx.auth.getUserIdentity(); 
+    const identity = await ctx.auth.getUserIdentity();
 
     // user must be authenticated to create a document
     if (!identity) {
@@ -161,7 +164,7 @@ export const create = mutation({
      * Extracts the user ID from the identity from the currently logged in user.
      * This identity is provided by Clerk.
      */
-    const userId = identity.subject; 
+    const userId = identity.subject;
 
     /**
      * Inserts a new document into the database.
@@ -191,6 +194,8 @@ export const create = mutation({
  * 1. The user must be authenticated.
  * 2. The documents must belong to the user.
  * 3. The documents must be archived (in trash).
+ *
+ * @see https://docs.convex.dev/functions
  */
 export const getTrash = query({
   handler: async (ctx) => {
@@ -233,8 +238,9 @@ export const getTrash = query({
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
- * 
+ *
  * @param id (string) - document ID to restore
+ * @see https://docs.convex.dev/functions
  */
 export const restore = mutation({
   args: { id: v.id("documents") },
@@ -316,13 +322,14 @@ export const restore = mutation({
 /**
  * Permanently deletes a document from the database.
  * Ideally, the document should be archived (in trash) before being deleted.
- * This is not a requirement as it it not checked. 
+ * This is not a requirement as it it not checked.
  * Requirements to delete a document:
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
- * 
+ *
  * @param id (string) - document ID to delete
+ * @see https://docs.convex.dev/functions
  */
 export const remove = mutation({
   args: { id: v.id("documents") },
@@ -373,6 +380,8 @@ export const remove = mutation({
  * Requirements to search for documents:
  * 1. The user must be authenticated.
  * 2. The documents must belong to the user.
+ *
+ * @param query (string) - query to search for
  */
 export const getSearch = query({
   handler: async (ctx) => {
@@ -416,8 +425,9 @@ export const getSearch = query({
  * 3. The document must belong to the user.
  * 4. The document must not be archived (in trash).
  * 5. If the document is not published
- * 
+ *
  * @param documentId (string) - document ID to fetch
+ * @see https://docs.convex.dev/functions
  */
 export const getById = query({
   args: { documentId: v.id("documents") },
@@ -471,13 +481,14 @@ export const getById = query({
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
- * 
+ *
  * @param id (string) - document ID to update
  * @param title (string?) - new title of the document
  * @param content (string?) - new content of the document
  * @param coverImage (string?) - new cover image of the document
  * @param icon (string?) - new icon of the document
  * @param isPublished (boolean?) - whether the document is published
+ * @see https://docs.convex.dev/functions
  */
 export const update = mutation({
   args: {
@@ -533,7 +544,7 @@ export const update = mutation({
      * 3. coverImage (string): cover image of the document
      * 4. icon (string): icon of the document
      * 5. isPublished (boolean): whether the document is published
-     * 
+     *
      * The ID of the document is kept the same.
      */
     const document = await ctx.db.patch(args.id, {
@@ -550,6 +561,9 @@ export const update = mutation({
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
+ *
+ * @param id (string) - document ID to remove the icon for
+ * @see https://docs.convex.dev/functions
  */
 export const removeIcon = mutation({
   args: { id: v.id("documents") },
@@ -591,7 +605,7 @@ export const removeIcon = mutation({
      * Removes the icon for a document in the database.
      * The document is updated with the following fields:
      * 1. icon (string): icon of the document
-     * 
+     *
      * The ID and the rest of the fields of the document are kept the same.
      */
     const document = await ctx.db.patch(args.id, {
@@ -608,6 +622,9 @@ export const removeIcon = mutation({
  * 1. The user must be authenticated.
  * 2. The document must exist.
  * 3. The document must belong to the user.
+ *
+ * @param id (string) - document ID to remove the cover image for
+ * @see https://docs.convex.dev/functions
  */
 export const removeCoverImage = mutation({
   args: { id: v.id("documents") },
@@ -649,7 +666,7 @@ export const removeCoverImage = mutation({
      * Removes the cover image for a document in the database.
      * The document is updated with the following fields:
      * 1. coverImage (string): cover image of the document
-     * 
+     *
      * The ID and the rest of the fields of the document are kept the same.
      */
     const document = await ctx.db.patch(args.id, {

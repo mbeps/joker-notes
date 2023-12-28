@@ -11,6 +11,8 @@ import { v } from "convex/values";
  * - `coverImage`(string): The document cover image URL.
  * - `icon`(string): The document icon.
  * - `isPublished`(boolean): Whether the document is shareable.
+ *
+ * @see https://docs.convex.dev/database/schemas
  */
 export default defineSchema({
   documents: defineTable({
