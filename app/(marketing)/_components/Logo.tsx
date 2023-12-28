@@ -8,9 +8,16 @@ const font = Poppins({
   weight: ["400", "600"],
 });
 
+/**
+ * Logo component for the marketing page.
+ * Different logos are used depending on the theme.
+ * The logo is also hidden on mobile devices.
+ * @returns (React.FC) - Logo component
+ */
 const Logo: React.FC = () => {
   return (
     <div className="hidden md:flex items-center gap-x-2">
+      {/* Light Mode Logo */}
       <Image
         src="/logos/logo-light.ico"
         height="40"
@@ -18,6 +25,7 @@ const Logo: React.FC = () => {
         alt="Logo"
         className="dark:hidden"
       />
+      {/* Dark Mode Logo */}
       <Image
         src="/logos/logo-dark.ico"
         height="40"
@@ -25,6 +33,7 @@ const Logo: React.FC = () => {
         alt="Logo"
         className="hidden dark:block"
       />
+      {/* Logo Text */}
       <p className={cn("font-semibold", font.className)}>Motion</p>
     </div>
   );

@@ -1,6 +1,12 @@
 import Image from "next/image";
 import React from "react";
 
+/**
+ * Displays the hero images on the marketing page.
+ * The images are conditionally rendered depending on the theme.
+ * One of the images is hidden on mobile devices.
+ * @returns (React.FC) - Heroes component
+ */
 const Heroes: React.FC = () => {
   return (
     <div
@@ -19,12 +25,14 @@ const Heroes: React.FC = () => {
 						md:h-[400px] md:w-[400px]
 					"
         >
+          {/* Light Mode Theme */}
           <Image
             src="/documents/documents-light.png"
             fill
             className="object-contain dark:hidden"
             alt="Documents"
           />
+          {/* Dark Mode Theme */}
           <Image
             src="/documents/documents-dark.png"
             fill
@@ -38,12 +46,14 @@ const Heroes: React.FC = () => {
 						h-[400px] w-[400px] 
 						hidden md:block"
         >
+          {/* Light Mode Theme */}
           <Image
             src="/reading/reading-light.png"
             fill
             className="object-contain dark:hidden"
             alt="Reading"
           />
+          {/* Dark Mode Theme */}
           <Image
             src="/reading/reading-dark.png"
             fill

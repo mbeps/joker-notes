@@ -7,6 +7,12 @@ import { useConvexAuth } from "convex/react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Heading component for the marketing page.
+ * This component is used to display the main heading and CTA.
+ * The button is conditionally rendered depending on the user's authentication state.
+ * @returns (React.FC) - Heading component
+ */
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
 

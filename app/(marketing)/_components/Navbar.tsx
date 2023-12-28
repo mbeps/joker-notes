@@ -11,9 +11,16 @@ import Link from "next/link";
 import React from "react";
 import Logo from "./Logo";
 
-type NavbarProps = {};
-
-const Navbar: React.FC<NavbarProps> = () => {
+/**
+ * Navbar component specific to the marketing page.
+ * This component allows the user to sign in, sign up, and toggle the theme.
+ * @returns (React.FC) - Navbar component
+ */
+const Navbar: React.FC = () => {
+  /**
+   * Checks if the user has scrolled down the page.
+   * This is used to add a border to the navbar.
+   */
   const scrolled = useScrollTop();
   const { isAuthenticated, isLoading } = useConvexAuth();
 
@@ -60,4 +67,5 @@ const Navbar: React.FC<NavbarProps> = () => {
     </div>
   );
 };
+
 export default Navbar;
