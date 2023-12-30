@@ -182,7 +182,7 @@ const Navigation: React.FC = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
+          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999] p-3",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0",
         )}
@@ -197,13 +197,13 @@ const Navigation: React.FC = () => {
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        <div>
+        <div className="space-y-1">
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
           <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
-        <div className="mt-4">
+        <div className="mt-4 space-y-1">
           <DocumentList />
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
           <Popover>

@@ -32,7 +32,7 @@ const UserItem: React.FC<UserItemProps> = () => {
       <DropdownMenuTrigger asChild>
         <div
           role="button"
-          className="flex items-center text-sm p-3 w-full hover:bg-primary/5"
+          className="flex items-center text-sm p-3 w-full hover:bg-primary/5 rounded-lg"
         >
           <div className="gap-x-2 flex items-center max-w-[150px]">
             <Avatar className="h-5 w-5">
