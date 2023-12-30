@@ -57,7 +57,7 @@ To successfully run Joker Notes on your local environment, follow these detailed
 Initiate by cloning the Joker Notes repository to your local machine. Use the following command in your terminal:
 
 ```sh
-git clone https://github.com/mbeps/motion.git
+git clone https://github.com/mbeps/joker-notes.git
 ```
 
 ## 2. **Install Dependencies**
