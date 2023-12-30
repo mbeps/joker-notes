@@ -25,19 +25,37 @@ import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import DocumentList from "./DocumentList";
 import { Item } from "./Item";
+import Navbar from "./Navbar";
 import TrashBox from "./TrashBox";
 import UserItem from "./UserItem";
-import Navbar from "./Navbar";
 
-type NavigationProps = {};
-
-const Navigation: React.FC<NavigationProps> = () => {
+/**
+ * The navigation sidebar that contains the user's documents and other actions.
+ * This sidebar is only visible on desktop and is collapsed on mobile.
+ *
+ * The sidebar contains the following items:
+ * - User information where user can view their profile and log out
+ * - Search bar where user can search for documents
+ * - Settings where user can change their settings
+ * - New page where user can create a new document
+ * - List of documents the user has created and can navigate to
+ * - Trash where user can view deleted documents and restore or permanently delete them
+ *
+ * @returns (ReactElement) - The navigation sidebar
+ */
+const Navigation: React.FC = () => {
   const router = useRouter();
   const settings = useSettings();
   const search = useSearch();
   const params = useParams();
   const pathname = usePathname();
+  /**
+   * Tracks whether the user is on a mobile device.
+   */
   const isMobile = useMediaQuery("(max-width: 768px)");
+  /**
+   * Creates a new document using the Convex API defined in the `documents` file.
+   */
   const create = useMutation(api.documents.create);
 
   const isResizingRef = useRef(false);
@@ -46,6 +64,7 @@ const Navigation: React.FC<NavigationProps> = () => {
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
+  // collapse sidebar on mobile or expand sidebar on desktop
   useEffect(() => {
     if (isMobile) {
       collapse();
@@ -55,12 +74,17 @@ const Navigation: React.FC<NavigationProps> = () => {
     /* trunk-ignore(eslint/react-hooks/exhaustive-deps) */
   }, [isMobile]);
 
+  // on mobile, automatically collapse the sidebar when the user navigates to a new page
   useEffect(() => {
     if (isMobile) {
       collapse();
     }
   }, [pathname, isMobile]);
 
+  /**
+   * Handles the mouse down event when the user clicks on the border between the sidebar and the navbar.
+   * @param event (MouseEvent) - The mouse event when the user clicks on the border between the sidebar and the navbar
+   */
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
@@ -73,6 +97,12 @@ const Navigation: React.FC<NavigationProps> = () => {
   };
 
   // resize sidebar
+  /**
+   * Resizes the sidebar when the user clicks on the border between the sidebar and the navbar.
+   * The sidebar can be resized between 240px and 480px.
+   * @param event (MouseEvent) - The mouse event when the user clicks on the border between the sidebar and the navbar
+   * @returns (void) - breaks out of the function if the user is not resizing the sidebar
+   */
   const handleMouseMove = (event: MouseEvent) => {
     if (!isResizingRef.current) return;
     let newWidth = event.clientX;
@@ -90,13 +120,19 @@ const Navigation: React.FC<NavigationProps> = () => {
     }
   };
 
+  /**
+   * Stops resizing the sidebar when the user releases the mouse button.
+   */
   const handleMouseUp = () => {
     isResizingRef.current = false;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  // reset sidebar width when clicking on the border
+  /**
+   * Resets the width of the sidebar to its default width.
+   * This is called when clicking on the border between the sidebar and the navbar.
+   */
   const resetWidth = () => {
     if (sidebarRef.current && navbarRef.current) {
       setIsCollapsed(false);
@@ -124,6 +160,11 @@ const Navigation: React.FC<NavigationProps> = () => {
     }
   };
 
+  /**
+   * Creates a new document and redirects the user to the new document.
+   * The new document is created with the title "Untitled".
+   * Once the document is created, the user is redirected to the new document.
+   */
   const handleCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
       router.push(`/documents/${documentId}`),

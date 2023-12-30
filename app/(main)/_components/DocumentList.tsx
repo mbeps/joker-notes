@@ -19,10 +19,20 @@ const DocumentList: React.FC<DocumentListProps> = ({
   parentDocumentId,
   level = 0,
 }) => {
+  /**
+   * Allows extracting the document ID from the URL.
+   */
   const params = useParams();
+  /**
+   * Allows redirecting to another page.
+   */
   const router = useRouter();
+  // keeps track of which documents are expanded
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
+  /**
+   * Expands or collapses a document.
+   */
   const onExpand = (documentId: string) => {
     setExpanded((prevExpanded) => ({
       ...prevExpanded,
@@ -30,10 +40,19 @@ const DocumentList: React.FC<DocumentListProps> = ({
     }));
   };
 
+  /**
+   * Fetches the documents from the database.
+   * Nested documents are fetched recursively.
+   * Archived (in trash) documents are not fetched.
+   */
   const documents = useQuery(api.documents.getSidebar, {
     parentDocument: parentDocumentId,
   });
 
+  /**
+   * Redirects the user to a specific document.
+   * @param documentId (string) The ID of the document.
+   */
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`);
   };

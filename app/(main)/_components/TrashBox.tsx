@@ -12,28 +12,59 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 
 const TrashBox: React.FC = () => {
+  /**
+   * Allows redirecting to another page.
+   */
   const router = useRouter();
+  /**
+   * Allows extracting the document ID from the URL.
+   */
   const params = useParams();
+  /**
+   * Fetches archived (in trash) documents from the database.
+   */
   const documents = useQuery(api.documents.getTrash);
+  /**
+   * Allows restoring a document from archive (in trash).
+   * Uses the `restore` mutation from the `documents` API from Convex.
+   */
   const restore = useMutation(api.documents.restore);
+  /**
+   * Allows removing a document from the database permanently.
+   * Uses the `remove` mutation from the `documents` API from Convex.
+   */
   const remove = useMutation(api.documents.remove);
 
+  // keeps track of the search query
   const [search, setSearch] = useState("");
 
+  /**
+   * Filters the documents based on the search query.
+   */
   const filteredDocuments = documents?.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase());
   });
 
+  /**
+   * Redirects the user to a specific document page.
+   * @param documentId (string) The ID of the document.
+   */
   const onClick = (documentId: string) => {
     router.push(`/documents/${documentId}`);
   };
 
+  /**
+   * Restores a document from the archive (in trash).
+   * Marks the document as not archived (not in trash).
+   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The click event.
+   * @param documentId (string) The ID of the document.
+   */
   const onRestore = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     documentId: Id<"documents">,
   ) => {
-    event.stopPropagation();
-    const promise = restore({ id: documentId });
+    event.stopPropagation(); // prevents the event from bubbling up to the parent element
+    const promise = restore({ id: documentId }); // restores the document from the archive (in trash)
 
     toast.promise(promise, {
       loading: "Restoring note...",
@@ -42,8 +73,13 @@ const TrashBox: React.FC = () => {
     });
   };
 
+  /**
+   * Permanently deletes a document from the database.
+   * Once the document is deleted, it cannot be restored.
+   * Redirects to the documents page if the document being deleted is currently open.
+   */
   const onRemove = (documentId: Id<"documents">) => {
-    const promise = remove({ id: documentId });
+    const promise = remove({ id: documentId }); // permanently deletes the document from the database
 
     toast.promise(promise, {
       loading: "Deleting note...",
@@ -52,10 +88,12 @@ const TrashBox: React.FC = () => {
     });
 
     if (params.documentId === documentId) {
+      // redirects to the documents page if the document being deleted is currently open
       router.push("/documents");
     }
   };
 
+  // shows a loading spinner if the documents are still being fetched
   if (documents === undefined) {
     return (
       <div className="h-full flex items-center justify-center p-4">

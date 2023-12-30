@@ -16,13 +16,34 @@ interface NavbarProps {
   onResetWidth: () => void;
 }
 
+/**
+ * The navbar component displayed at the top of the document page.
+ * This navbar is only displayed when a document is loaded.
+ * This component is responsible for:
+ * - Displaying and renaming the document title
+ * - Publishing and unpublishing the document
+ * - Displaying the document menu where the user can trigger various actions
+ *
+ * If the document is archived (in trash), a banner is displayed at the top of the page.
+ * @param isCollapsed (boolean) - Whether the navbar is collapsed or not
+ * @param onResetWidth (function) - Function to reset the width of the navbar
+ * @returns (JSX.Element) - The navbar component
+ */
 const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
+  /**
+   * Fetch the document by its ID.
+   */
   const params = useParams();
 
+  /**
+   * Fetch the document by its ID.
+   * The data from the document is then used to display the document title, and publish/unpublish the document.
+   */
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId as Id<"documents">,
   });
 
+  // If the document is undefined, it means it is loading.
   if (document === undefined) {
     return (
       <nav
@@ -42,6 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
     );
   }
 
+  // If the document is null, it means it does not exist.
   if (document === null) {
     return null;
   }

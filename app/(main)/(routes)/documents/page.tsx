@@ -10,12 +10,33 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Document page where published documents are displayed.
+ * Published documents cannot be modified.
+ * @returns (JSX.Element) - The document page
+ */
 const DocumentPage: React.FC = () => {
+  /**
+   * Router allowing page to navigate to other pages.
+   */
   const router = useRouter();
+  /**
+   * Currently logged in user from Clerk.
+   */
   const { user } = useUser();
   // document.api follows the structure in the convex folder
+  /**
+   * Create a new document with the title "Untitled".
+   * The `create` function is from the Convex API.
+   */
   const create = useMutation(api.documents.create);
 
+  /**
+   * Creates a new document with the title "Untitled".
+   * This document is saved in the Convex database.
+   * Once the document is created, the user is redirected to the document page.
+   * The toast is used to display a message to the user.
+   */
   const onCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
       router.push(`/documents/${documentId}`),
