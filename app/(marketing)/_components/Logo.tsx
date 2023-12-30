@@ -34,7 +34,7 @@ const Logo: React.FC = () => {
         className="hidden dark:block"
       />
       {/* Logo Text */}
-      <p className={cn("font-semibold", font.className)}>Motion</p>
+      <p className={cn("font-semibold", font.className)}>Joker Notes</p>
     </div>
   );
 };

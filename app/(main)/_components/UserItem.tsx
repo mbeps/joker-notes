@@ -39,7 +39,7 @@ const UserItem: React.FC<UserItemProps> = () => {
               <AvatarImage src={user?.imageUrl} />
             </Avatar>
             <span className="text-start font-medium line-clamp-1">
-              {`${user?.fullName}'s Motion`}
+              {`${user?.fullName}'s Joker`}
             </span>
           </div>
           <ChevronsLeftRight className="rotate-90 ml-2 text-muted-foreground h-4 w-4" />
@@ -63,7 +63,7 @@ const UserItem: React.FC<UserItemProps> = () => {
             </div>
             <div className="space-y-1">
               <p className="text-sm line-clamp-1">
-                {`${user?.fullName}'s Motion`}
+                {`${user?.fullName}'s Joker`}
               </p>
             </div>
           </div>

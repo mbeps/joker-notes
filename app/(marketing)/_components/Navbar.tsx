@@ -50,14 +50,14 @@ const Navbar: React.FC = () => {
               </Button>
             </SignInButton>
             <SignInButton mode="modal">
-              <Button size="sm">Get Motion free</Button>
+              <Button size="sm">Get Joker Notes free</Button>
             </SignInButton>
           </>
         )}
         {isAuthenticated && !isLoading && (
           <>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/documents">Enter Motion</Link>
+              <Link href="/documents">Enter Joker Notes</Link>
             </Button>
             <UserButton afterSignOutUrl="/" />
           </>

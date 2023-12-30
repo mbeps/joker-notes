@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
  * Metadata for the website.
  */
 export const metadata: Metadata = {
-  title: "Motion",
+  title: "Joker Notes",
   description: "Organise notes cleanly and efficiently.",
 };
 

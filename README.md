@@ -1,14 +1,14 @@
 ![screenshotr_2023-12-30T19-34-34](https://github.com/mbeps/motion/assets/58662575/77c4cbda-d580-4126-83bf-b3ef12fd28b9)
 
 
-Introducing Motion Notes, a versatile and user-centric platform designed to revolutionize the way you create, manage, and publish notes. Building upon the concept of intuitive and interactive platforms, Motion Notes brings together a powerful suite of features aimed at boosting productivity and enhancing user experience. From seamless sign-up processes and customizable viewing options to sophisticated note organization and management, Motion Notes caters to all your note-taking needs. Whether you're jotting down ideas, compiling research, or sharing insights, our platform is engineered to provide a seamless, flexible, and enjoyable note-taking journey. Get ready to experience the next level of note-taking with Motion Notes.
+Introducing Joker Notes, a versatile and user-centric platform designed to revolutionize the way you create, manage, and publish notes. Building upon the concept of intuitive and interactive platforms, Joker Notes brings together a powerful suite of features aimed at boosting productivity and enhancing user experience. From seamless sign-up processes and customizable viewing options to sophisticated note organization and management, Joker Notes caters to all your note-taking needs. Whether you're jotting down ideas, compiling research, or sharing insights, our platform is engineered to provide a seamless, flexible, and enjoyable note-taking journey. Get ready to experience the next level of note-taking with Joker Notes.
 
 # **Features**
 
-Our platform, Motion Notes, offers a variety of features aimed at enhancing productivity and user experience through an intuitive and feature-rich notes application. Here are the key features:
+Our platform, Joker Notes, offers a variety of features aimed at enhancing productivity and user experience through an intuitive and feature-rich notes application. Here are the key features:
 
 ## **Authentication and Account Management**
-Motion Notes ensures a secure and seamless user experience with robust authentication options:
+Joker Notes ensures a secure and seamless user experience with robust authentication options:
 - **Email and Password Sign Up:** Users can sign up using their email and password.
 - **Email and Password Login:** Users can log in using their email and password.
 - **Third-Party Authentication:** Users can authenticate using various third-party providers, including Google, Microsoft, LinkedIn, GitHub, Discord, and Apple.
@@ -25,11 +25,11 @@ Create, customize, and manage your notes with ease:
 - **Nested Notes and Notebooks:** Users can create structured documentation and organize their thoughts more efficiently with the ability to create nested notes and notebooks.
 - **Note Management:** Users can move notes to trash, restore them, or permanently delete them, giving full control over their note lifecycle.
 
-These features are designed to provide a comprehensive, user-friendly experience for personal or professional note-taking and content management. Motion Notes is built to be flexible, powerful, and accessible, catering to a wide range of note-taking and organizational needs.
+These features are designed to provide a comprehensive, user-friendly experience for personal or professional note-taking and content management. Joker Notes is built to be flexible, powerful, and accessible, catering to a wide range of note-taking and organizational needs.
 
 # **Tech Stack**
 
-Our platform, Motion Notes, is built on a robust and modern technology stack designed to deliver a seamless and feature-rich user experience. Here's a breakdown of the technologies employed:
+Our platform, Joker Notes, is built on a robust and modern technology stack designed to deliver a seamless and feature-rich user experience. Here's a breakdown of the technologies employed:
 
 ## **Frontend**
 
@@ -47,14 +47,14 @@ Our platform, Motion Notes, is built on a robust and modern technology stack des
 - **[Convex](https://www.convex.dev/)**: A developer-friendly database emphasizing reactivity and ease of use. It combines a relational data model with JSON-like documents, offering intuitive JavaScript APIs, automatic query optimization, and built-in reactivity for real-time applications.
 - **[EdgeStore](https://edgestore.dev/)**: A file storage solution specifically designed for Next.js, providing a type-safe way to manage file uploads and retrievals. It integrates seamlessly with Next.js, offering access control, metadata handling, lifecycle hooks, and automatic thumbnail generation, among other features.
 
-This tech stack is carefully selected to ensure that Motion Notes offers a smooth, efficient, and highly customizable user experience. It reflects our commitment to leveraging the best tools available for developing high-quality, robust, and user-friendly applications.
+This tech stack is carefully selected to ensure that Joker Notes offers a smooth, efficient, and highly customizable user experience. It reflects our commitment to leveraging the best tools available for developing high-quality, robust, and user-friendly applications.
 
 # **Running Application Locally**
 
-To successfully run Motion Notes on your local environment, follow these detailed instructions. Ensure all prerequisites like Node.js are installed beforehand.
+To successfully run Joker Notes on your local environment, follow these detailed instructions. Ensure all prerequisites like Node.js are installed beforehand.
 
 ## 1. **Clone the Project Locally**
-Initiate by cloning the Motion Notes repository to your local machine. Use the following command in your terminal:
+Initiate by cloning the Joker Notes repository to your local machine. Use the following command in your terminal:
 
 ```sh
 git clone https://github.com/mbeps/motion.git
@@ -122,7 +122,7 @@ With your environment variables configured and database running, initiate the Ne
 yarn dev
 ```
 
-This command starts the development server, usually available at `localhost:3000`. Access it via your browser to interact with your instance of Motion Notes.
+This command starts the development server, usually available at `localhost:3000`. Access it via your browser to interact with your instance of Joker Notes.
 
 **Note:** It's crucial to run both `yarn convex-dev` for the Convex database and `yarn dev` for the Next.js server concurrently for the application to function properly.
 

@@ -25,7 +25,7 @@ const SettingsModal: React.FC = () => {
           <div className="flex flex-col gap-y-1">
             <Label>Appearance</Label>
             <span className="text-[0.8rem] text-muted-foreground">
-              Customize how Motion looks on your device
+              Customize how Joker Notes looks on your device
             </span>
           </div>
           <ThemeToggle />
