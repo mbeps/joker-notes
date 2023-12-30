@@ -15,8 +15,8 @@ interface TitleProps {
 /**
  * Title component which displays the title of the document.
  * It also allows the user to edit the title.
- * @param initialData (Doc<"documents">) - The initial data of the document.
- * @returns (JSX.Element) - The title of the document.
+ * @param initialData (Doc<"documents">): The initial data of the document.
+ * @returns (JSX.Element): The title of the document.
  */
 export const Title = ({ initialData }: TitleProps) => {
   /**
@@ -61,7 +61,7 @@ export const Title = ({ initialData }: TitleProps) => {
    * Updates the title of the document.
    * It takes the value of the input and updates the title of the document.
    * Uses the update mutation from the Convex API.
-   * @param event (React.ChangeEvent<HTMLInputElement>) - The event that triggered the function.
+   * @param event (React.ChangeEvent<HTMLInputElement>): The event that triggered the function.
    */
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value); // updates the title of the document
@@ -73,7 +73,7 @@ export const Title = ({ initialData }: TitleProps) => {
 
   /**
    * Disables the input when the user presses the Enter key.
-   * @param event (React.KeyboardEvent<HTMLInputElement>) - The event that triggered the function.
+   * @param event (React.KeyboardEvent<HTMLInputElement>): The event that triggered the function.
    */
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

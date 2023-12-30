@@ -17,7 +17,7 @@ interface BannerProps {
  * A banner that appears at the top of the page when the page is in the trash.
  * This banner allows the user to restore the page or delete it permanently from the database.
  * @param documentId (string) The ID of the document.
- * @returns (JSX.Element) - A banner that appears at the top of the page when the page is in the trash.
+ * @returns (JSX.Element): A banner that appears at the top of the page when the page is in the trash.
  */
 const Banner: React.FC<BannerProps> = ({ documentId }) => {
   /**

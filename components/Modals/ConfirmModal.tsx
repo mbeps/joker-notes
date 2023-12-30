@@ -23,14 +23,14 @@ interface ConfirmModalProps {
  * The cancel button will close the modal.
  * The confirm button will call the onConfirm callback.
  * `children` will be rendered as the trigger, for example confirm button.
- * @param children (React.ReactNode) - children to render as trigger
- * @param onConfirm (Function) - callback to call when confirm button is clicked
- * @returns (React.FC<ConfirmModalProps>) - confirm modal component
+ * @param children (React.ReactNode): children to render as trigger
+ * @param onConfirm (Function): callback to call when confirm button is clicked
+ * @returns (React.FC<ConfirmModalProps>): confirm modal component
  */
 const ConfirmModal: React.FC<ConfirmModalProps> = ({ children, onConfirm }) => {
   /**
    * Handle confirm button click.
-   * @param event (React.MouseEvent<HTMLButtonElement, MouseEvent>) - mouse and button event
+   * @param event (React.MouseEvent<HTMLButtonElement, MouseEvent>): mouse and button event
    */
   const handleConfirm = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
  * This allows modals defined in the components/Modals folder to be rendered on the client side only throughout the entire app.
  * The modal cannot the rendered on the server side because it requires the window object which will cause hydration errors.
  * Only the client side will have access to the window object.
- * @returns (JSX.Element | null) - Modal Provider
+ * @returns (JSX.Element | null): Modal Provider
  */
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);

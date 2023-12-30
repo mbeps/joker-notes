@@ -18,7 +18,7 @@ type UserItemProps = {};
  * User item in the sidebar.
  * It displays the user's name and email address.
  * Allows the user to log out.
- * @returns (JSX.Element) - A dropdown menu that allows the user to log out.
+ * @returns (JSX.Element): A dropdown menu that allows the user to log out.
  */
 const UserItem: React.FC<UserItemProps> = () => {
   /**

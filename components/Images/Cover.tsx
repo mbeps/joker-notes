@@ -96,7 +96,7 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
 
 /**
  * Skeleton component to be displayed while the cover image is loading.
- * @returns (React.FC) - cover image skeleton component
+ * @returns (React.FC): cover image skeleton component
  */
 Cover.Skeleton = function CoverSkeleton() {
   return <Skeleton className="w-full h-[12vh]" />;

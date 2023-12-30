@@ -41,17 +41,17 @@ interface ItemProps {
  * This item can be used to:
  * - Display, navigate and manage documents
  * - Display and interact with any other item in the sidebar
- * @param id (string) - The ID of the document.
- * @param documentIcon (string) - The icon to display next to the document.
- * @param active (boolean) - Whether the document is active.
- * @param expanded (boolean) - Whether the document is expanded.
- * @param isSearch (boolean) - Whether the item is a search button.
- * @param level (number) - The level of the document in the hierarchy.
- * @param onExpand (function) - Expands or collapses a document.
- * @param label (string) - The label of the document.
- * @param onClick (function) - Function to call when the item is clicked.
+ * @param id (string): The ID of the document.
+ * @param documentIcon (string): The icon to display next to the document.
+ * @param active (boolean): Whether the document is active.
+ * @param expanded (boolean): Whether the document is expanded.
+ * @param isSearch (boolean): Whether the item is a search button.
+ * @param level (number): The level of the document in the hierarchy.
+ * @param onExpand (function): Expands or collapses a document.
+ * @param label (string): The label of the document.
+ * @param onClick (function): Function to call when the item is clicked.
  * @param icon (LucideIcon) The icon to display next to the document.
- * @returns (JSX.Element) - A document in the sidebar.
+ * @returns (JSX.Element): A document in the sidebar.
  */
 export const Item = ({
   id,
@@ -87,7 +87,7 @@ export const Item = ({
    * Archives (moves to trash) a document.
    * The document is not deleted permanently but rather marked as archived.
    * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the trash icon).
-   * @returns (void) - exist if the document ID is undefined.
+   * @returns (void): exist if the document ID is undefined.
    */
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
@@ -116,7 +116,7 @@ export const Item = ({
   /**
    * Allows creating a new document.
    * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the plus icon
-   * @returns (void) - exist if the document ID is undefined (no parent document
+   * @returns (void): exist if the document ID is undefined (no parent document
    */
   const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element

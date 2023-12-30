@@ -47,7 +47,7 @@ const CoverImageModal: React.FC = () => {
 
   /**
    * Updates or creates a cover image for the document.
-   * @param file (File) - image to upload
+   * @param file (File): image to upload
    */
   const onChange = async (file?: File) => {
     if (file) {

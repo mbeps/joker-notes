@@ -41,7 +41,7 @@ import UserItem from "./UserItem";
  * - List of documents the user has created and can navigate to
  * - Trash where user can view deleted documents and restore or permanently delete them
  *
- * @returns (ReactElement) - The navigation sidebar
+ * @returns (ReactElement): The navigation sidebar
  */
 const Navigation: React.FC = () => {
   const router = useRouter();
@@ -83,7 +83,7 @@ const Navigation: React.FC = () => {
 
   /**
    * Handles the mouse down event when the user clicks on the border between the sidebar and the navbar.
-   * @param event (MouseEvent) - The mouse event when the user clicks on the border between the sidebar and the navbar
+   * @param event (MouseEvent): The mouse event when the user clicks on the border between the sidebar and the navbar
    */
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -100,8 +100,8 @@ const Navigation: React.FC = () => {
   /**
    * Resizes the sidebar when the user clicks on the border between the sidebar and the navbar.
    * The sidebar can be resized between 240px and 480px.
-   * @param event (MouseEvent) - The mouse event when the user clicks on the border between the sidebar and the navbar
-   * @returns (void) - breaks out of the function if the user is not resizing the sidebar
+   * @param event (MouseEvent): The mouse event when the user clicks on the border between the sidebar and the navbar
+   * @returns (void): breaks out of the function if the user is not resizing the sidebar
    */
   const handleMouseMove = (event: MouseEvent) => {
     if (!isResizingRef.current) return;

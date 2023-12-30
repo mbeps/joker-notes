@@ -11,7 +11,7 @@ import { Doc, Id } from "./_generated/dataModel";
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to archive
+ * @param id (string): document ID to archive
  * @see https://docs.convex.dev/functions
  */
 export const archive = mutation({
@@ -53,7 +53,7 @@ export const archive = mutation({
      * Recursively archives all children documents.
      * This goes layer by layer.
      * It first archives the current root document, then goes to the next layer and archives all its children documents.
-     * @param documentId (string) - document ID to archive
+     * @param documentId (string): document ID to archive
      */
     const recursiveArchive = async (documentId: Id<"documents">) => {
       const children = await ctx.db
@@ -90,7 +90,7 @@ export const archive = mutation({
  * 2. The documents must belong to the user.
  * 3. The documents must not be archived (in trash).
  *
- * @param parentDocument (string) - ID of the parent document
+ * @param parentDocument (string): ID of the parent document
  * @see https://docs.convex.dev/functions
  */
 export const getSidebar = query({
@@ -139,8 +139,8 @@ export const getSidebar = query({
  * 1. The user must be authenticated.
  * 2. The document must have a title.
  *
- * @param title (string) - title of the document
- * @param parentDocument (string?) - ID of the parent document
+ * @param title (string): title of the document
+ * @param parentDocument (string?): ID of the parent document
  * @see https://docs.convex.dev/functions
  */
 export const create = mutation({
@@ -239,7 +239,7 @@ export const getTrash = query({
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to restore
+ * @param id (string): document ID to restore
  * @see https://docs.convex.dev/functions
  */
 export const restore = mutation({
@@ -280,7 +280,7 @@ export const restore = mutation({
      * Restores the document and all its children documents.
      * This goes layer by layer.
      * It first restores the current root document, then goes to the next layer and restores all its children documents.
-     * @param documentId (string) - document ID to restore
+     * @param documentId (string): document ID to restore
      */
     const recursiveRestore = async (documentId: Id<"documents">) => {
       const children = await ctx.db
@@ -328,7 +328,7 @@ export const restore = mutation({
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to delete
+ * @param id (string): document ID to delete
  * @see https://docs.convex.dev/functions
  */
 export const remove = mutation({
@@ -381,7 +381,7 @@ export const remove = mutation({
  * 1. The user must be authenticated.
  * 2. The documents must belong to the user.
  *
- * @param query (string) - query to search for
+ * @param query (string): query to search for
  */
 export const getSearch = query({
   handler: async (ctx) => {
@@ -426,7 +426,7 @@ export const getSearch = query({
  * 4. The document must not be archived (in trash).
  * 5. If the document is not published
  *
- * @param documentId (string) - document ID to fetch
+ * @param documentId (string): document ID to fetch
  * @see https://docs.convex.dev/functions
  */
 export const getById = query({
@@ -482,12 +482,12 @@ export const getById = query({
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to update
- * @param title (string?) - new title of the document
- * @param content (string?) - new content of the document
- * @param coverImage (string?) - new cover image of the document
- * @param icon (string?) - new icon of the document
- * @param isPublished (boolean?) - whether the document is published
+ * @param id (string): document ID to update
+ * @param title (string?): new title of the document
+ * @param content (string?): new content of the document
+ * @param coverImage (string?): new cover image of the document
+ * @param icon (string?): new icon of the document
+ * @param isPublished (boolean?): whether the document is published
  * @see https://docs.convex.dev/functions
  */
 export const update = mutation({
@@ -562,7 +562,7 @@ export const update = mutation({
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to remove the icon for
+ * @param id (string): document ID to remove the icon for
  * @see https://docs.convex.dev/functions
  */
 export const removeIcon = mutation({
@@ -623,7 +623,7 @@ export const removeIcon = mutation({
  * 2. The document must exist.
  * 3. The document must belong to the user.
  *
- * @param id (string) - document ID to remove the cover image for
+ * @param id (string): document ID to remove the cover image for
  * @see https://docs.convex.dev/functions
  */
 export const removeCoverImage = mutation({

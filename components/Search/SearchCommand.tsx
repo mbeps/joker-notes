@@ -62,7 +62,7 @@ const SearchCommand: React.FC = () => {
   /**
    * The onSelect function is used to select a document from the search results.
    * This is used to navigate to the document page.
-   * @param id (string) - The document ID
+   * @param id (string): The document ID
    */
   const onSelect = (id: string) => {
     router.push(`/documents/${id}`);

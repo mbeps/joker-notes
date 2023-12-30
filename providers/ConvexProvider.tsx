@@ -12,8 +12,8 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
  * This allows the Convex client and Clerk to be managed throughout the entire app.
  * This means that the Convex client and Clerk will be available in all components,
  * giving access to the database and authentication.
- * @param children (React.ReactNode) - the rest of the app.
- * @returns (JSX.Element) - Convex Provider (with Clerk)
+ * @param children (React.ReactNode): the rest of the app.
+ * @returns (JSX.Element): Convex Provider (with Clerk)
  * @see https://clerk.com/docs/integrations/databases/convex
  */
 export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {

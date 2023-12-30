@@ -27,9 +27,9 @@ interface ToolbarProps {
  * - The icon is editable
  * - The cover image is editable
  *
- * @param initialData (Doc<"documents">) - The document data
- * @param preview (boolean) - Whether the document is in preview mode
- * @returns (React.FC<ToolbarProps>) - The toolbar component
+ * @param initialData (Doc<"documents">): The document data
+ * @param preview (boolean): Whether the document is in preview mode
+ * @returns (React.FC<ToolbarProps>): The toolbar component
  */
 const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   /**
@@ -68,7 +68,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   /**
    * Enables the input and focuses it.
    * This function is called when the user clicks on the title.
-   * @returns (void) - Enables the input and focuses it.
+   * @returns (void): Enables the input and focuses it.
    */
   const enableInput = () => {
     if (preview) return;
@@ -83,7 +83,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   /**
    * Disables the input.
    * This function is called when the user clicks outside of the input or presses the enter key.
-   * @returns (void) - Disables the input.
+   * @returns (void): Disables the input.
    */
   const disableInput = () => setIsEditing(false);
 
@@ -91,7 +91,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
    * Updates the title value and calls the update mutation.
    * If the input is empty, the title is set to "Untitled".
    * If the input is not empty, the title is set to the input value.
-   * @param value (string) - The title value
+   * @param value (string): The title value
    */
   const onInput = (value: string) => {
     setValue(value);
@@ -104,7 +104,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   /**
    * Prevents the default behaviour of the enter key.
    * Disables the input when the user presses the enter key.
-   * @param event (React.KeyboardEvent<HTMLTextAreaElement>) - The keydown event
+   * @param event (React.KeyboardEvent<HTMLTextAreaElement>): The keydown event
    */
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
@@ -116,7 +116,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   /**
    * Adds the icon to the document in the database.
    * This calls the `documents.update` API from the Convex API.
-   * @param icon (string) - The icon value
+   * @param icon (string): The icon value
    */
   const onIconSelect = (icon: string) => {
     update({

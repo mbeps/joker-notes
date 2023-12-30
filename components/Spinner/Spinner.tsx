@@ -24,8 +24,8 @@ interface SpinnerProps extends VariantProps<typeof spinnerVariants> {}
 
 /**
  * Spinner component that displays a loading spinner.
- * @param size ('default' | 'sm' | 'lg' | 'icon') - The size of the spinner.
- * @returns (JSX.Element) - The spinner component.
+ * @param size ('default' | 'sm' | 'lg' | 'icon'): The size of the spinner.
+ * @returns (JSX.Element): The spinner component.
  */
 export const Spinner = ({ size }: SpinnerProps) => {
   return <Loader className={cn(spinnerVariants({ size }))} />;

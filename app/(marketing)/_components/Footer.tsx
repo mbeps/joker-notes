@@ -4,7 +4,7 @@ import Logo from "./Logo";
 
 /**
  * Footer component displayed at the bottom of the marketing page.
- * @returns (React.FC) - Footer component
+ * @returns (React.FC): Footer component
  */
 const Footer: React.FC = () => {
   return (

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 /**
  * Fetches the host name of the current window.
  * This is useful when using the app in different environments.
- * @returns (string) - the origin of the current window (host name)
+ * @returns (string): the origin of the current window (host name)
  */
 export const useOrigin = () => {
   const [mounted, setMounted] = useState(false);

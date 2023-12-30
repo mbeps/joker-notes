@@ -12,7 +12,7 @@ const font = Poppins({
  * Logo component for the marketing page.
  * Different logos are used depending on the theme.
  * The logo is also hidden on mobile devices.
- * @returns (React.FC) - Logo component
+ * @returns (React.FC): Logo component
  */
 const Logo: React.FC = () => {
   return (

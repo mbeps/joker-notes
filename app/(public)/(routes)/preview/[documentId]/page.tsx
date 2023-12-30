@@ -53,7 +53,7 @@ const PreviewDocumentPage: React.FC<PreviewDocumentIdPageProps> = ({
    * - Cover image of the document
    * - Icon of the document
    * - Whether the document is shared or not
-   * @param content (string) - The content of the document
+   * @param content (string): The content of the document
    */
   const onChange = (content: string) => {
     update({

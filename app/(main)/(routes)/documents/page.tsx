@@ -13,7 +13,7 @@ import { toast } from "sonner";
 /**
  * Document page where published documents are displayed.
  * Published documents cannot be modified.
- * @returns (JSX.Element) - The document page
+ * @returns (JSX.Element): The document page
  */
 const DocumentPage: React.FC = () => {
   /**

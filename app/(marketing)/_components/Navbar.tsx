@@ -14,7 +14,7 @@ import Logo from "./Logo";
 /**
  * Navbar component specific to the marketing page.
  * This component allows the user to sign in, sign up, and toggle the theme.
- * @returns (React.FC) - Navbar component
+ * @returns (React.FC): Navbar component
  */
 const Navbar: React.FC = () => {
   /**

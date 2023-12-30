@@ -5,7 +5,7 @@ import React from "react";
  * Displays the hero images on the marketing page.
  * The images are conditionally rendered depending on the theme.
  * One of the images is hidden on mobile devices.
- * @returns (React.FC) - Heroes component
+ * @returns (React.FC): Heroes component
  */
 const Heroes: React.FC = () => {
   return (

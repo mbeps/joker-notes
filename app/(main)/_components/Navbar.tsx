@@ -25,9 +25,9 @@ interface NavbarProps {
  * - Displaying the document menu where the user can trigger various actions
  *
  * If the document is archived (in trash), a banner is displayed at the top of the page.
- * @param isCollapsed (boolean) - Whether the navbar is collapsed or not
- * @param onResetWidth (function) - Function to reset the width of the navbar
- * @returns (JSX.Element) - The navbar component
+ * @param isCollapsed (boolean): Whether the navbar is collapsed or not
+ * @param onResetWidth (function): Function to reset the width of the navbar
+ * @returns (JSX.Element): The navbar component
  */
 const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
   /**

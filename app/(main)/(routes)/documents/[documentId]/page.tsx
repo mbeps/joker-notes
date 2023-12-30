@@ -19,8 +19,8 @@ interface DocumentPageProps {
  * Document page where documents are displayed.
  * Documents can be modified by the user.
  * Only the owner of the document can modify the document (as implemented by `MainLayout`)
- * @param documentId (string) - The ID of the document to be fetched
- * @returns (JSX.Element) - The document page
+ * @param documentId (string): The ID of the document to be fetched
+ * @returns (JSX.Element): The document page
  */
 const DocumentPage: React.FC<DocumentPageProps> = ({ params }) => {
   /**
@@ -59,7 +59,7 @@ const DocumentPage: React.FC<DocumentPageProps> = ({ params }) => {
    * - Cover image of the document
    * - Icon of the document
    * - Whether the document is shared or not
-   * @param content (string) - The content of the document
+   * @param content (string): The content of the document
    */
   const onChange = (content: string) => {
     update({
