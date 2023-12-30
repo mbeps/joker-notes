@@ -76,7 +76,7 @@ const SearchCommand: React.FC = () => {
 
   return (
     <CommandDialog open={isOpen} onOpenChange={onClose}>
-      <CommandInput placeholder={`Search ${user?.fullName}'s Motion...`} />
+      <CommandInput placeholder={`Search ${user?.fullName}'s Joker Notes...`} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Documents">

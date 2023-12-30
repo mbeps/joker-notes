@@ -19,7 +19,7 @@ const Logo: React.FC = () => {
     <div className="hidden md:flex items-center gap-x-2">
       {/* Light Mode Logo */}
       <Image
-        src="/logos/logo-light.ico"
+        src="/logos/logo-light.svg"
         height="40"
         width="40"
         alt="Logo"
@@ -27,14 +27,14 @@ const Logo: React.FC = () => {
       />
       {/* Dark Mode Logo */}
       <Image
-        src="/logos/logo-dark.ico"
+        src="/logos/logo-dark.svg"
         height="40"
         width="40"
         alt="Logo"
         className="hidden dark:block"
       />
       {/* Logo Text */}
-      <p className={cn("font-semibold", font.className)}>Motion</p>
+      <p className={cn("font-semibold", font.className)}>Joker Notes</p>
     </div>
   );
 };

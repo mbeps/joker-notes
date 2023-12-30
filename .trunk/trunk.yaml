@@ -19,7 +19,7 @@ lint:
   enabled:
     - oxipng@9.0.0
     - actionlint@1.6.26
-    - checkov@3.1.43
+    - checkov@3.1.46
     - eslint@8.56.0
     - git-diff-check
     - hadolint@2.12.0
