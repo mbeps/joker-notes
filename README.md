@@ -1,3 +1,6 @@
+![screenshotr_2023-12-30T19-34-34](https://github.com/mbeps/motion/assets/58662575/77c4cbda-d580-4126-83bf-b3ef12fd28b9)
+
+
 Introducing Motion Notes, a versatile and user-centric platform designed to revolutionize the way you create, manage, and publish notes. Building upon the concept of intuitive and interactive platforms, Motion Notes brings together a powerful suite of features aimed at boosting productivity and enhancing user experience. From seamless sign-up processes and customizable viewing options to sophisticated note organization and management, Motion Notes caters to all your note-taking needs. Whether you're jotting down ideas, compiling research, or sharing insights, our platform is engineered to provide a seamless, flexible, and enjoyable note-taking journey. Get ready to experience the next level of note-taking with Motion Notes.
 
 # **Features**
