@@ -3,9 +3,12 @@ import Heroes from "./_components/Heroes";
 import Footer from "./_components/Footer";
 import { Heading } from "./_components/Heading";
 
-type pageProps = {};
-
-const MarketingPage: React.FC<pageProps> = () => {
+/**
+ * This is the marketing page where users can learn more about the application.
+ * From here, the user can also sign up or login to the application.
+ * @returns (React.ReactNode) The marketing page
+ */
+const MarketingPage: React.FC = () => {
   return (
     <div
       className="
@@ -29,4 +32,5 @@ const MarketingPage: React.FC<pageProps> = () => {
     </div>
   );
 };
+
 export default MarketingPage;

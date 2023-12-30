@@ -22,11 +22,25 @@ interface MenuProps {
 }
 
 export const Menu = ({ documentId }: MenuProps) => {
+  /**
+   * Allows redirecting to another page.
+   */
   const router = useRouter();
+  /**
+   * Currently logged in user.
+   * Provided by Clerk.
+   */
   const { user } = useUser();
 
+  /**
+   * Allows archiving (moving to trash) a document.
+   * Uses the `remove` mutation from the `documents` API from Convex.
+   */
   const archive = useMutation(api.documents.archive);
 
+  /**
+   * Archives (moves to trash) a document and redirects to the documents page.
+   */
   const onArchive = () => {
     const promise = archive({ id: documentId });
 

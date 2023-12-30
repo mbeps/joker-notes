@@ -16,16 +16,29 @@ const IconPicker: React.FC<IconPickerProps> = ({
   onChange,
   asChild,
 }) => {
+  /**
+   * Hook to get the current theme from Next.js.
+   * This is used to set the Emoji Picker theme.
+   */
   const { resolvedTheme } = useTheme();
+  /**
+   * Transform the Next.js theme to Emoji Picker theme.
+   * This is because the Emoji Picker has its own theme system.
+   */
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
 
-  // mapping Next.js theme to EmojiPicker theme
-  // Emoji Picker has its own theme
+  /**
+   * Map the Next.js theme to Emoji Picker theme.
+   */
   const themeMap = {
     dark: Theme.DARK,
     light: Theme.LIGHT,
   };
 
+  /**
+   * Get the theme from the theme map for the Emoji Picker.
+   * Uses this theme to render the Emoji Picker's colour scheme.
+   */
   const theme = themeMap[currentTheme];
 
   return (

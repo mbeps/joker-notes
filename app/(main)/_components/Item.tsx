@@ -36,6 +36,23 @@ interface ItemProps {
   icon: LucideIcon;
 }
 
+/**
+ * An item that can be clicked on in the sidebar.
+ * This item can be used to:
+ * - Display, navigate and manage documents
+ * - Display and interact with any other item in the sidebar
+ * @param id (string): The ID of the document.
+ * @param documentIcon (string): The icon to display next to the document.
+ * @param active (boolean): Whether the document is active.
+ * @param expanded (boolean): Whether the document is expanded.
+ * @param isSearch (boolean): Whether the item is a search button.
+ * @param level (number): The level of the document in the hierarchy.
+ * @param onExpand (function): Expands or collapses a document.
+ * @param label (string): The label of the document.
+ * @param onClick (function): Function to call when the item is clicked.
+ * @param icon (LucideIcon) The icon to display next to the document.
+ * @returns (JSX.Element): A document in the sidebar.
+ */
 export const Item = ({
   id,
   label,
@@ -48,16 +65,36 @@ export const Item = ({
   onExpand,
   expanded,
 }: ItemProps) => {
+  /**
+   * User currently logged in.
+   * Provided by Clerk.
+   */
   const { user } = useUser();
+  /**
+   * Allows redirecting to another page.
+   */
   const router = useRouter();
+  /**
+   * Allows creating a new document.
+   */
   const create = useMutation(api.documents.create);
+  /**
+   * Allows archiving a document (moving it to trash).
+   */
   const archive = useMutation(api.documents.archive);
 
+  /**
+   * Archives (moves to trash) a document.
+   * The document is not deleted permanently but rather marked as archived.
+   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the trash icon).
+   * @returns (void): exist if the document ID is undefined.
+   */
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
-    if (!id) return;
-    const promise = archive({ id }).then(() => router.push("/documents"));
+    event.stopPropagation(); // prevents the event from bubbling up to the parent element
+    if (!id) return; // exist if the document ID is undefined
+    const promise = archive({ id }).then(() => router.push("/documents")); // archives the document and redirects to the documents page
 
+    // displays a toast notification
     toast.promise(promise, {
       loading: "Moving to trash...",
       success: "Note moved to trash!",
@@ -65,22 +102,32 @@ export const Item = ({
     });
   };
 
+  /**
+   * Expands documents to show nested documents.
+   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the expand icon).
+   */
   const handleExpand = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    event.stopPropagation();
-    onExpand?.();
+    event.stopPropagation(); // prevents the event from bubbling up to the parent element
+    onExpand?.(); // calls the onExpand function passed as a prop
   };
 
+  /**
+   * Allows creating a new document.
+   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the plus icon
+   * @returns (void): exist if the document ID is undefined (no parent document
+   */
   const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
-    if (!id) return;
+    event.stopPropagation(); // prevents the event from bubbling up to the parent element
+    if (!id) return; // exist if the document ID is undefined (no parent document)
     const promise = create({ title: "Untitled", parentDocument: id }).then(
+      // creates a new document with the title "Untitled" and the current document as the parent document
       (documentId) => {
         if (!expanded) {
-          onExpand?.();
+          onExpand?.(); // expands the current document if it is not expanded
         }
-        router.push(`/documents/${documentId}`);
+        router.push(`/documents/${documentId}`); // redirects to the new document
       },
     );
 
@@ -91,6 +138,11 @@ export const Item = ({
     });
   };
 
+  /**
+   * Icon to display next to the document.
+   * If the document is expanded, the icon is a chevron pointing down.
+   * If the document is collapsed, the icon is a chevron pointing right.
+   */
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
   return (

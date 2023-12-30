@@ -1,6 +1,19 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+/**
+ * Schema for the Convex database.
+ * - `title` (string): The title of the document.
+ * - `userId`(string): The Clerk user ID of the document owner.
+ * - `isArchived`(boolean): Whether the document is in trash.
+ * - `parentDocument`(string): The parent document ID as documents can be nested.
+ * - `content`(string): The document content.
+ * - `coverImage`(string): The document cover image URL.
+ * - `icon`(string): The document icon.
+ * - `isPublished`(boolean): Whether the document is shareable.
+ *
+ * @see https://docs.convex.dev/database/schemas
+ */
 export default defineSchema({
   documents: defineTable({
     title: v.string(),

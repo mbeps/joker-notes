@@ -6,6 +6,16 @@ import { redirect } from "next/navigation";
 import Navigation from "./_components/Navigation";
 import SearchCommand from "@/components/Search/SearchCommand";
 
+/**
+ * Layout component that applies to all pages within the `(main)` directory.
+ * The providers from the root layout component are inherited by this component.
+ * The structure of the layout is overwritten.
+ *
+ * All the pages in the `(main)` directory are protected by authentication.
+ * All the pages in the `(main)` directory are rendered within the `Navigation` component.
+ *
+ * @protected Only authenticated users can access the pages in the `(main)` directory.
+ */
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
 

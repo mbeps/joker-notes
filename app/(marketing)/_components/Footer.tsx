@@ -2,6 +2,10 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import Logo from "./Logo";
 
+/**
+ * Footer component displayed at the bottom of the marketing page.
+ * @returns (React.FC): Footer component
+ */
 const Footer: React.FC = () => {
   return (
     <div className="flex items-center w-full p-6 bg-background z-50 dark:bg-[#1F1F1F]">

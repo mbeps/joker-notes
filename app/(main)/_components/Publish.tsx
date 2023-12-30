@@ -19,20 +19,42 @@ interface PublishProps {
 }
 
 const Publish: React.FC<PublishProps> = ({ initialData }) => {
+  /**
+   * Extracts the host name of the website.
+   */
   const origin = useOrigin();
+  /**
+   * Allows updating a document.
+   * Uses the `update` mutation from the `documents` API from Convex.
+   */
   const update = useMutation(api.documents.update);
 
+  // keeps track of whether the URL has been copied to the clipboard
   const [copied, setCopied] = useState(false);
+  // keeps track of whether the user is submitting the form
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /**
+   * The full URL of the the published note.
+   * Published notes do not have the same URL as the editor.
+   * If the note is not published, navigating to this URL will return a 404.
+   */
   const url = `${origin}/preview/${initialData._id}`;
 
+  /**
+   * Publishes the note making it visible to the public.
+   * Published notes are not editable by the public.
+   */
   const onPublish = () => {
     setIsSubmitting(true);
 
+    /**
+     * Updates the document with the `isPublished` property set to `true`.
+     * This makes the note visible to the public.
+     */
     const promise = update({
-      id: initialData._id,
-      isPublished: true,
+      id: initialData._id, // the ID of the document
+      isPublished: true, // whether the document is published
     }).finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
@@ -42,12 +64,20 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
     });
   };
 
+  /**
+   * Unpublishes the note making it invisible to the public.
+   * This means that only the author can see the note.
+   */
   const onUnpublish = () => {
     setIsSubmitting(true);
 
+    /**
+     * Updates the document with the `isPublished` property set to `false`.
+     * This makes the note invisible to the public.
+     */
     const promise = update({
-      id: initialData._id,
-      isPublished: false,
+      id: initialData._id, // the ID of the document
+      isPublished: false, // whether the document is published
     }).finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
@@ -57,6 +87,9 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
     });
   };
 
+  /**
+   * Copies the URL of the published note to the clipboard.
+   */
   const onCopy = () => {
     navigator.clipboard.writeText(url);
     setCopied(true);

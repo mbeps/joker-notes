@@ -19,17 +19,38 @@ interface CoverImageProps {
 }
 
 export const Cover = ({ url, preview }: CoverImageProps) => {
+  /**
+   * Hooks allowing to update stored data within EdgeStore.
+   * EdgeStore is the project's file storage.
+   */
   const { edgestore } = useEdgeStore();
+  /**
+   * Gets the URL parameters.
+   * This can be used to get the document ID from the URL.
+   */
   const params = useParams();
+  /**
+   * Mutation hook to update the document.
+   */
   const coverImage = useCoverImage();
+  /**
+   * Mutation hook to remove the cover image.
+   * Calls the `removeCoverImage` API method from `convex/documents.ts`.
+   */
   const removeCoverImage = useMutation(api.documents.removeCoverImage);
 
+  /**
+   * Handle remove button click.
+   * This removes the cover image from the document.
+   */
   const onRemove = async () => {
     if (url) {
+      // removes the image from EdgeStore
       await edgestore.publicFiles.delete({
         url: url,
       });
     }
+    // calls the `removeCoverImage` API method to remove the image from the Convex database
     removeCoverImage({
       id: params.documentId as Id<"documents">,
     });
@@ -43,7 +64,10 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
         url && "bg-muted",
       )}
     >
+      {/* if there is cover image, display it */}
       {!!url && <Image src={url} fill alt="Cover" className="object-cover" />}
+
+      {/* if there is cover image and document is editable */}
       {url && !preview && (
         <div className="opacity-0 group-hover:opacity-100 absolute bottom-5 right-5 flex items-center gap-x-2">
           <Button
@@ -70,6 +94,10 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
   );
 };
 
+/**
+ * Skeleton component to be displayed while the cover image is loading.
+ * @returns (React.FC): cover image skeleton component
+ */
 Cover.Skeleton = function CoverSkeleton() {
   return <Skeleton className="w-full h-[12vh]" />;
 };
