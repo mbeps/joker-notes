@@ -96,3 +96,32 @@ jobs:
 
       - name: Build
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          echo CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }} >> .env
+          echo NEXT_PUBLIC_CONVEX_URL=${{ secrets.NEXT_PUBLIC_CONVEX_URL }} >> .env
+          echo NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }} >> .env
+          echo CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }} >> .env
+          echo EDGE_STORE_ACCESS_KEY=${{ secrets.EDGE_STORE_ACCESS_KEY }} >> .env
+          echo EDGE_STORE_SECRET_KEY=${{ secrets.EDGE_STORE_SECRET_KEY }} >> .env
+
+      - name: Run Docker Compose
+        run: |
+          cd docker
+          docker-compose -f docker-compose.yml up -d
+
+      - name: Run tests
+        run: |
+          # Add your test commands here
+
+      - name: Stop Docker Compose
+        run: |
+          cd docker
+          docker-compose -f docker-compose.yml down
