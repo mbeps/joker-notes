@@ -4,15 +4,12 @@ import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 
 /**
- * Moves a document to trash (archive) along with all its children documents.
- * The document is not deleted from the database, but rather marked as archived.
- * Requirements to archive a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Marks a document and its descendants as archived so they disappear from the active tree.
+ * Only the owning Clerk user can invoke this mutation.
  *
- * @param id (string): document ID to archive
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} id Document identifier to archive.
+ * @returns {Promise<Doc<"documents"> | undefined>} Updated document after archiving.
+ * @see https://docs.convex.dev/functions/mutations
  */
 export const archive = mutation({
   args: { id: v.id("documents") },
@@ -84,14 +81,12 @@ export const archive = mutation({
 });
 
 /**
- * Fetches all documents that are not archived (in trash).
- * Requirements to fetch documents:
- * 1. The user must be authenticated.
- * 2. The documents must belong to the user.
- * 3. The documents must not be archived (in trash).
+ * Returns the visible child documents for the authenticated user and optional parent.
+ * Filters out archived notes so the sidebar only shows active branches.
  *
- * @param parentDocument (string): ID of the parent document
- * @see https://docs.convex.dev/functions
+ * @param {{ parentDocument?: Id<"documents"> }} args Query arguments containing an optional parent document id.
+ * @returns {Promise<Doc<"documents">[]>} Active child documents sorted by creation date.
+ * @see https://docs.convex.dev/database/queries
  */
 export const getSidebar = query({
   args: {
@@ -134,14 +129,12 @@ export const getSidebar = query({
 });
 
 /**
- * Creates a new document.
- * Requirements to create a document:
- * 1. The user must be authenticated.
- * 2. The document must have a title.
+ * Inserts a new document owned by the current Clerk user, optionally under a parent.
+ * Initializes notes as unpublished and active so they appear immediately in the UI.
  *
- * @param title (string): title of the document
- * @param parentDocument (string?): ID of the parent document
- * @see https://docs.convex.dev/functions
+ * @param {{ title: string; parentDocument?: Id<"documents"> }} args Mutation arguments including the new title.
+ * @returns {Promise<Id<"documents">>} Identifier of the newly created document.
+ * @see https://docs.convex.dev/database/writing-data
  */
 export const create = mutation({
   args: {
@@ -189,13 +182,11 @@ export const create = mutation({
 });
 
 /**
- * Fetches all documents that are archived (in trash).
- * Requirements to fetch documents:
- * 1. The user must be authenticated.
- * 2. The documents must belong to the user.
- * 3. The documents must be archived (in trash).
+ * Lists archived documents for the signed-in user so the trash view can render.
+ * Results are sorted newest first to surface recent deletions.
  *
- * @see https://docs.convex.dev/functions
+ * @returns {Promise<Doc<"documents">[]>} Archived documents owned by the authenticated user.
+ * @see https://docs.convex.dev/database/queries
  */
 export const getTrash = query({
   handler: async (ctx) => {
@@ -233,14 +224,12 @@ export const getTrash = query({
 });
 
 /**
- * Restores a document from trash (archives).
- * Requirements to restore a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Reverses the archive operation for a document tree and re-exposes it to the owner.
+ * Automatically lifts the note out of nested parents that remain archived.
  *
- * @param id (string): document ID to restore
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} id Document identifier to restore.
+ * @returns {Promise<Doc<"documents"> | undefined>} Updated document after restoration.
+ * @see https://docs.convex.dev/functions/mutations
  */
 export const restore = mutation({
   args: { id: v.id("documents") },
@@ -320,16 +309,12 @@ export const restore = mutation({
 });
 
 /**
- * Permanently deletes a document from the database.
- * Ideally, the document should be archived (in trash) before being deleted.
- * This is not a requirement as it it not checked.
- * Requirements to delete a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Permanently removes a document that belongs to the authenticated user.
+ * Use after archival when the note should no longer exist in storage.
  *
- * @param id (string): document ID to delete
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} id Document identifier to delete.
+ * @returns {Promise<void>} Resolves when the document has been removed.
+ * @see https://docs.convex.dev/database/writing-data#delete-records
  */
 export const remove = mutation({
   args: { id: v.id("documents") },
@@ -376,12 +361,11 @@ export const remove = mutation({
 });
 
 /**
- * Searches for documents that match the query.
- * Requirements to search for documents:
- * 1. The user must be authenticated.
- * 2. The documents must belong to the user.
+ * Returns all non-archived documents for the current user so the client can filter locally.
+ * Keeps search fast by relying on indexed queries in Convex.
  *
- * @param query (string): query to search for
+ * @returns {Promise<Doc<"documents">[]>} Active documents owned by the authenticated user.
+ * @see https://docs.convex.dev/database/queries#indexes
  */
 export const getSearch = query({
   handler: async (ctx) => {
@@ -418,16 +402,12 @@ export const getSearch = query({
 });
 
 /**
- * Fetches a document by its ID.
- * Requirements to fetch a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
- * 4. The document must not be archived (in trash).
- * 5. If the document is not published
+ * Loads a document by id, exposing published entries publicly while guarding private ones.
+ * Ensures only the owner can read unpublished content.
  *
- * @param documentId (string): document ID to fetch
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} documentId Document identifier to fetch.
+ * @returns {Promise<Doc<"documents">>} The requested document if access is allowed.
+ * @see https://docs.convex.dev/database/queries
  */
 export const getById = query({
   args: { documentId: v.id("documents") },
@@ -476,19 +456,12 @@ export const getById = query({
 });
 
 /**
- * Updates a document.
- * Requirements to update a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Applies partial updates to a document owned by the current user.
+ * Supports updating metadata, content, and publishing status in one call.
  *
- * @param id (string): document ID to update
- * @param title (string?): new title of the document
- * @param content (string?): new content of the document
- * @param coverImage (string?): new cover image of the document
- * @param icon (string?): new icon of the document
- * @param isPublished (boolean?): whether the document is published
- * @see https://docs.convex.dev/functions
+ * @param {{ id: Id<"documents">; title?: string; content?: string; coverImage?: string; icon?: string; isPublished?: boolean }} args Mutation arguments describing the desired updates.
+ * @returns {Promise<Doc<"documents">>} Updated document reflecting the changes.
+ * @see https://docs.convex.dev/database/writing-data#update-records
  */
 export const update = mutation({
   args: {
@@ -556,14 +529,12 @@ export const update = mutation({
 });
 
 /**
- * Removes the icon for a document.
- * Requirements to remove the icon for a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Clears the icon metadata on a document after validating ownership.
+ * Useful when reverting to plain text titles in the UI.
  *
- * @param id (string): document ID to remove the icon for
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} id Document identifier whose icon should be removed.
+ * @returns {Promise<Doc<"documents">>} Updated document with the icon cleared.
+ * @see https://docs.convex.dev/functions/mutations
  */
 export const removeIcon = mutation({
   args: { id: v.id("documents") },
@@ -617,14 +588,12 @@ export const removeIcon = mutation({
 });
 
 /**
- * Removes the cover image for a document.
- * Requirements to remove the cover image for a document:
- * 1. The user must be authenticated.
- * 2. The document must exist.
- * 3. The document must belong to the user.
+ * Unsets the cover image URL for a document once the owner removes the asset.
+ * Keeps the remaining metadata intact.
  *
- * @param id (string): document ID to remove the cover image for
- * @see https://docs.convex.dev/functions
+ * @param {Id<"documents">} id Document identifier whose cover image should be removed.
+ * @returns {Promise<Doc<"documents">>} Updated document with the cover image cleared.
+ * @see https://docs.convex.dev/functions/mutations
  */
 export const removeCoverImage = mutation({
   args: { id: v.id("documents") },

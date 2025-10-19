@@ -8,36 +8,25 @@ import { Id } from "@/convex/_generated/dataModel";
 import { SingleImageDropzone } from "../Images/SingleImageDropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 
+/**
+ * Modal that surfaces a single-image dropzone for uploading or replacing document cover art.
+ * Coordinates Edge Store uploads with Convex mutations tied to the active document.
+ *
+ * @returns Dialog that lets the user manage the current document cover image.
+ * @see https://docs.edgestore.dev
+ * @see https://docs.convex.dev/database/writing-data
+ */
 const CoverImageModal: React.FC = () => {
-  /**
-   * Gets the URL parameters.
-   * This can be used to get the document ID from the URL.
-   */
   const params = useParams();
-  /**
-   * Mutation hook to update the document.
-   * This calls the `update` API method from `convex/documents.ts`.
-   */
   const update = useMutation(api.documents.update);
-  /**
-   * Hook to get the cover image state.
-   * This opens a modal to select a cover image.
-   */
   const coverImage = useCoverImage();
   const { edgestore } = useEdgeStore();
 
-  /**
-   * State to store the selected image to be uploaded.
-   */
   const [file, setFile] = useState<File>();
-  /**
-   * State to store if the form is submitting.
-   */
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
-   * Handle close button click.
-   * This clears the selected file, clears the submitting state, and closes the modal.
+   * Closes the modal while clearing local upload state.
    */
   const onClose = () => {
     setFile(undefined);
@@ -46,8 +35,8 @@ const CoverImageModal: React.FC = () => {
   };
 
   /**
-   * Updates or creates a cover image for the document.
-   * @param file (File): image to upload
+   * Uploads the provided file to Edge Store and persists the resulting URL to Convex.
+   * Reuses `replaceTargetUrl` so edits overwrite the existing asset.
    */
   const onChange = async (file?: File) => {
     if (file) {
@@ -87,7 +76,7 @@ const CoverImageModal: React.FC = () => {
         </DialogHeader>
         {/* Dropzone where the file is selected and then displayed (when there is image) */}
         <SingleImageDropzone
-          className="w-full outline-none"
+          className="w-full outline-hidden"
           disabled={isSubmitting}
           value={file}
           onChange={onChange}

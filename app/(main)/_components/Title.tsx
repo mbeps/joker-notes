@@ -8,15 +8,20 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import React, { useRef, useState } from "react";
 
+/**
+ * Props for the editable document title component.
+ */
 interface TitleProps {
   initialData: Doc<"documents">;
 }
 
 /**
- * Title component which displays the title of the document.
- * It also allows the user to edit the title.
- * @param initialData (Doc<"documents">): The initial data of the document.
- * @returns (JSX.Element): The title of the document.
+ * Inline document title editor that persists changes through Convex in real time.
+ * Supports toggling between read-only and input modes with keyboard shortcuts.
+ *
+ * @param initialData Document data whose title will be displayed and edited.
+ * @returns Inline title control supporting quick edits.
+ * @see https://docs.convex.dev/database/writing-data
  */
 export const Title = ({ initialData }: TitleProps) => {
   /**
@@ -24,10 +29,6 @@ export const Title = ({ initialData }: TitleProps) => {
    * Used to focus the input when the user clicks on the title.
    */
   const inputRef = useRef<HTMLInputElement>(null);
-  /**
-   * Allows updating a document.
-   * Uses the `update` mutation from the `documents` API from Convex.
-   */
   const update = useMutation(api.documents.update);
 
   // keeps track of the title of the document
@@ -36,9 +37,7 @@ export const Title = ({ initialData }: TitleProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   /**
-   * Enables the input to edit the title.
-   * Initially, the component being displayed is not an input.
-   * Once it is clicked, the component becomes an input allowing the user to edit the title.
+   * Opens the title input and focuses it so users can immediately type.
    */
   const enableInput = () => {
     setTitle(initialData.title);
@@ -50,18 +49,16 @@ export const Title = ({ initialData }: TitleProps) => {
   };
 
   /**
-   * Disables the input to edit the title.
-   * Once the input is disabled, the component becomes a button again.
+   * Returns the component to its button state.
    */
   const disableInput = () => {
     setIsEditing(false);
   };
 
   /**
-   * Updates the title of the document.
-   * It takes the value of the input and updates the title of the document.
-   * Uses the update mutation from the Convex API.
-   * @param event (React.ChangeEvent<HTMLInputElement>): The event that triggered the function.
+   * Saves the latest text input to Convex while updating local state.
+   *
+   * @param event Input change event from the title field.
    */
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value); // updates the title of the document
@@ -72,8 +69,9 @@ export const Title = ({ initialData }: TitleProps) => {
   };
 
   /**
-   * Disables the input when the user presses the Enter key.
-   * @param event (React.KeyboardEvent<HTMLInputElement>): The event that triggered the function.
+   * Closes the input on Enter to mirror Notion-style interactions.
+   *
+   * @param event Keyboard event emitted from the title input.
    */
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -108,6 +106,11 @@ export const Title = ({ initialData }: TitleProps) => {
   );
 };
 
+/**
+ * Skeleton placeholder rendered while the document title loads.
+ *
+ * @returns Placeholder matching the title dimensions.
+ */
 Title.Skeleton = function TitleSkeleton() {
   return <Skeleton className="h-9 w-20 rounded-md" />;
 };

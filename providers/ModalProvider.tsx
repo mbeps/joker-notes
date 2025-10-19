@@ -5,11 +5,11 @@ import SettingsModal from "@/components/Modals/SettingsModal";
 import { useEffect, useState } from "react";
 
 /**
- * Global Modal Provider to be used in the global Layout component.
- * This allows modals defined in the components/Modals folder to be rendered on the client side only throughout the entire app.
- * The modal cannot the rendered on the server side because it requires the window object which will cause hydration errors.
- * Only the client side will have access to the window object.
- * @returns (JSX.Element | null): Modal Provider
+ * Mounts application wide modals only on the client to avoid hydration mismatches with window APIs.
+ * Gives layouts a single place to register modal components that render via Zustand state.
+ *
+ * @returns Wrapper that renders shared modals once the component hydrates.
+ * @see https://nextjs.org/docs/app/building-your-application/rendering/client-components
  */
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);

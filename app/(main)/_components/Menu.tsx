@@ -11,35 +11,35 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+/**
+ * Props passed to the document action menu containing the Convex document id.
+ */
 interface MenuProps {
   documentId: Id<"documents">;
 }
 
+/**
+ * Document actions menu providing destructive options like moving a note to trash.
+ * Integrates Clerk user data for audit feedback and Convex mutations for persistence.
+ *
+ * @param documentId Identifier of the document whose actions are exposed.
+ * @returns Dropdown menu with destructive document actions and metadata.
+ * @see https://docs.convex.dev/database/writing-data
+ * @see https://clerk.com/docs/references/react/use-user
+ */
 export const Menu = ({ documentId }: MenuProps) => {
-  /**
-   * Allows redirecting to another page.
-   */
   const router = useRouter();
-  /**
-   * Currently logged in user.
-   * Provided by Clerk.
-   */
   const { user } = useUser();
-
-  /**
-   * Allows archiving (moving to trash) a document.
-   * Uses the `remove` mutation from the `documents` API from Convex.
-   */
   const archive = useMutation(api.documents.archive);
 
   /**
-   * Archives (moves to trash) a document and redirects to the documents page.
+   * Archives the document and redirects back to the document list.
    */
   const onArchive = () => {
     const promise = archive({ id: documentId });
@@ -79,6 +79,9 @@ export const Menu = ({ documentId }: MenuProps) => {
   );
 };
 
+/**
+ * Skeleton placeholder for the menu button while document metadata loads.
+ */
 Menu.Skeleton = function MenuSkeleton() {
   return <Skeleton className="h-10 w-10" />;
 };

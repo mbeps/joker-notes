@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 
-// gets the origin of the current window so the host name
 /**
- * Fetches the host name of the current window.
- * This is useful when using the app in different environments.
- * @returns (string): the origin of the current window (host name)
+ * Returns the browser origin string once the component has hydrated to avoid SSR mismatches.
+ * Enables client-side code to construct absolute URLs without guessing deployment hosts.
+ *
+ * @returns The window origin after hydration, or an empty string during SSR.
+ * @see https://nextjs.org/docs/app/building-your-application/rendering/client-components
  */
 export const useOrigin = () => {
   const [mounted, setMounted] = useState(false);
 
-  /**
-   * Gets the origin of the current window.
-   */
   const origin =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
@@ -11,18 +11,15 @@ import React from "react";
 import { toast } from "sonner";
 
 /**
- * Document page where published documents are displayed.
- * Published documents cannot be modified.
- * @returns (JSX.Element): The document page
+ * Empty state page shown when the user has not selected a document.
+ * Invites them to create a new note using the Convex documents API.
+ *
+ * @returns Empty state with imagery and a button to create a document.
+ * @see https://docs.convex.dev/database/writing-data
+ * @see https://clerk.com/docs/references/react/use-user
  */
 const DocumentPage: React.FC = () => {
-  /**
-   * Router allowing page to navigate to other pages.
-   */
   const router = useRouter();
-  /**
-   * Currently logged in user from Clerk.
-   */
   const { user } = useUser();
   // document.api follows the structure in the convex folder
   /**
@@ -32,14 +29,11 @@ const DocumentPage: React.FC = () => {
   const create = useMutation(api.documents.create);
 
   /**
-   * Creates a new document with the title "Untitled".
-   * This document is saved in the Convex database.
-   * Once the document is created, the user is redirected to the document page.
-   * The toast is used to display a message to the user.
+   * Persists a blank document and navigates to its editor route.
    */
   const onCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`),
+      router.push(`/documents/${documentId}`)
     );
 
     toast.promise(promise, {

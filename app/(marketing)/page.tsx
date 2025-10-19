@@ -4,9 +4,10 @@ import Footer from "./_components/Footer";
 import { Heading } from "./_components/Heading";
 
 /**
- * This is the marketing page where users can learn more about the application.
- * From here, the user can also sign up or login to the application.
- * @returns (React.ReactNode) The marketing page
+ * Landing page that showcases Joker Notes features and funnels visitors to authentication.
+ * Composed of hero sections and a footer specific to marketing content.
+ *
+ * @returns Marketing homepage layout describing Joker Notes.
  */
 const MarketingPage: React.FC = () => {
   return (

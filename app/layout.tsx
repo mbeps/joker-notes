@@ -10,7 +10,10 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 const inter = Inter({ subsets: ["latin"] });
 
 /**
- * Metadata for the website.
+ * Static site metadata consumed by Next.js for `<head>` rendering.
+ *
+ * @returns Metadata describing the Joker Notes application.
+ * @see https://nextjs.org/docs/app/building-your-application/optimizing/metadata
  */
 export const metadata: Metadata = {
   title: "Joker Notes",
@@ -18,13 +21,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * The root layout for the website.
- * The entire website is wrapped in this layout meaning that it will follow this layout.
- * This includesL:
- * - The structure of the website unless it is overridden by a sub-layout component
- * - Any providers will be available to the entire website
- * @param children (React.ReactNode) The children to render to follow the layout.
- * @returns (React.ReactNode) The layout for the website
+ * Top-level app layout that wires essential providers and shared UI chrome.
+ * Registers Convex, Edge Store, theme, and modal contexts for the entire tree.
+ *
+ * @param param0 Object containing children to render.
+ * @param param0.children React subtree rendered inside the root layout.
+ * @returns HTML scaffold with required global providers.
+ * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
  */
 export default function RootLayout({
   children,

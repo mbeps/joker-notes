@@ -9,29 +9,37 @@ import { Item } from "./Item";
 import { cn } from "@/lib/utils";
 import { FileIcon } from "lucide-react";
 
+/**
+ * Props accepted by the recursive document list renderer.
+ */
 interface DocumentListProps {
   parentDocumentId?: Id<"documents">;
   level?: number;
   data?: Doc<"documents">[];
 }
 
+/**
+ * Recursive sidebar tree that renders the user's document hierarchy.
+ * Loads sibling nodes via Convex queries and toggles nested lists on demand.
+ *
+ * @param parentDocumentId Parent document used to scope the list.
+ * @param level Nesting depth for indentation.
+ * @returns Hierarchical list of documents for the active user.
+ * @see https://docs.convex.dev/database/queries
+ */
 const DocumentList: React.FC<DocumentListProps> = ({
   parentDocumentId,
   level = 0,
 }) => {
-  /**
-   * Allows extracting the document ID from the URL.
-   */
   const params = useParams();
-  /**
-   * Allows redirecting to another page.
-   */
   const router = useRouter();
   // keeps track of which documents are expanded
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   /**
-   * Expands or collapses a document.
+   * Toggles the expanded state for a document id.
+   *
+   * @param {string} documentId Document identifier whose expanded state should flip.
    */
   const onExpand = (documentId: string) => {
     setExpanded((prevExpanded) => ({
@@ -42,16 +50,15 @@ const DocumentList: React.FC<DocumentListProps> = ({
 
   /**
    * Fetches the documents from the database.
-   * Nested documents are fetched recursively.
-   * Archived (in trash) documents are not fetched.
    */
   const documents = useQuery(api.documents.getSidebar, {
     parentDocument: parentDocumentId,
   });
 
   /**
-   * Redirects the user to a specific document.
-   * @param documentId (string) The ID of the document.
+   * Navigates to the requested document route.
+   *
+   * @param {string} documentId Document identifier to navigate to.
    */
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`);
@@ -81,7 +88,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
         className={cn(
           "hidden text-sm font-medium text-muted-foreground/80",
           expanded && "last:block",
-          level === 0 && "hidden",
+          level === 0 && "hidden"
         )}
       >
         No pages inside

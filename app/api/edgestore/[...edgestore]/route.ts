@@ -4,7 +4,10 @@ import { createEdgeStoreNextHandler } from "@edgestore/server/adapters/next/app"
 const es = initEdgeStore.create();
 
 /**
- * This is the main router for the Edge Store buckets.
+ * Edge Store router that manages public file uploads and deletes.
+ *
+ * @returns Router configuration for Edge Store buckets.
+ * @see https://docs.edgestore.dev/usage/next
  */
 const edgeStoreRouter = es.router({
   publicFiles: es.fileBucket().beforeDelete(() => {
@@ -19,6 +22,6 @@ const handler = createEdgeStoreNextHandler({
 export { handler as GET, handler as POST };
 
 /**
- * This type is used to create the type-safe client for the frontend.
+ * Router type exported for generating the strongly typed Edge Store client.
  */
 export type EdgeStoreRouter = typeof edgeStoreRouter;

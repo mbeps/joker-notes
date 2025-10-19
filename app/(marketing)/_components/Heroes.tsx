@@ -2,10 +2,11 @@ import Image from "next/image";
 import React from "react";
 
 /**
- * Displays the hero images on the marketing page.
- * The images are conditionally rendered depending on the theme.
- * One of the images is hidden on mobile devices.
- * @returns (React.FC): Heroes component
+ * Presentation component that swaps marketing hero illustrations by theme and breakpoint.
+ * Uses Next.js image optimization for responsive loading.
+ *
+ * @returns Image collage illustrating Joker Notes features.
+ * @see https://nextjs.org/docs/app/building-your-application/optimizing/images
  */
 const Heroes: React.FC = () => {
   return (

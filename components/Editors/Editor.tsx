@@ -2,10 +2,15 @@
 
 import { useTheme } from "next-themes";
 import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import "@blocknote/core/style.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import { useCreateBlockNote } from "@blocknote/react";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 import { useEdgeStore } from "@/lib/edgestore";
 
+/**
+ * Props accepted by the rich text editor including change handler and initial content.
+ */
 interface EditorProps {
   onChange: (value: string) => void;
   initialContent?: string;
@@ -13,29 +18,34 @@ interface EditorProps {
 }
 
 /**
- * Editor component that uses BlockNote to render a rich text editor.
- * BlockNote allows for the creation of rich text notes with images, links, and more.
+ * BlockNote powered editor configured for Joker Notes documents.
+ * Handles initial content hydration and file uploads through Edge Store.
+ *
+ * @param onChange Callback invoked with the serialized BlockNote document JSON.
+ * @param editable When false, renders the editor read-only.
+ * @param initialContent Serialized BlockNote document used to hydrate the editor.
+ * @returns Rich text editor wired to Joker Notes storage.
+ * @see https://blocknotejs.org
+ * @see https://docs.edgestore.dev
  */
 const Editor: React.FC<EditorProps> = ({
   onChange,
   editable,
   initialContent,
 }) => {
-  // get the current theme from Next.js
+  // Get the current theme from Next.js
   const { resolvedTheme } = useTheme();
-  // get the EdgeStore hooks to manage the file storage
+  // Get the EdgeStore hooks to manage the file storage
   const { edgestore } = useEdgeStore();
 
   /**
-   * Handle file upload such as images so that they can be used as notes.
-   * This uploads the file to EdgeStore and returns the URL.
+   * Uploads embedded files to Edge Store and returns the hosted URL.
+   *
+   * @param file The local file selected by BlockNote.
+   * @returns The public URL returned by Edge Store.
+   * @see https://docs.edgestore.dev
    */
   const handleUpload = async (file: File) => {
-    /**
-     * Upload the file to EdgeStore.
-     * This returns the URL of the uploaded file.
-     * This URL can be used to display the file and be stored in the database.
-     */
     const response = await edgestore.publicFiles.upload({
       file,
     });
@@ -46,14 +56,10 @@ const Editor: React.FC<EditorProps> = ({
   /**
    * Initialize the editor with the initial content.
    */
-  const editor: BlockNoteEditor = useBlockNote({
-    editable,
+  const editor: BlockNoteEditor = useCreateBlockNote({
     initialContent: initialContent
       ? (JSON.parse(initialContent) as PartialBlock[])
       : undefined,
-    onEditorContentChange: (editor) => {
-      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-    },
     uploadFile: handleUpload,
   });
 
@@ -61,9 +67,15 @@ const Editor: React.FC<EditorProps> = ({
     <div>
       <BlockNoteView
         editor={editor}
+        editable={editable}
+        onChange={() => {
+          // Calls onChange with the updated content
+          onChange(JSON.stringify(editor.document, null, 2));
+        }}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
       />
     </div>
   );
 };
+
 export default Editor;

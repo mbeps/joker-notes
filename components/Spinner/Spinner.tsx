@@ -3,8 +3,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Spinner variants that can be selected when using the Spinner component.
- * By default, the spinner is 4x4.
+ * Defines the size variants for the spinner using class-variance-authority.
+ * Keeps loader dimensions consistent across consumers.
  */
 const spinnerVariants = cva("text-muted-foreground animate-spin", {
   variants: {
@@ -20,12 +20,18 @@ const spinnerVariants = cva("text-muted-foreground animate-spin", {
   },
 });
 
+/**
+ * Props accepted by the spinner allowing consumers to pick a size preset.
+ */
 interface SpinnerProps extends VariantProps<typeof spinnerVariants> {}
 
 /**
- * Spinner component that displays a loading spinner.
- * @param size ('default' | 'sm' | 'lg' | 'icon'): The size of the spinner.
- * @returns (JSX.Element): The spinner component.
+ * Loading indicator built with a Lucide loader icon and Tailwind animations.
+ * Ideal for inline async affordances.
+ *
+ * @param size Spinner dimension preset to render.
+ * @returns Animated spinner icon sized according to the chosen variant.
+ * @see https://lucide.dev/icons/loader-2
  */
 export const Spinner = ({ size }: SpinnerProps) => {
   return <Loader className={cn(spinnerVariants({ size }))} />;

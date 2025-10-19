@@ -13,35 +13,35 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
 
+/**
+ * Props controlling the cover image display, including optional preview mode.
+ */
 interface CoverImageProps {
   url?: string;
   preview?: boolean;
 }
 
+/**
+ * Displays the document cover image with controls for replacing or removing it when editable.
+ * Coordinates Edge Store uploads with Convex metadata updates.
+ *
+ * @param url The current cover image URL to display.
+ * @param preview When true, hides editing controls for read-only previews.
+ * @returns The cover image region with optional management actions.
+ * @see https://docs.edgestore.dev
+ * @see https://docs.convex.dev/database/writing-data
+ */
 export const Cover = ({ url, preview }: CoverImageProps) => {
-  /**
-   * Hooks allowing to update stored data within EdgeStore.
-   * EdgeStore is the project's file storage.
-   */
   const { edgestore } = useEdgeStore();
-  /**
-   * Gets the URL parameters.
-   * This can be used to get the document ID from the URL.
-   */
   const params = useParams();
-  /**
-   * Mutation hook to update the document.
-   */
   const coverImage = useCoverImage();
   /**
-   * Mutation hook to remove the cover image.
-   * Calls the `removeCoverImage` API method from `convex/documents.ts`.
+   * Convex mutation that clears the cover image reference for this document.
    */
   const removeCoverImage = useMutation(api.documents.removeCoverImage);
 
   /**
-   * Handle remove button click.
-   * This removes the cover image from the document.
+   * Deletes the existing cover asset from Edge Store and clears it in Convex.
    */
   const onRemove = async () => {
     if (url) {
@@ -61,7 +61,7 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
       className={cn(
         "relative w-full h-[35vh] group",
         !url && "h-[12vh]",
-        url && "bg-muted",
+        url && "bg-muted"
       )}
     >
       {/* if there is cover image, display it */}
@@ -95,8 +95,9 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
 };
 
 /**
- * Skeleton component to be displayed while the cover image is loading.
- * @returns (React.FC): cover image skeleton component
+ * Skeleton placeholder shown while the cover image loads.
+ *
+ * @returns {JSX.Element} Placeholder block that mimics the cover layout.
  */
 Cover.Skeleton = function CoverSkeleton() {
   return <Skeleton className="w-full h-[12vh]" />;

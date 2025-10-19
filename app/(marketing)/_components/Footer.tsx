@@ -3,8 +3,11 @@ import React from "react";
 import Logo from "./Logo";
 
 /**
- * Footer component displayed at the bottom of the marketing page.
- * @returns (React.FC): Footer component
+ * Marketing footer that anchors the brand mark and quick policy links.
+ * Mirrors the CTA styling used across marketing surfaces.
+ *
+ * @returns Footer region for marketing pages with policy shortcuts.
+ * @see https://ui.shadcn.com/docs/components/button
  */
 const Footer: React.FC = () => {
   return (

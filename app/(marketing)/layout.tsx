@@ -1,12 +1,13 @@
 import Navbar from "./_components/Navbar";
 
 /**
- * This applies the layout for the marketing pages.
- * This overrides the default layout for the marketing pages.
- * However, the providers from the main layout are still available.
- * A navbar is also added to the layout meaning that it will be available to all marketing pages.
- * @param children (React.ReactNode) The children to render to follow the layout.
- * @returns (React.ReactNode) The layout pages within the `(marketing)` folder.
+ * Layout dedicated to marketing pages that injects the marketing navbar and spacing.
+ * Still inherits providers defined at the root layout level.
+ *
+ * @param param0 Props containing the marketing children.
+ * @param param0.children Marketing content to render beneath the navbar.
+ * @returns Marketing layout scaffold including the shared navbar.
+ * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
  */
 const MarketingLayout = ({ children }: { children: React.ReactNode }) => {
   return (

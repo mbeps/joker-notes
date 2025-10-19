@@ -18,11 +18,28 @@ env:
   EDGE_STORE_SECRET_KEY: ${{ secrets.EDGE_STORE_SECRET_KEY }}
 
 jobs:
-  lint:
+  types-check:
+    name: Types Check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.17.0, 20.9.0]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run TypeScript check
+        run: yarn tsc --noEmit
+
+  lint:
+    needs: types-check
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -48,7 +65,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Install dependencies
@@ -60,9 +77,6 @@ jobs:
   build:
     needs: lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.17.0, 20.9.0]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,7 +102,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Install dependencies
