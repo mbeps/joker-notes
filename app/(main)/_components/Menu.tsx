@@ -11,7 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";

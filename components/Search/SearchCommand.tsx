@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useSearch } from "@/hooks/useSearch";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { File } from "lucide-react";
 import { useRouter } from "next/navigation";

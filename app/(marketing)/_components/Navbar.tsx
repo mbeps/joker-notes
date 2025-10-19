@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
-import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignInButton, UserButton } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
 import Link from "next/link";
 import React from "react";

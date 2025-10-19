@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
