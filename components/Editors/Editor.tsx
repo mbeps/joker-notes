@@ -2,8 +2,10 @@
 
 import { useTheme } from "next-themes";
 import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import "@blocknote/core/style.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import { useCreateBlockNote } from "@blocknote/react";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 import { useEdgeStore } from "@/lib/edgestore";
 
 interface EditorProps {
@@ -21,9 +23,9 @@ const Editor: React.FC<EditorProps> = ({
   editable,
   initialContent,
 }) => {
-  // get the current theme from Next.js
+  // Get the current theme from Next.js
   const { resolvedTheme } = useTheme();
-  // get the EdgeStore hooks to manage the file storage
+  // Get the EdgeStore hooks to manage the file storage
   const { edgestore } = useEdgeStore();
 
   /**
@@ -46,14 +48,10 @@ const Editor: React.FC<EditorProps> = ({
   /**
    * Initialize the editor with the initial content.
    */
-  const editor: BlockNoteEditor = useBlockNote({
-    editable,
+  const editor: BlockNoteEditor = useCreateBlockNote({
     initialContent: initialContent
       ? (JSON.parse(initialContent) as PartialBlock[])
       : undefined,
-    onEditorContentChange: (editor) => {
-      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-    },
     uploadFile: handleUpload,
   });
 
@@ -61,9 +59,15 @@ const Editor: React.FC<EditorProps> = ({
     <div>
       <BlockNoteView
         editor={editor}
+        editable={editable}
+        onChange={() => {
+          // Calls onChange with the updated content
+          onChange(JSON.stringify(editor.document, null, 2));
+        }}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
       />
     </div>
   );
 };
+
 export default Editor;
