@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
     <div
       className={cn(
         "z-50 bg-background dark:bg-[#1F1F1F] fixed top-0 flex items-center w-full p-6",
-        scrolled && "border-b shadow-sm",
+        scrolled && "border-b shadow-xs",
       )}
     >
       <Logo />

@@ -22,6 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
+import { Kbd } from "@/components/ui/kbd"
 
 interface ItemProps {
   id?: Id<"documents">;
@@ -180,15 +181,13 @@ export const Item = ({
 						inline-flex h-5 
 						select-none 
 						items-center 
-						gap-1 
-						rounded-full
-						border 
-						bg-muted 
-						px-1.5 
-						font-mono text-[10px] font-medium text-muted-foreground 
-						opacity-100"
+            space-x-1"
         >
-          <span className="text-xs">⌘</span>K
+          <Kbd>⌘</Kbd>
+          <Kbd>K</Kbd>
+          <span>{"/ "}</span>
+          <Kbd>Ctrl</Kbd>
+          <Kbd>K</Kbd>
         </kbd>
       )}
       {!!id && (

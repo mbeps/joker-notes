@@ -87,7 +87,7 @@ const CoverImageModal: React.FC = () => {
         </DialogHeader>
         {/* Dropzone where the file is selected and then displayed (when there is image) */}
         <SingleImageDropzone
-          className="w-full outline-none"
+          className="w-full outline-hidden"
           disabled={isSubmitting}
           value={file}
           onChange={onChange}
