@@ -1,5 +1,9 @@
 import { create } from "zustand";
 
+/**
+ * Declares the minimal shape required for search modal consumers.
+ * Keeps modal state transitions co-located with the boolean flag.
+ */
 type SearchStore = {
   isOpen: boolean;
   onOpen: () => void;
@@ -8,13 +12,11 @@ type SearchStore = {
 };
 
 /**
- * Manages the state of the search modal.
- * - isOpen (boolean): whether the search modal is open (true) or not (false).
- * - onOpen (function): opens the search modal.
- * - onClose (function): closes the search modal.
- * - toggle (function): toggles the search modal (open/close).
- * @returns (object): the state of the search modal.
- * @see https://docs.pmnd.rs/zustand/getting-started/introduction#first-create-a-store
+ * Zustand store that governs the global search palette state and toggles.
+ * Ensures components can summon the palette without lifting state up manually.
+ *
+ * @returns The command palette store containing open state and toggle helpers.
+ * @see https://docs.pmnd.rs/zustand/getting-started/introduction
  */
 export const useSearch = create<SearchStore>((set, get) => ({
   isOpen: false,

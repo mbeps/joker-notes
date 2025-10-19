@@ -7,10 +7,12 @@ import { Label } from "../ui/label";
 import { ThemeToggle } from "../ui/ThemeToggle";
 
 /**
- * Settings modal component to change settings.
- * The settings modal can change:;
- * - The current theme
- * @returns (React.FC): settings modal component
+ * Modal surface that exposes application appearance settings like theme selection.
+ * Driven by the global settings Zustand store so any component can open or close it.
+ *
+ * @returns Settings dialog for toggling application appearance.
+ * @see https://docs.pmnd.rs/zustand/getting-started/introduction
+ * @see https://ui.shadcn.com/docs/components/dialog
  */
 const SettingsModal: React.FC = () => {
   const settings = useSettings();

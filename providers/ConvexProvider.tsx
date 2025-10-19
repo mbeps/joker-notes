@@ -8,13 +8,13 @@ import { ClerkProvider, useAuth } from "@clerk/nextjs";
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 /**
- * Convex Provider to be used in the global Layout component.
- * This allows the Convex client and Clerk to be managed throughout the entire app.
- * This means that the Convex client and Clerk will be available in all components,
- * giving access to the database and authentication.
- * @param children (React.ReactNode): the rest of the app.
- * @returns (JSX.Element): Convex Provider (with Clerk)
- * @see https://clerk.com/docs/integrations/databases/convex
+ * Wraps the React tree with Clerk and Convex providers so queries and mutations share auth context.
+ * Enables client components to call Convex APIs that are scoped to the signed-in Clerk user.
+ *
+ * @param children React subtree needing authenticated Convex access.
+ * @returns Providers that hydrate Clerk and Convex contexts.
+ * @see https://docs.convex.dev/quickstart/nextjs
+ * @see https://clerk.com/docs/nextjs
  */
 export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
   return (

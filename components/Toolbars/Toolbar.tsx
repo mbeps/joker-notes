@@ -10,65 +10,50 @@ import IconPicker from "../Icon/IconPicker";
 import TextareaAutosize from "react-textarea-autosize";
 import { useCoverImage } from "@/hooks/useCoverImage";
 
+/**
+ * Props supplied to the document toolbar including the Convex document payload.
+ * The optional preview flag lets consumers disable edits for read-only views.
+ */
 interface ToolbarProps {
   initialData: Doc<"documents">;
   preview?: boolean;
 }
 
 /**
- * Toolbar component for the document title.
- * This toolbar is rendered at the top of the document where the title is displayed.
- * If the document is in preview mode:
- * - The title is not editable
- * - The icon is not editable
- * - The cover image is not editable
- * If the document is not in preview mode:
- * - The title is editable
- * - The icon is editable
- * - The cover image is editable
+ * Document header controller that manages title editing, emoji icons, and cover images.
+ * Persists updates through Convex mutations while coordinating UI affordances.
  *
- * @param initialData (Doc<"documents">): The document data
- * @param preview (boolean): Whether the document is in preview mode
- * @returns (React.FC<ToolbarProps>): The toolbar component
+ * @param initialData The source document to display and mutate.
+ * @param preview When true, disables editing affordances for read-only previews.
+ * @returns Toolbar region that coordinates icon, title, and cover interactions.
+ * @see https://docs.convex.dev/database/writing-data
  */
 const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
-  /**
-   * The input ref is used to focus the input when the user clicks on the title.
-   */
   const inputRef = useRef<ElementRef<"textarea">>(null);
-  /**
-   * The isEditing state is used to determine whether the title is being edited.
-   * If the title is being edited, the input is displayed.
-   */
   const [isEditing, setIsEditing] = useState(false);
-  /**
-   * The value state is used to store the title value.
-   * This state is used to update the title in the database.
-   */
   const [value, setValue] = useState(initialData.title);
 
   /**
-   * The update mutation is used to update the document in the database.
-   * This calls the documents.update API from the Convex API.
+   * Convex mutation used to persist title and icon changes.
    */
   const update = useMutation(api.documents.update);
   /**
-   * The removeIcon mutation is used to remove the icon from the document in the database.
-   * This calls the documents.removeIcon API from the Convex API.
+   * Convex mutation that removes the icon metadata from a document.
    */
   const removeIcon = useMutation(api.documents.removeIcon);
 
   /**
-   * The coverImage hook is used to add a cover image to the document.
-   * This hook is used to open the cover image modal.
-   * This modal also allows the user to replace the cover image.
+   * Zustand-backed modal controls for managing document cover images.
+   *
+   * @see https://docs.pmnd.rs/zustand
    */
   const coverImage = useCoverImage();
 
   /**
-   * Enables the input and focuses it.
-   * This function is called when the user clicks on the title.
-   * @returns (void): Enables the input and focuses it.
+   * Enables title editing and repopulates the input with the latest value.
+   * Focus is deferred to ensure React has mounted the textarea.
+   *
+   * @returns void
    */
   const enableInput = () => {
     if (preview) return;
@@ -81,17 +66,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   };
 
   /**
-   * Disables the input.
-   * This function is called when the user clicks outside of the input or presses the enter key.
-   * @returns (void): Disables the input.
+   * Restores read-only mode for the title field.
+   *
+   * @returns void
    */
   const disableInput = () => setIsEditing(false);
 
   /**
-   * Updates the title value and calls the update mutation.
-   * If the input is empty, the title is set to "Untitled".
-   * If the input is not empty, the title is set to the input value.
-   * @param value (string): The title value
+   * Persists the latest title value, falling back to `Untitled` when empty.
    */
   const onInput = (value: string) => {
     setValue(value);
@@ -102,9 +84,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   };
 
   /**
-   * Prevents the default behaviour of the enter key.
-   * Disables the input when the user presses the enter key.
-   * @param event (React.KeyboardEvent<HTMLTextAreaElement>): The keydown event
+   * Prevents multiline entry by intercepting the Enter key and closing the editor.
    */
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
@@ -114,9 +94,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   };
 
   /**
-   * Adds the icon to the document in the database.
-   * This calls the `documents.update` API from the Convex API.
-   * @param icon (string): The icon value
+   * Saves the selected emoji as the document icon via the Convex update mutation.
    */
   const onIconSelect = (icon: string) => {
     update({
@@ -126,8 +104,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   };
 
   /**
-   * Removes the icon from the document in the database.
-   * This calls the `documents.removeIcon` API from the Convex API.
+   * Clears the current emoji icon by calling the dedicated Convex mutation.
    */
   const onRemoveIcon = () => {
     removeIcon({

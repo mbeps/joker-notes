@@ -14,19 +14,21 @@ import { Globe, Check, Copy } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+/**
+ * Props passed to the publish popover, including the Convex document payload.
+ */
 interface PublishProps {
   initialData: Doc<"documents">;
 }
 
+/**
+ * Popover UI that toggles a document's published state and exposes the public URL.
+ * Uses the origin hook to build shareable links and Convex mutations to persist state.
+ * @see https://docs.convex.dev/database/writing-data
+ * @see https://nextjs.org/docs/app/api-reference/functions/use-router.
+ */
 const Publish: React.FC<PublishProps> = ({ initialData }) => {
-  /**
-   * Extracts the host name of the website.
-   */
   const origin = useOrigin();
-  /**
-   * Allows updating a document.
-   * Uses the `update` mutation from the `documents` API from Convex.
-   */
   const update = useMutation(api.documents.update);
 
   // keeps track of whether the URL has been copied to the clipboard
@@ -42,8 +44,7 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
   const url = `${origin}/preview/${initialData._id}`;
 
   /**
-   * Publishes the note making it visible to the public.
-   * Published notes are not editable by the public.
+   * Publishes the note so it becomes visible on the public preview route.
    */
   const onPublish = () => {
     setIsSubmitting(true);
@@ -65,8 +66,7 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
   };
 
   /**
-   * Unpublishes the note making it invisible to the public.
-   * This means that only the author can see the note.
+   * Reverts the document to a private state by disabling the public flag.
    */
   const onUnpublish = () => {
     setIsSubmitting(true);
@@ -88,7 +88,7 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
   };
 
   /**
-   * Copies the URL of the published note to the clipboard.
+   * Copies the public URL to the clipboard and briefly shows confirmation.
    */
   const onCopy = () => {
     navigator.clipboard.writeText(url);

@@ -6,6 +6,9 @@ import { useDropzone, type DropzoneOptions } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
 import { Spinner } from "../Spinner/Spinner";
 
+/**
+ * Named tailwind class groupings applied to the dropzone during various states.
+ */
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out",
   image:
@@ -17,6 +20,9 @@ const variants = {
   reject: "border border-red-700 bg-red-700 bg-opacity-10",
 };
 
+/**
+ * Props accepted by the single image dropzone component.
+ */
 type InputProps = {
   width?: number;
   height?: number;
@@ -27,6 +33,9 @@ type InputProps = {
   dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
 };
 
+/**
+ * Error message helpers keyed by react-dropzone rejection codes.
+ */
 const ERROR_MESSAGES = {
   fileTooLarge(maxSize: number) {
     return `The file is too large. Max size is ${formatFileSize(maxSize)}.`;
@@ -42,6 +51,20 @@ const ERROR_MESSAGES = {
   },
 };
 
+/**
+ * File uploader built on top of react-dropzone that supports previewing a single image.
+ * Emits the selected file via `onChange` and clears it when the dismiss icon is clicked.
+ *
+ * @param dropzoneOptions Additional dropzone configuration such as max size.
+ * @param width Optional fixed width for the dropzone surface.
+ * @param height Optional fixed height for the dropzone surface.
+ * @param value Current file or URL to preview.
+ * @param className Custom class names applied to the dropzone wrapper.
+ * @param onChange Callback fired when a new file is chosen or cleared.
+ * @param disabled When true, prevents file interaction and shows a spinner overlay.
+ * @returns A dropzone element tailored for single image uploads.
+ * @see https://react-dropzone.js.org
+ */
 const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   (
     { dropzoneOptions, width, height, value, className, disabled, onChange },
@@ -192,6 +215,9 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 );
 SingleImageDropzone.displayName = "SingleImageDropzone";
 
+/**
+ * Lightweight button used by the dropzone to render actions with consistent styling.
+ */
 const Button = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -214,6 +240,12 @@ const Button = React.forwardRef<
 });
 Button.displayName = "Button";
 
+/**
+ * Converts a byte count into a human readable file size string.
+ *
+ * @param bytes Number of bytes to format.
+ * @returns Human readable size string including units.
+ */
 function formatFileSize(bytes?: number) {
   if (!bytes) {
     return "0 Bytes";

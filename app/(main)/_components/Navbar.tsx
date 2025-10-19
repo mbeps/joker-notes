@@ -11,23 +11,22 @@ import { Menu } from "./Menu";
 import { MenuIcon } from "lucide-react";
 import Publish from "./Publish";
 
+/**
+ * Props for the document navbar component rendered within the workspace layout.
+ */
 interface NavbarProps {
   isCollapsed: boolean;
   onResetWidth: () => void;
 }
 
 /**
- * The navbar component displayed at the top of the document page.
- * This navbar is only displayed when a document is loaded.
- * This component is responsible for:
- * - Displaying and renaming the document title
- * - Publishing and unpublishing the document
- * - Displaying the document menu where the user can trigger various actions
+ * Workspace navbar that surfaces document level actions such as renaming and publishing.
+ * Loads document metadata via Convex queries and shows an archived banner when needed.
  *
- * If the document is archived (in trash), a banner is displayed at the top of the page.
- * @param isCollapsed (boolean): Whether the navbar is collapsed or not
- * @param onResetWidth (function): Function to reset the width of the navbar
- * @returns (JSX.Element): The navbar component
+ * @param isCollapsed Whether the sidebar is collapsed, used to conditionally show the menu icon.
+ * @param onResetWidth Callback that restores the sidebar width when the menu icon is pressed.
+ * @returns Document toolbar for the active page or null when the document is missing.
+ * @see https://docs.convex.dev/database/queries
  */
 const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
   /**

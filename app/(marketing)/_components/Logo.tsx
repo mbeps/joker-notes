@@ -9,10 +9,11 @@ const font = Poppins({
 });
 
 /**
- * Logo component for the marketing page.
- * Different logos are used depending on the theme.
- * The logo is also hidden on mobile devices.
- * @returns (React.FC): Logo component
+ * Marketing logo lockup that swaps assets based on the active theme.
+ * Uses Next.js optimized `Image` and Google Fonts helpers.
+ *
+ * @returns Branded logo element suitable for marketing headers and footers.
+ * @see https://nextjs.org/docs/app/building-your-application/optimizing/images
  */
 const Logo: React.FC = () => {
   return (

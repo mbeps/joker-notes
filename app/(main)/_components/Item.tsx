@@ -22,8 +22,11 @@ import {
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
-import { Kbd } from "@/components/ui/kbd"
+import { Kbd } from "@/components/ui/kbd";
 
+/**
+ * Props supplied to a sidebar item representing navigation actions or documents.
+ */
 interface ItemProps {
   id?: Id<"documents">;
   documentIcon?: string;
@@ -38,21 +41,22 @@ interface ItemProps {
 }
 
 /**
- * An item that can be clicked on in the sidebar.
- * This item can be used to:
- * - Display, navigate and manage documents
- * - Display and interact with any other item in the sidebar
- * @param id (string): The ID of the document.
- * @param documentIcon (string): The icon to display next to the document.
- * @param active (boolean): Whether the document is active.
- * @param expanded (boolean): Whether the document is expanded.
- * @param isSearch (boolean): Whether the item is a search button.
- * @param level (number): The level of the document in the hierarchy.
- * @param onExpand (function): Expands or collapses a document.
- * @param label (string): The label of the document.
- * @param onClick (function): Function to call when the item is clicked.
- * @param icon (LucideIcon) The icon to display next to the document.
- * @returns (JSX.Element): A document in the sidebar.
+ * Sidebar row that handles navigation, search, and document management affordances.
+ * Integrates Convex mutations for document CRUD and Clerk metadata for audit info.
+ *
+ * @param id Document identifier rendered by the row.
+ * @param label Label displayed for the row.
+ * @param  onClick Handler invoked when the row is activated.
+ * @param icon Icon displayed when no custom document icon exists.
+ * @param active Whether the row represents the currently viewed document.
+ * @param documentIcon Custom emoji icon for the document.
+ * @param isSearch Whether the item triggers the global search command.
+ * @param level Nesting depth used to compute indentation.
+ * @param onExpand Callback that toggles expansion for nested documents.
+ * @param expanded Indicates whether the current document is expanded.
+ * @returns Sidebar item row containing the supplied metadata and controls.
+ * @see https://docs.convex.dev/database/writing-data
+ * @see https://clerk.com/docs/references/react/use-user
  */
 export const Item = ({
   id,
@@ -66,29 +70,13 @@ export const Item = ({
   onExpand,
   expanded,
 }: ItemProps) => {
-  /**
-   * User currently logged in.
-   * Provided by Clerk.
-   */
   const { user } = useUser();
-  /**
-   * Allows redirecting to another page.
-   */
   const router = useRouter();
-  /**
-   * Allows creating a new document.
-   */
   const create = useMutation(api.documents.create);
-  /**
-   * Allows archiving a document (moving it to trash).
-   */
   const archive = useMutation(api.documents.archive);
 
   /**
-   * Archives (moves to trash) a document.
-   * The document is not deleted permanently but rather marked as archived.
-   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the trash icon).
-   * @returns (void): exist if the document ID is undefined.
+   * Sends the current document to the Convex trash archive and shows toast feedback.
    */
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
@@ -104,20 +92,17 @@ export const Item = ({
   };
 
   /**
-   * Expands documents to show nested documents.
-   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the expand icon).
+   * Notifies parent components to toggle nested document visibility.
    */
   const handleExpand = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     onExpand?.(); // calls the onExpand function passed as a prop
   };
 
   /**
-   * Allows creating a new document.
-   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The event that triggered the function (clicking on the plus icon
-   * @returns (void): exist if the document ID is undefined (no parent document
+   * Creates a nested document beneath the current one and navigates to it.
    */
   const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
@@ -129,7 +114,7 @@ export const Item = ({
           onExpand?.(); // expands the current document if it is not expanded
         }
         router.push(`/documents/${documentId}`); // redirects to the new document
-      },
+      }
     );
 
     toast.promise(promise, {
@@ -155,7 +140,7 @@ export const Item = ({
       }}
       className={cn(
         "group min-h-[30px] text-sm py-2 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium rounded-lg",
-        active && "bg-primary/5 text-primary",
+        active && "bg-primary/5 text-primary"
       )}
     >
       {!!id && (
@@ -239,6 +224,9 @@ export const Item = ({
   );
 };
 
+/**
+ * Skeleton placeholder rendered while document items load.
+ */
 Item.Skeleton = function ItemSkeleton({ level }: { level?: number }) {
   return (
     <div

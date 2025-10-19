@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 
 /**
- * Checks if the user has scrolled past the threshold.
- * The threshold is the number of pixels from the top of the page.
- * @param threshold (number): the threshold to trigger the scroll top.
- * @returns (boolean): whether the user has scrolled past the threshold (true) or not (false).
+ * Tracks whether the window scroll offset has crossed a threshold so sticky UI can react.
+ * Avoids manual listener management in components consuming scroll state.
+ *
+ * @param threshold Pixels from the top that should trigger the scrolled state.
+ * @returns True when the user has scrolled beyond the provided threshold.
+ * @see https://react.dev/reference/react/useEffect
  */
 export const useScrollTop = (threshold = 10) => {
   const [scrolled, setScrolled] = useState(false);

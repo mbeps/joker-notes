@@ -9,35 +9,28 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
+/**
+ * Props supplied to the trash banner, carrying the Convex document id.
+ */
 interface BannerProps {
   documentId: Id<"documents">;
 }
 
 /**
- * A banner that appears at the top of the page when the page is in the trash.
- * This banner allows the user to restore the page or delete it permanently from the database.
- * @param documentId (string) The ID of the document.
- * @returns (JSX.Element): A banner that appears at the top of the page when the page is in the trash.
+ * Warning banner rendered for trashed documents offering restore or delete actions.
+ * Utilizes Convex mutations for both operations while surfacing toast feedback.
+ *
+ * @param documentId Identifier of the trashed document.
+ * @returns Banner UI with restore and delete affordances.
+ * @see https://docs.convex.dev/database/writing-data
  */
 const Banner: React.FC<BannerProps> = ({ documentId }) => {
-  /**
-   * Allows redirecting to another page.
-   */
   const router = useRouter();
-  /**
-   * Allows removing a document from the database permanently.
-   * Uses the `remove` mutation from the `documents` API from Convex.
-   */
   const remove = useMutation(api.documents.remove);
-  /**
-   * Allows restoring a document from archive (in trash).
-   * Uses the `restore` mutation from the `documents` API from Convex.
-   */
   const restore = useMutation(api.documents.restore);
 
   /**
-   * Removes the document from the database permanently.
-   * Redirects to the documents page.
+   * Permanently deletes the trashed document and navigates back to the list.
    */
   const onRemove = () => {
     const promise = remove({ id: documentId });
@@ -51,6 +44,9 @@ const Banner: React.FC<BannerProps> = ({ documentId }) => {
     router.push("/documents");
   };
 
+  /**
+   * Restores the trashed document to the active list.
+   */
   const onRestore = () => {
     const promise = restore({ id: documentId });
 

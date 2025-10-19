@@ -5,10 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 /**
- * Displays error page whenever there is an error.
- * This component also has a button that redirects the user back to the documents page.
- * If the user is not logged in, they will be redirected to the login page as the documents page is protected.
- * @returns (React.ReactNode) The error page to display when something goes wrong
+ * Client error boundary UI that invites users to retry by returning to documents.
+ * Follows the Next.js app router error handling contract.
+ *
+ * @returns Error state layout encouraging navigation back to documents.
+ * @see https://nextjs.org/docs/app/building-your-application/routing/error-handling
  */
 const Error = () => {
   return (

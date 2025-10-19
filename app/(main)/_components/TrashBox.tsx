@@ -11,28 +11,19 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+/**
+ * Popover content that lists trashed documents with options to restore or permanently delete.
+ * Uses Convex queries and mutations to reflect trash state in real time.
+ *
+ * @returns Trash management interface containing filter input and action buttons.
+ * @see https://docs.convex.dev/database/queries
+ * @see https://docs.convex.dev/database/writing-data
+ */
 const TrashBox: React.FC = () => {
-  /**
-   * Allows redirecting to another page.
-   */
   const router = useRouter();
-  /**
-   * Allows extracting the document ID from the URL.
-   */
   const params = useParams();
-  /**
-   * Fetches archived (in trash) documents from the database.
-   */
   const documents = useQuery(api.documents.getTrash);
-  /**
-   * Allows restoring a document from archive (in trash).
-   * Uses the `restore` mutation from the `documents` API from Convex.
-   */
   const restore = useMutation(api.documents.restore);
-  /**
-   * Allows removing a document from the database permanently.
-   * Uses the `remove` mutation from the `documents` API from Convex.
-   */
   const remove = useMutation(api.documents.remove);
 
   // keeps track of the search query
@@ -47,21 +38,22 @@ const TrashBox: React.FC = () => {
 
   /**
    * Redirects the user to a specific document page.
-   * @param documentId (string) The ID of the document.
+   *
+   * @param documentId Identifier of the document to open.
    */
   const onClick = (documentId: string) => {
     router.push(`/documents/${documentId}`);
   };
 
   /**
-   * Restores a document from the archive (in trash).
-   * Marks the document as not archived (not in trash).
-   * @param event (React.MouseEvent<HTMLDivElement, MouseEvent>) The click event.
-   * @param documentId (string) The ID of the document.
+   * Restores a trashed document and surfaces toast feedback.
+   *
+   * @param event Click event coming from the restore icon.
+   * @param documentId Identifier of the document to restore.
    */
   const onRestore = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    documentId: Id<"documents">,
+    documentId: Id<"documents">
   ) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     const promise = restore({ id: documentId }); // restores the document from the archive (in trash)
@@ -74,9 +66,9 @@ const TrashBox: React.FC = () => {
   };
 
   /**
-   * Permanently deletes a document from the database.
-   * Once the document is deleted, it cannot be restored.
-   * Redirects to the documents page if the document being deleted is currently open.
+   * Permanently removes a document and redirects if the active page is deleted.
+   *
+   * @param documentId Identifier of the document to remove.
    */
   const onRemove = (documentId: Id<"documents">) => {
     const promise = remove({ id: documentId }); // permanently deletes the document from the database

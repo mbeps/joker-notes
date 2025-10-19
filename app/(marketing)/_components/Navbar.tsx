@@ -12,14 +12,16 @@ import React from "react";
 import Logo from "./Logo";
 
 /**
- * Navbar component specific to the marketing page.
- * This component allows the user to sign in, sign up, and toggle the theme.
- * @returns (React.FC): Navbar component
+ * Sticky marketing navbar that exposes auth CTAs, theme toggle, and scroll shadow.
+ * Reacts to Convex auth state to swap between sign-up prompts and document access links.
+ *
+ * @returns Marketing navbar containing theme, auth, and scroll-aware styling.
+ * @see https://docs.convex.dev/auth/clerk
+ * @see https://clerk.com/docs/components/user-button
  */
 const Navbar: React.FC = () => {
   /**
-   * Checks if the user has scrolled down the page.
-   * This is used to add a border to the navbar.
+   * Applies a shadow once the visitor scrolls past the hero to improve contrast.
    */
   const scrolled = useScrollTop();
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -28,7 +30,7 @@ const Navbar: React.FC = () => {
     <div
       className={cn(
         "z-50 bg-background dark:bg-[#1F1F1F] fixed top-0 flex items-center w-full p-6",
-        scrolled && "border-b shadow-xs",
+        scrolled && "border-b shadow-xs"
       )}
     >
       <Logo />

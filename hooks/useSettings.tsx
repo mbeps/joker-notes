@@ -1,5 +1,9 @@
 import { create } from "zustand";
 
+/**
+ * Shapes the Zustand slice used by the settings modal controller.
+ * Keeps open state and the associated toggle handlers together.
+ */
 type SettingsStore = {
   isOpen: boolean;
   onOpen: () => void;
@@ -7,12 +11,11 @@ type SettingsStore = {
 };
 
 /**
- * Manages the state of the settings modal.
- * - isOpen (boolean): whether the settings modal is open (true) or not (false).
- * - onOpen (function): opens the settings modal.
- * - onClose (function): closes the settings modal.
- * @returns (object): the state of the settings modal.
- * @see https://docs.pmnd.rs/zustand/getting-started/introduction#first-create-a-store
+ * Global Zustand store that exposes shared settings modal state to any component.
+ * Avoids prop drilling by centralizing open and close toggles.
+ *
+ * @returns The reactive settings modal slice.
+ * @see https://docs.pmnd.rs/zustand/getting-started/introduction
  */
 export const useSettings = create<SettingsStore>((set) => ({
   isOpen: false,

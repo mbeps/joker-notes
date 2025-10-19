@@ -1,5 +1,9 @@
 import { create } from "zustand";
 
+/**
+ * Represents the slice of modal state required for cover image workflows.
+ * Couples the current image URL with modal visibility and mutators.
+ */
 type CoverImageStore = {
   url?: string;
   isOpen: boolean;
@@ -9,14 +13,11 @@ type CoverImageStore = {
 };
 
 /**
- * Manages the state of the cover image modal.
- * - url (string): the url of the cover image.
- * - isOpen (boolean): whether the cover image modal is open (true) or not (false).
- * - onOpen (function): opens the cover image modal.
- * - onClose (function): closes the cover image modal.
- * - onReplace (function): replaces the cover image.
- * @returns (object): the state of the cover image modal.
- * @see https://docs.pmnd.rs/zustand/getting-started/introduction#first-create-a-store
+ * Zustand store that coordinates cover image selection across components.
+ * Centralizes modal visibility and the selected upload for consistent UX.
+ *
+ * @returns Store utilities for managing the cover image modal and current image.
+ * @see https://docs.pmnd.rs/zustand/getting-started/introduction
  */
 export const useCoverImage = create<CoverImageStore>((set) => ({
   url: undefined,

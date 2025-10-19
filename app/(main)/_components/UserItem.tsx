@@ -15,10 +15,11 @@ import React from "react";
 type UserItemProps = {};
 
 /**
- * User item in the sidebar.
- * It displays the user's name and email address.
- * Allows the user to log out.
- * @returns (JSX.Element): A dropdown menu that allows the user to log out.
+ * Sidebar dropdown that shows the active Clerk user and exposes sign-out controls.
+ * Mirrors the design system avatar and leverages Clerk's `SignOutButton`.
+ *
+ * @returns Dropdown populated with the current Clerk user's profile and actions.
+ * @see https://clerk.com/docs/components/sign-out-button
  */
 const UserItem: React.FC<UserItemProps> = () => {
   /**

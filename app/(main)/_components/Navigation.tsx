@@ -30,18 +30,11 @@ import TrashBox from "./TrashBox";
 import UserItem from "./UserItem";
 
 /**
- * The navigation sidebar that contains the user's documents and other actions.
- * This sidebar is only visible on desktop and is collapsed on mobile.
+ * Collapsible workspace sidebar that surfaces navigation, shortcuts, and trash management.
+ * Persists panel width across breakpoints and uses Convex mutations for document creation.
  *
- * The sidebar contains the following items:
- * - User information where user can view their profile and log out
- * - Search bar where user can search for documents
- * - Settings where user can change their settings
- * - New page where user can create a new document
- * - List of documents the user has created and can navigate to
- * - Trash where user can view deleted documents and restore or permanently delete them
- *
- * @returns (ReactElement): The navigation sidebar
+ * @returns Sidebar navigation shell responsive to viewport size and route changes.
+ * @see https://docs.convex.dev/database/writing-data
  */
 const Navigation: React.FC = () => {
   const router = useRouter();
@@ -50,11 +43,11 @@ const Navigation: React.FC = () => {
   const params = useParams();
   const pathname = usePathname();
   /**
-   * Tracks whether the user is on a mobile device.
+   * Tracks whether the viewport should use the mobile collapsed experience.
    */
   const isMobile = useMediaQuery("(max-width: 768px)");
   /**
-   * Creates a new document using the Convex API defined in the `documents` file.
+   * Convex mutation used to create new documents from sidebar actions.
    */
   const create = useMutation(api.documents.create);
 
@@ -82,11 +75,10 @@ const Navigation: React.FC = () => {
   }, [pathname, isMobile]);
 
   /**
-   * Handles the mouse down event when the user clicks on the border between the sidebar and the navbar.
-   * @param event (MouseEvent): The mouse event when the user clicks on the border between the sidebar and the navbar
+   * Begins sidebar resizing by listening for subsequent mouse events.
    */
   const handleMouseDown = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -98,10 +90,7 @@ const Navigation: React.FC = () => {
 
   // resize sidebar
   /**
-   * Resizes the sidebar when the user clicks on the border between the sidebar and the navbar.
-   * The sidebar can be resized between 240px and 480px.
-   * @param event (MouseEvent): The mouse event when the user clicks on the border between the sidebar and the navbar
-   * @returns (void): breaks out of the function if the user is not resizing the sidebar
+   * Adjusts the sidebar width while enforcing min and max bounds.
    */
   const handleMouseMove = (event: MouseEvent) => {
     if (!isResizingRef.current) return;
@@ -115,13 +104,13 @@ const Navigation: React.FC = () => {
       navbarRef.current.style.setProperty("left", `${newWidth}px`);
       navbarRef.current.style.setProperty(
         "width",
-        `calc(100% - ${newWidth}px)`,
+        `calc(100% - ${newWidth}px)`
       );
     }
   };
 
   /**
-   * Stops resizing the sidebar when the user releases the mouse button.
+   * Ends the resize interaction and removes temporary listeners.
    */
   const handleMouseUp = () => {
     isResizingRef.current = false;
@@ -130,8 +119,7 @@ const Navigation: React.FC = () => {
   };
 
   /**
-   * Resets the width of the sidebar to its default width.
-   * This is called when clicking on the border between the sidebar and the navbar.
+   * Restores the sidebar to its default width, expanding it on desktop.
    */
   const resetWidth = () => {
     if (sidebarRef.current && navbarRef.current) {
@@ -141,13 +129,16 @@ const Navigation: React.FC = () => {
       sidebarRef.current.style.width = isMobile ? "100%" : "240px";
       navbarRef.current.style.setProperty(
         "width",
-        isMobile ? "0" : "calc(100% - 240px)",
+        isMobile ? "0" : "calc(100% - 240px)"
       );
       navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
       setTimeout(() => setIsResetting(false), 300);
     }
   };
 
+  /**
+   * Collapses the sidebar so content can take the full viewport width.
+   */
   const collapse = () => {
     if (sidebarRef.current && navbarRef.current) {
       setIsCollapsed(true);
@@ -161,13 +152,11 @@ const Navigation: React.FC = () => {
   };
 
   /**
-   * Creates a new document and redirects the user to the new document.
-   * The new document is created with the title "Untitled".
-   * Once the document is created, the user is redirected to the new document.
+   * Creates a new document with a default title and navigates to it once saved.
    */
   const handleCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`),
+      router.push(`/documents/${documentId}`)
     );
 
     toast.promise(promise, {
@@ -185,7 +174,7 @@ const Navigation: React.FC = () => {
           "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-99999 p-3",
           isCollapsed && "p-0",
           isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "w-0 p-0",
+          isMobile && "w-0 p-0"
         )}
       >
         <div
@@ -193,7 +182,7 @@ const Navigation: React.FC = () => {
           role="button"
           className={cn(
             "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
-            isMobile && "opacity-100",
+            isMobile && "opacity-100"
           )}
         >
           <ChevronsLeft className="h-6 w-6" />
@@ -230,7 +219,7 @@ const Navigation: React.FC = () => {
         className={cn(
           "absolute top-0 z-99999 left-60 w-[calc(100%-240px)]",
           isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "left-0 w-full",
+          isMobile && "left-0 w-full"
         )}
       >
         {!!params.documentId ? (
