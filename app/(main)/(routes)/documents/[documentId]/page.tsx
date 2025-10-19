@@ -9,11 +9,11 @@ import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import React, { useMemo } from "react";
 
-interface DocumentPageProps {
-  params: {
-    documentId: Id<"documents">;
-  };
-}
+// Params types are async in Next.js 15; keep a permissive `any` here for the
+// client page so the component can continue to read params synchronously.
+type DocumentPageProps = {
+  params: any;
+};
 
 /**
  * Document page where documents are displayed.
@@ -29,7 +29,7 @@ const DocumentPage: React.FC<DocumentPageProps> = ({ params }) => {
    */
   const Editor = useMemo(
     () => dynamic(() => import("@/components/Editors/Editor"), { ssr: false }),
-    [],
+    []
   );
 
   /**
