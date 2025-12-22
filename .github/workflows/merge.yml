@@ -19,8 +19,11 @@ env:
 
 jobs:
   types-check:
-    name: Types Check
+    name: Types Check - Node ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '22.x', '24.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: yarn
 
       - name: Install dependencies
@@ -39,7 +42,11 @@ jobs:
 
   lint:
     needs: types-check
+    name: Lint - Node ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '22.x', '24.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -65,7 +72,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Install dependencies
@@ -76,7 +83,11 @@ jobs:
 
   build:
     needs: lint
+    name: Build - Node ${{ matrix.node-version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '22.x', '24.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -102,7 +113,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Install dependencies
@@ -112,9 +123,12 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
   test:
-    name: Run Tests
+    name: Run Tests - Node ${{ matrix.node-version }}
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20.x', '22.x', '24.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -140,7 +154,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Install dependencies
