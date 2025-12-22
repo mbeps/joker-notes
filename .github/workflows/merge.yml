@@ -123,7 +123,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
   test:
-    name: Run Tests - Node ${{ matrix.node-version }}
+    name: Tests - Node ${{ matrix.node-version }}
     needs: build
     runs-on: ubuntu-latest
     strategy:
