@@ -20,7 +20,13 @@ import {
   Trash,
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import React, { ElementRef, useEffect, useRef, useState } from "react";
+import React, {
+  ElementRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import DocumentList from "./DocumentList";
@@ -57,6 +63,39 @@ const Navigation: React.FC = () => {
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
+  /**
+   * Restores the sidebar to its default width, expanding it on desktop.
+   */
+  const resetWidth = useCallback(() => {
+    if (sidebarRef.current && navbarRef.current) {
+      setIsCollapsed(false);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
+      navbarRef.current.style.setProperty(
+        "width",
+        isMobile ? "0" : "calc(100% - 240px)"
+      );
+      navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  }, [isMobile]);
+
+  /**
+   * Collapses the sidebar so content can take the full viewport width.
+   */
+  const collapse = useCallback(() => {
+    if (sidebarRef.current && navbarRef.current) {
+      setIsCollapsed(true);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = "0";
+      navbarRef.current.style.setProperty("width", "100%");
+      navbarRef.current.style.setProperty("left", "0");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  }, []);
+
   // collapse sidebar on mobile or expand sidebar on desktop
   useEffect(() => {
     if (isMobile) {
@@ -64,15 +103,14 @@ const Navigation: React.FC = () => {
     } else {
       resetWidth();
     }
-    /* trunk-ignore(eslint/react-hooks/exhaustive-deps) */
-  }, [isMobile]);
+  }, [isMobile, collapse, resetWidth]);
 
   // on mobile, automatically collapse the sidebar when the user navigates to a new page
   useEffect(() => {
     if (isMobile) {
       collapse();
     }
-  }, [pathname, isMobile]);
+  }, [pathname, isMobile, collapse]);
 
   /**
    * Begins sidebar resizing by listening for subsequent mouse events.
@@ -116,39 +154,6 @@ const Navigation: React.FC = () => {
     isResizingRef.current = false;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  /**
-   * Restores the sidebar to its default width, expanding it on desktop.
-   */
-  const resetWidth = () => {
-    if (sidebarRef.current && navbarRef.current) {
-      setIsCollapsed(false);
-      setIsResetting(true);
-
-      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
-      navbarRef.current.style.setProperty(
-        "width",
-        isMobile ? "0" : "calc(100% - 240px)"
-      );
-      navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
-      setTimeout(() => setIsResetting(false), 300);
-    }
-  };
-
-  /**
-   * Collapses the sidebar so content can take the full viewport width.
-   */
-  const collapse = () => {
-    if (sidebarRef.current && navbarRef.current) {
-      setIsCollapsed(true);
-      setIsResetting(true);
-
-      sidebarRef.current.style.width = "0";
-      navbarRef.current.style.setProperty("width", "100%");
-      navbarRef.current.style.setProperty("left", "0");
-      setTimeout(() => setIsResetting(false), 300);
-    }
   };
 
   /**

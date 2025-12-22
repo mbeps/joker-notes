@@ -12,8 +12,6 @@ import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ChevronsLeftRight } from "lucide-react";
 import React from "react";
 
-type UserItemProps = {};
-
 /**
  * Sidebar dropdown that shows the active Clerk user and exposes sign-out controls.
  * Mirrors the design system avatar and leverages Clerk's `SignOutButton`.
@@ -21,7 +19,7 @@ type UserItemProps = {};
  * @returns Dropdown populated with the current Clerk user's profile and actions.
  * @see https://clerk.com/docs/components/sign-out-button
  */
-const UserItem: React.FC<UserItemProps> = () => {
+const UserItem: React.FC = () => {
   /**
    * Currently logged in user.
    * Provided by Clerk.

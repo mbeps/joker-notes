@@ -7,15 +7,14 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import React, { useMemo } from "react";
+import React, { useMemo, use } from "react";
 
-// Params types are async in Next.js 15; keep permissive `any` here to preserve
-// the client-side usage pattern.
 /**
  * Route params provided to the preview page.
+ * In Next.js 16, params is a Promise that must be awaited.
  */
 type PreviewDocumentIdPageProps = {
-  params: any;
+  params: Promise<{ documentId: Id<"documents"> }>;
 };
 
 /**
@@ -27,9 +26,8 @@ type PreviewDocumentIdPageProps = {
  * @returns Read-only preview of the published document or null if absent.
  * @see https://docs.convex.dev/database/queries
  */
-const PreviewDocumentPage: React.FC<PreviewDocumentIdPageProps> = ({
-  params,
-}) => {
+const PreviewDocumentPage: React.FC<PreviewDocumentIdPageProps> = (props) => {
+  const params = use(props.params);
   /**
    * Dynamically import the editor component to prevent it from being bundled.
    * The editor cannot be rendered by the server.
