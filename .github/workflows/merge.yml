@@ -123,7 +123,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
   test:
-    name: Run Tests - Node ${{ matrix.node-version }}
+    name: Tests - Node ${{ matrix.node-version }}
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -162,3 +162,20 @@ jobs:
 
       - name: Run Tests
         run: ${{ steps.detect-package-manager.outputs.runner }} vitest --coverage
+
+  docker-compose:
+    name: Docker Compose
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Docker Compose
+        uses: docker/compose-action@v2
+        with:
+          files: docker/docker-compose.yml
+          args: up --build -d
