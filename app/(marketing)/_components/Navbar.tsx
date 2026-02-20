@@ -58,8 +58,8 @@ const Navbar: React.FC = () => {
         )}
         {isAuthenticated && !isLoading && (
           <>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/documents">Enter Joker Notes</Link>
+            <Button variant="ghost" size="sm" render={<Link href="/documents" />}>
+              Enter Joker Notes
             </Button>
             <UserButton afterSignOutUrl="/" />
           </>

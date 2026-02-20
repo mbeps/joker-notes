@@ -4,6 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuPositioner,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
@@ -179,26 +180,22 @@ export const Item = ({
         <div className="ml-auto flex items-center gap-x-2">
           {/* Delete Note */}
           <DropdownMenu>
-            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-              <div
-                role="button"
-                className="
+            <DropdownMenuTrigger 
+              onClick={(e) => e.stopPropagation()} 
+              className="
 									opacity-0 group-hover:opacity-100
 									h-full
 									ml-auto
 									rounded-sm
 									hover:bg-neutral-300 dark:hover:bg-neutral-600
 									"
-              >
-                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-60"
-              align="start"
-              side="right"
-              forceMount
             >
+              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+            </DropdownMenuTrigger>
+            <DropdownMenuPositioner align="start" side="right">
+              <DropdownMenuContent
+                className="w-60"
+              >
               <DropdownMenuItem onClick={onArchive}>
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
@@ -208,6 +205,7 @@ export const Item = ({
                 Last edited by: {user?.fullName}
               </div>
             </DropdownMenuContent>
+            </DropdownMenuPositioner>
           </DropdownMenu>
 
           {/* Create Note */}

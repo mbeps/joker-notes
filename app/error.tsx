@@ -29,8 +29,8 @@ const Error = () => {
         className="hidden dark:block"
       />
       <h2 className="text-xl font-medium">Something went wrong!</h2>
-      <Button asChild>
-        <Link href="/documents">Go back</Link>
+      <Button render={<Link href="/documents" />}>
+        Go back
       </Button>
     </div>
   );
