@@ -3,7 +3,7 @@
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { useTheme } from "next-themes";
 import React from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger, PopoverPositioner } from "../ui/popover";
 
 /**
  * Props for the icon picker including the change callback and trigger slot.
@@ -48,14 +48,18 @@ const IconPicker: React.FC<IconPickerProps> = ({
 
   return (
     <Popover>
-      <PopoverTrigger asChild={asChild}>{children}</PopoverTrigger>
-      <PopoverContent className="p-0 w-full border-none shadow-none">
-        <EmojiPicker
-          height={350}
-          theme={theme}
-          onEmojiClick={(data) => onChange(data.emoji)}
-        />
-      </PopoverContent>
+      <PopoverTrigger render={asChild ? children as React.ReactElement : undefined}>
+        {!asChild && children}
+      </PopoverTrigger>
+      <PopoverPositioner sideOffset={8}>
+        <PopoverContent className="p-0 border-none shadow-none text-left w-auto bg-transparent">
+          <EmojiPicker
+            height={350}
+            theme={theme}
+            onEmojiClick={(data) => onChange(data.emoji)}
+          />
+        </PopoverContent>
+      </PopoverPositioner>
     </Popover>
   );
 };

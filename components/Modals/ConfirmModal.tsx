@@ -43,9 +43,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ children, onConfirm }) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger onClick={(e) => e.stopPropagation()} asChild>
-        {children}
-      </AlertDialogTrigger>
+      <AlertDialogTrigger 
+        render={children as React.ReactElement}
+        onClick={(e) => e.stopPropagation()} 
+      />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

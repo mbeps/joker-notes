@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuPositioner,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
@@ -55,17 +56,13 @@ export const Menu = ({ documentId }: MenuProps) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="ghost">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+      <DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
+        <MoreHorizontal className="h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-60"
-        align="end"
-        alignOffset={8}
-        forceMount
-      >
+      <DropdownMenuPositioner align="end" alignOffset={8}>
+        <DropdownMenuContent
+          className="w-60"
+        >
         <DropdownMenuItem onClick={onArchive}>
           <Trash className="h-4 w-4 mr-2" />
           Delete
@@ -75,6 +72,7 @@ export const Menu = ({ documentId }: MenuProps) => {
           Last edited by: {user?.fullName}
         </div>
       </DropdownMenuContent>
+      </DropdownMenuPositioner>
     </DropdownMenu>
   );
 };

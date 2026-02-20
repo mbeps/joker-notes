@@ -5,6 +5,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverPositioner,
 } from "@/components/ui/popover";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
@@ -101,15 +102,14 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost">
-          Publish
-          {initialData.isPublished && (
-            <Globe className="text-sky-500 w-4 h-4 ml-2" />
-          )}
-        </Button>
+      <PopoverTrigger render={<Button size="sm" variant="ghost" />}>
+        Publish
+        {initialData.isPublished && (
+          <Globe className="text-sky-500 w-4 h-4 ml-2" />
+        )}
       </PopoverTrigger>
-      <PopoverContent className="w-72" align="end" alignOffset={8} forceMount>
+      <PopoverPositioner align="end" alignOffset={8}>
+        <PopoverContent className="w-72">
         {initialData.isPublished ? (
           <div className="space-y-4">
             <div className="flex items-center gap-x-2">
@@ -162,7 +162,8 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
             </Button>
           </div>
         )}
-      </PopoverContent>
+        </PopoverContent>
+      </PopoverPositioner>
     </Popover>
   );
 };

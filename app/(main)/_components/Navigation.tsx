@@ -4,6 +4,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverPositioner,
 } from "@/components/ui/popover";
 import { api } from "@/convex/_generated/api";
 import { useSearch } from "@/hooks/useSearch";
@@ -176,7 +177,7 @@ const Navigation: React.FC = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-99999 p-3",
+          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-40 p-3",
           isCollapsed && "p-0",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0 p-0"
@@ -205,12 +206,13 @@ const Navigation: React.FC = () => {
             <PopoverTrigger className="w-full mt-4">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
-            <PopoverContent
-              className="p-0 w-72"
-              side={isMobile ? "bottom" : "right"}
-            >
-              <TrashBox />
-            </PopoverContent>
+            <PopoverPositioner side={isMobile ? "bottom" : "right"}>
+              <PopoverContent
+                className="p-0 w-72"
+              >
+                <TrashBox />
+              </PopoverContent>
+            </PopoverPositioner>
           </Popover>
         </div>
         <div
@@ -222,7 +224,7 @@ const Navigation: React.FC = () => {
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-99999 left-60 w-[calc(100%-240px)]",
+          "absolute top-0 z-40 left-60 w-[calc(100%-240px)]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full"
         )}

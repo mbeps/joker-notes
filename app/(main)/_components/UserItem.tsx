@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuPositioner,
 } from "@/components/ui/dropdown-menu";
 import { SignOutButton, useUser } from "@clerk/nextjs";
 import { ChevronsLeftRight } from "lucide-react";
@@ -28,28 +29,19 @@ const UserItem: React.FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div
-          role="button"
-          className="flex items-center text-sm p-3 w-full hover:bg-primary/5 rounded-lg"
-        >
-          <div className="gap-x-2 flex items-center max-w-[150px]">
-            <Avatar className="h-5 w-5">
-              <AvatarImage src={user?.imageUrl} />
-            </Avatar>
-            <span className="text-start font-medium line-clamp-1">
-              {`${user?.fullName}'s Joker`}
-            </span>
-          </div>
-          <ChevronsLeftRight className="rotate-90 ml-2 text-muted-foreground h-4 w-4" />
+      <DropdownMenuTrigger className="flex items-center text-sm p-3 w-full hover:bg-primary/5 rounded-lg">
+        <div className="gap-x-2 flex items-center max-w-[150px]">
+          <Avatar className="h-5 w-5">
+            <AvatarImage src={user?.imageUrl} />
+          </Avatar>
+          <span className="text-start font-medium line-clamp-1">
+            {`${user?.fullName}'s Joker`}
+          </span>
         </div>
+        <ChevronsLeftRight className="rotate-90 ml-2 text-muted-foreground h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-80"
-        align="start"
-        alignOffset={11}
-        forceMount
-      >
+      <DropdownMenuPositioner align="start" alignOffset={11}>
+        <DropdownMenuContent className="w-80">
         <div className="flex flex-col space-y-4 p-2">
           <p className="text-xs font-medium leading-none text-muted-foreground">
             {user?.emailAddresses[0].emailAddress}
@@ -69,12 +61,13 @@ const UserItem: React.FC = () => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          asChild
+          render={<SignOutButton />}
           className="w-full cursor-pointer text-muted-foreground"
         >
-          <SignOutButton>Log out</SignOutButton>
+          Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
+      </DropdownMenuPositioner>
     </DropdownMenu>
   );
 };
