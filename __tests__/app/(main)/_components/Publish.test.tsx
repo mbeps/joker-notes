@@ -16,6 +16,7 @@ vi.mock("sonner", () => ({
 }));
 
 import Publish from "@/app/(main)/_components/Publish";
+import { ROUTES } from "@/constants/routes";
 
 const baseDoc = {
   _id: "doc1",
@@ -82,13 +83,10 @@ describe("Publish", () => {
       <Publish initialData={{ ...baseDoc, isPublished: true } as never} />,
     );
     fireEvent.click(screen.getByRole("button", { name: /publish/i }));
-    const input = await screen.findByDisplayValue(
-      "http://localhost:3000/preview/doc1",
-    );
+    const expectedUrl = `http://localhost:3000${ROUTES.PREVIEW.detail("doc1")}`;
+    const input = await screen.findByDisplayValue(expectedUrl);
     const copyButton = input.parentElement!.querySelector("button")!;
     fireEvent.click(copyButton);
-    expect(writeText).toHaveBeenCalledWith(
-      "http://localhost:3000/preview/doc1",
-    );
+    expect(writeText).toHaveBeenCalledWith(expectedUrl);
   });
 });

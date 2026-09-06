@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Kbd } from "@/components/ui/kbd";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
@@ -82,7 +83,9 @@ export const Item = ({
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     if (!id) return; // exist if the document ID is undefined
-    const promise = archive({ id }).then(() => router.push("/documents")); // archives the document and redirects to the documents page
+    const promise = archive({ id }).then(() =>
+      router.push(ROUTES.DOCUMENTS.path),
+    ); // archives the document and redirects to the documents page
 
     // displays a toast notification
     toast.promise(promise, {
@@ -114,7 +117,7 @@ export const Item = ({
         if (!expanded) {
           onExpand?.(); // expands the current document if it is not expanded
         }
-        router.push(`/documents/${documentId}`); // redirects to the new document
+        router.push(ROUTES.DOCUMENTS.detail(documentId)); // redirects to the new document
       },
     );
 

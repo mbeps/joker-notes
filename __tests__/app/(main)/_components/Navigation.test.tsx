@@ -67,6 +67,7 @@ vi.mock("@/app/(main)/_components/Item", () => ({
 }));
 
 import Navigation from "@/app/(main)/_components/Navigation";
+import { ROUTES } from "@/constants/routes";
 
 describe("Navigation", () => {
   beforeEach(() => {
@@ -107,14 +108,14 @@ describe("Navigation", () => {
     await vi.waitFor(() =>
       expect(create).toHaveBeenCalledWith({ title: "Untitled" }),
     );
-    expect(push).toHaveBeenCalledWith("/documents/new-doc");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("new-doc"));
   });
 
   it("creates a new page via the Add a page item", async () => {
     render(<Navigation />);
     screen.getByTestId("item-Add a page").click();
     await vi.waitFor(() => expect(create).toHaveBeenCalled());
-    expect(push).toHaveBeenCalledWith("/documents/new-doc");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("new-doc"));
   });
 
   it("renders the navbar when a document is open", () => {

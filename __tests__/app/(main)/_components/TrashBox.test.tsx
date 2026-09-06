@@ -55,6 +55,7 @@ vi.mock("sonner", () => ({
 }));
 
 import TrashBox from "@/app/(main)/_components/TrashBox";
+import { ROUTES } from "@/constants/routes";
 
 describe("TrashBox", () => {
   beforeEach(() => {
@@ -100,7 +101,7 @@ describe("TrashBox", () => {
     queryResult = [{ _id: "doc2", title: "Trashed B" }];
     render(<TrashBox />);
     fireEvent.click(screen.getByText("Trashed B"));
-    expect(push).toHaveBeenCalledWith("/documents/doc2");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("doc2"));
   });
 
   it("restores a document via the undo button without navigating", () => {
@@ -136,6 +137,6 @@ describe("TrashBox", () => {
       .closest('[data-testid="confirm-modal"]')!;
     fireEvent.click(deleteBtn);
     await vi.waitFor(() => expect(remove).toHaveBeenCalledWith({ id: "doc1" }));
-    expect(push).toHaveBeenCalledWith("/documents");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.path);
   });
 });

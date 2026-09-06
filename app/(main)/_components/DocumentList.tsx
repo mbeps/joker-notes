@@ -5,6 +5,7 @@ import { FileIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
@@ -62,7 +63,7 @@ const DocumentList: React.FC<DocumentListProps> = ({
    * @param {string} documentId Document identifier to navigate to.
    */
   const onRedirect = (documentId: string) => {
-    router.push(`/documents/${documentId}`);
+    router.push(ROUTES.DOCUMENTS.detail(documentId));
   };
 
   if (documents === undefined) {

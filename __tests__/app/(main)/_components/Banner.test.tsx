@@ -43,6 +43,7 @@ vi.mock("@/components/Modals/ConfirmModal", () => {
 });
 
 import Banner from "@/app/(main)/_components/Banner";
+import { ROUTES } from "@/constants/routes";
 
 describe("Banner", () => {
   beforeEach(() => {
@@ -65,6 +66,6 @@ describe("Banner", () => {
     render(<Banner documentId="doc1" />);
     fireEvent.click(screen.getByText("confirm-trigger"));
     await vi.waitFor(() => expect(remove).toHaveBeenCalledWith({ id: "doc1" }));
-    expect(push).toHaveBeenCalledWith("/documents");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.path);
   });
 });

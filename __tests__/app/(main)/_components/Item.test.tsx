@@ -32,6 +32,7 @@ vi.mock("sonner", () => ({
 
 import { FileIcon } from "lucide-react";
 import { Item } from "@/app/(main)/_components/Item";
+import { ROUTES } from "@/constants/routes";
 
 const baseProps = { label: "My Doc", icon: FileIcon };
 
@@ -101,7 +102,7 @@ describe("Item", () => {
       }),
     );
     expect(onExpand).toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/documents/new-doc");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("new-doc"));
   });
 
   it("does not expand again if already expanded when creating", async () => {
@@ -114,7 +115,7 @@ describe("Item", () => {
     fireEvent.click(plusBtn);
     await vi.waitFor(() => expect(create).toHaveBeenCalled());
     expect(onExpand).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/documents/new-doc");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("new-doc"));
   });
 
   it("archives the document via dropdown menu item and navigates away", async () => {
@@ -129,7 +130,7 @@ describe("Item", () => {
     await vi.waitFor(() =>
       expect(archive).toHaveBeenCalledWith({ id: "doc1" }),
     );
-    expect(push).toHaveBeenCalledWith("/documents");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.path);
   });
 
   it("shows the last edited user in the dropdown", async () => {

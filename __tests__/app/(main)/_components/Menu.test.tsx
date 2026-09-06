@@ -21,6 +21,7 @@ vi.mock("sonner", () => ({
 }));
 
 import { Menu } from "@/app/(main)/_components/Menu";
+import { ROUTES } from "@/constants/routes";
 
 describe("Menu", () => {
   beforeEach(() => {
@@ -43,7 +44,7 @@ describe("Menu", () => {
     await vi.waitFor(() =>
       expect(archive).toHaveBeenCalledWith({ id: "doc1" }),
     );
-    expect(push).toHaveBeenCalledWith("/documents");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.path);
   });
 
   it("shows the last edited user in the dropdown", async () => {

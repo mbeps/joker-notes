@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 
 /**
@@ -33,7 +34,7 @@ const DocumentPage: React.FC = () => {
    */
   const onCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`),
+      router.push(ROUTES.DOCUMENTS.detail(documentId)),
     );
 
     toast.promise(promise, {

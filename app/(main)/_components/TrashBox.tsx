@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { Spinner } from "@/components/Spinner/Spinner";
 import { Input } from "@/components/ui/input";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 
@@ -43,7 +44,7 @@ const TrashBox: React.FC = () => {
    * @param documentId Identifier of the document to open.
    */
   const onClick = (documentId: string) => {
-    router.push(`/documents/${documentId}`);
+    router.push(ROUTES.DOCUMENTS.detail(documentId));
   };
 
   /**
@@ -82,7 +83,7 @@ const TrashBox: React.FC = () => {
 
     if (params.documentId === documentId) {
       // redirects to the documents page if the document being deleted is currently open
-      router.push("/documents");
+      router.push(ROUTES.DOCUMENTS.path);
     }
   };
 

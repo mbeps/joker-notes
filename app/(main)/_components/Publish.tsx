@@ -12,6 +12,7 @@ import {
   PopoverPositioner,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Doc } from "@/convex/_generated/dataModel";
 import { useOrigin } from "@/hooks/useOrigin";
@@ -43,7 +44,7 @@ const Publish: React.FC<PublishProps> = ({ initialData }) => {
    * Published notes do not have the same URL as the editor.
    * If the note is not published, navigating to this URL will return a 404.
    */
-  const url = `${origin}/preview/${initialData._id}`;
+  const url = `${origin}${ROUTES.PREVIEW.detail(initialData._id)}`;
 
   /**
    * Publishes the note so it becomes visible on the public preview route.

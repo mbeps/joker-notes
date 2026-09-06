@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import SearchCommand from "../../../components/Search/SearchCommand";
+import { ROUTES } from "../../../constants/routes";
 import { useSearch } from "../../../hooks/useSearch";
 
 const pushMock = vi.hoisted(() => vi.fn());
@@ -62,7 +63,7 @@ describe("SearchCommand", () => {
     });
     render(<SearchCommand />);
     fireEvent.click(screen.getByText("Groceries"));
-    expect(pushMock).toHaveBeenCalledWith("/documents/doc-1");
+    expect(pushMock).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("doc-1"));
     expect(useSearch.getState().isOpen).toBe(false);
   });
 

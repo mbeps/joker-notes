@@ -6,6 +6,7 @@ import type React from "react";
 import { toast } from "sonner";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 
@@ -41,7 +42,7 @@ const Banner: React.FC<BannerProps> = ({ documentId }) => {
       error: "Failed to delete note.",
     });
 
-    router.push("/documents");
+    router.push(ROUTES.DOCUMENTS.path);
   };
 
   /**

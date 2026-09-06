@@ -26,6 +26,7 @@ vi.mock("sonner", () => ({
 }));
 
 import DocumentList from "@/app/(main)/_components/DocumentList";
+import { ROUTES } from "@/constants/routes";
 
 const doc = (id: string, title: string) => ({
   _id: id,
@@ -78,7 +79,7 @@ describe("DocumentList", () => {
     queryResult = [doc("doc-a", "Doc A")];
     render(<DocumentList />);
     fireEvent.click(screen.getByText("Doc A"));
-    expect(push).toHaveBeenCalledWith("/documents/doc-a");
+    expect(push).toHaveBeenCalledWith(ROUTES.DOCUMENTS.detail("doc-a"));
   });
 
   it("expands a document and renders its children on chevron click", () => {

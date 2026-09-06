@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 
 /**
  * Client error boundary UI that invites users to retry by returning to documents.
@@ -29,7 +30,7 @@ const RootError = () => {
         className="hidden dark:block"
       />
       <h2 className="font-medium text-xl">Something went wrong!</h2>
-      <Button render={<Link href="/documents" />}>Go back</Button>
+      <Button render={<Link href={ROUTES.DOCUMENTS.path} />}>Go back</Button>
     </div>
   );
 };

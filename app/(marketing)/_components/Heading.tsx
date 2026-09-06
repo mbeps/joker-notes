@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Spinner } from "@/components/Spinner/Spinner";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 
 /**
  * Hero heading for the marketing page that tailors the primary CTA based on auth state.
@@ -34,7 +35,7 @@ export const Heading = () => {
         </div>
       )}
       {isAuthenticated && !isLoading && (
-        <Button render={<Link href="/documents" />}>
+        <Button render={<Link href={ROUTES.DOCUMENTS.path} />}>
           Enter Joker Notes
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

@@ -7,6 +7,7 @@ import type React from "react";
 import { Spinner } from "@/components/Spinner/Spinner";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ROUTES } from "@/constants/routes";
 import { useScrollTop } from "@/hooks/useScrollTop";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
@@ -53,7 +54,7 @@ const Navbar: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              render={<Link href="/documents" />}
+              render={<Link href={ROUTES.DOCUMENTS.path} />}
             >
               Enter Joker Notes
             </Button>

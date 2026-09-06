@@ -27,6 +27,7 @@ import {
   PopoverPositioner,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
@@ -163,7 +164,7 @@ const Navigation: React.FC = () => {
    */
   const handleCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`),
+      router.push(ROUTES.DOCUMENTS.detail(documentId)),
     );
 
     toast.promise(promise, {

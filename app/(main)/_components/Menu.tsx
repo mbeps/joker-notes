@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 
@@ -51,7 +52,7 @@ export const Menu = ({ documentId }: MenuProps) => {
       error: "Failed to archive note.",
     });
 
-    router.push("/documents");
+    router.push(ROUTES.DOCUMENTS.path);
   };
 
   return (

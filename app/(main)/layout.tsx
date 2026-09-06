@@ -4,6 +4,7 @@ import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 import SearchCommand from "@/components/Search/SearchCommand";
 import { Spinner } from "@/components/Spinner/Spinner";
+import { ROUTES } from "@/constants/routes";
 import Navigation from "./_components/Navigation";
 
 /**
@@ -26,7 +27,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   // prevents unauthenticated users from accessing any page in `main`
   if (!isAuthenticated) {
-    return redirect("/");
+    return redirect(ROUTES.HOME.path);
   }
 
   return (
