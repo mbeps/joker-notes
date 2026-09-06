@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 import type React from "react";
 import { use, useMemo } from "react";
 import { Cover } from "@/components/Images/Cover";
@@ -83,9 +84,9 @@ const DocumentPage: React.FC<DocumentPageProps> = (props) => {
     );
   }
 
-  // if the document does not exist display a message
+  // if the document does not exist trigger not-found UI
   if (document === null) {
-    return <div>Not found</div>;
+    return notFound();
   }
 
   return (
