@@ -1,6 +1,7 @@
 import { initEdgeStore } from "@edgestore/server";
 import { createEdgeStoreNextHandler } from "@edgestore/server/adapters/next/app";
 
+// Initialize EdgeStore server router with validated server environment
 const es = initEdgeStore.create();
 
 /**

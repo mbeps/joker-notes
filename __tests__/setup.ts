@@ -1,5 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 
+// Fallback environment variables for tests
+process.env.NEXT_PUBLIC_CONVEX_URL =
+  process.env.NEXT_PUBLIC_CONVEX_URL || "https://hearty-grasshopper-879.convex.cloud";
+process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY =
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+  "pk_test_Z3JhdGVmdWwtZ2xvd3dvcm0tMjAuY2xlcmsuYWNjb3VudHMuZGV2JA";
+process.env.CLERK_SECRET_KEY =
+  process.env.CLERK_SECRET_KEY || "sk_test_mock_clerk_secret_key";
+process.env.EDGE_STORE_ACCESS_KEY =
+  process.env.EDGE_STORE_ACCESS_KEY || "mock_edge_store_access_key";
+process.env.EDGE_STORE_SECRET_KEY =
+  process.env.EDGE_STORE_SECRET_KEY || "mock_edge_store_secret_key";
+
 // Mock ResizeObserver for cmdk and Base UI components
 class MockResizeObserver {
   observe = vi.fn();
