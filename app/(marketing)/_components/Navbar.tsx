@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
             >
               Enter Joker Notes
             </Button>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </>
         )}
         <ThemeToggle />

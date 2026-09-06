@@ -28,11 +28,7 @@ interface EditorProps {
  * @see https://blocknotejs.org
  * @see https://docs.edgestore.dev
  */
-const Editor: React.FC<EditorProps> = ({
-  onChange,
-  editable,
-  initialContent,
-}) => {
+const Editor = ({ onChange, editable, initialContent }: EditorProps) => {
   // Get the current theme from Next.js
   const { resolvedTheme } = useTheme();
   // Get the EdgeStore hooks to manage the file storage
