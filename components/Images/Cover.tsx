@@ -1,17 +1,16 @@
 "use client";
 
+import { useMutation } from "convex/react";
+import { ImageIcon, X } from "lucide-react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/useCoverImage";
 import { useEdgeStore } from "@/lib/edgestore";
 import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { ImageIcon, X } from "lucide-react";
-import { useParams } from "next/navigation";
-import React from "react";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import Image from "next/image";
 
 /**
  * Props controlling the cover image display, including optional preview mode.
@@ -59,9 +58,9 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
   return (
     <div
       className={cn(
-        "relative w-full h-[35vh] group",
+        "group relative h-[35vh] w-full",
         !url && "h-[12vh]",
-        url && "bg-muted"
+        url && "bg-muted",
       )}
     >
       {/* if there is cover image, display it */}
@@ -69,14 +68,14 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
 
       {/* if there is cover image and document is editable */}
       {url && !preview && (
-        <div className="opacity-0 group-hover:opacity-100 absolute bottom-5 right-5 flex items-center gap-x-2">
+        <div className="absolute right-5 bottom-5 flex items-center gap-x-2 opacity-0 group-hover:opacity-100">
           <Button
             onClick={() => coverImage.onReplace(url)}
             className="text-muted-foreground text-xs"
             variant="outline"
             size="sm"
           >
-            <ImageIcon className="h-4 w-4 mr-2" />
+            <ImageIcon className="mr-2 h-4 w-4" />
             Change cover
           </Button>
           <Button
@@ -85,7 +84,7 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
             variant="outline"
             size="sm"
           >
-            <X className="h-4 w-4 mr-2" />
+            <X className="mr-2 h-4 w-4" />
             Remove
           </Button>
         </div>
@@ -100,5 +99,5 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
  * @returns {JSX.Element} Placeholder block that mimics the cover layout.
  */
 Cover.Skeleton = function CoverSkeleton() {
-  return <Skeleton className="w-full h-[12vh]" />;
+  return <Skeleton className="h-[12vh] w-full" />;
 };

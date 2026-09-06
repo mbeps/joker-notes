@@ -1,29 +1,30 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuPositioner,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import {
   ChevronDown,
   ChevronRight,
-  LucideIcon,
+  type LucideIcon,
   MoreHorizontal,
   Plus,
   Trash,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import type React from "react";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPositioner,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Kbd } from "@/components/ui/kbd";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/constants/routes";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 
 /**
  * Props supplied to a sidebar item representing navigation actions or documents.
@@ -82,7 +83,9 @@ export const Item = ({
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     if (!id) return; // exist if the document ID is undefined
-    const promise = archive({ id }).then(() => router.push("/documents")); // archives the document and redirects to the documents page
+    const promise = archive({ id }).then(() =>
+      router.push(ROUTES.DOCUMENTS.path),
+    ); // archives the document and redirects to the documents page
 
     // displays a toast notification
     toast.promise(promise, {
@@ -96,7 +99,7 @@ export const Item = ({
    * Notifies parent components to toggle nested document visibility.
    */
   const handleExpand = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     onExpand?.(); // calls the onExpand function passed as a prop
@@ -114,8 +117,8 @@ export const Item = ({
         if (!expanded) {
           onExpand?.(); // expands the current document if it is not expanded
         }
-        router.push(`/documents/${documentId}`); // redirects to the new document
-      }
+        router.push(ROUTES.DOCUMENTS.detail(documentId)); // redirects to the new document
+      },
     );
 
     toast.promise(promise, {
@@ -140,35 +143,27 @@ export const Item = ({
         paddingLeft: level ? `${level * 12 + 12}px` : "12px",
       }}
       className={cn(
-        "group min-h-[30px] text-sm py-2 pr-3 w-full hover:bg-primary/5 flex items-center text-muted-foreground font-medium rounded-lg",
-        active && "bg-primary/5 text-primary"
+        "group flex min-h-[30px] w-full items-center rounded-lg py-2 pr-3 font-medium text-muted-foreground text-sm hover:bg-primary/5",
+        active && "bg-primary/5 text-primary",
       )}
     >
       {!!id && (
         <div
           role="button"
-          className="h-full rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 mr-1"
+          className="mr-1 h-full rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600"
           onClick={handleExpand}
         >
           <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
         </div>
       )}
       {documentIcon ? (
-        <div className="shrink-0 mr-2 text-[18px]">{documentIcon}</div>
+        <div className="mr-2 shrink-0 text-[18px]">{documentIcon}</div>
       ) : (
-        <Icon className="shrink-0 h-[18px] w-[18px] mr-2 text-muted-foreground" />
+        <Icon className="mr-2 h-[18px] w-[18px] shrink-0 text-muted-foreground" />
       )}
       <span className="truncate">{label}</span>
       {isSearch && (
-        <kbd
-          className="
-						ml-auto 
-						pointer-events-none 
-						inline-flex h-5 
-						select-none 
-						items-center 
-            space-x-1"
-        >
+        <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center space-x-1">
           <Kbd>⌘</Kbd>
           <Kbd>K</Kbd>
           <span>{"/ "}</span>
@@ -180,31 +175,23 @@ export const Item = ({
         <div className="ml-auto flex items-center gap-x-2">
           {/* Delete Note */}
           <DropdownMenu>
-            <DropdownMenuTrigger 
-              onClick={(e) => e.stopPropagation()} 
-              className="
-									opacity-0 group-hover:opacity-100
-									h-full
-									ml-auto
-									rounded-sm
-									hover:bg-neutral-300 dark:hover:bg-neutral-600
-									"
+            <DropdownMenuTrigger
+              onClick={(e) => e.stopPropagation()}
+              className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
             >
               <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuPositioner align="start" side="right">
-              <DropdownMenuContent
-                className="w-60"
-              >
-              <DropdownMenuItem onClick={onArchive}>
-                <Trash className="h-4 w-4 mr-2" />
-                Delete
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <div className="text-xs text-muted-foreground p-2">
-                Last edited by: {user?.fullName}
-              </div>
-            </DropdownMenuContent>
+              <DropdownMenuContent className="w-60">
+                <DropdownMenuItem onClick={onArchive}>
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <div className="p-2 text-muted-foreground text-xs">
+                  Last edited by: {user?.fullName}
+                </div>
+              </DropdownMenuContent>
             </DropdownMenuPositioner>
           </DropdownMenu>
 
@@ -212,7 +199,7 @@ export const Item = ({
           <div
             role="button"
             onClick={onCreate}
-            className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600"
+            className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
           >
             <Plus className="h-4 w-4 text-muted-foreground" />
           </div>

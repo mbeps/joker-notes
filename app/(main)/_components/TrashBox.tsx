@@ -1,15 +1,17 @@
 "use client";
 
-import ConfirmModal from "@/components/Modals/ConfirmModal";
-import { Spinner } from "@/components/Spinner/Spinner";
-import { Input } from "@/components/ui/input";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/Modals/ConfirmModal";
+import { Spinner } from "@/components/Spinner/Spinner";
+import { Input } from "@/components/ui/input";
+import { ROUTES } from "@/constants/routes";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 /**
  * Popover content that lists trashed documents with options to restore or permanently delete.
@@ -42,7 +44,7 @@ const TrashBox: React.FC = () => {
    * @param documentId Identifier of the document to open.
    */
   const onClick = (documentId: string) => {
-    router.push(`/documents/${documentId}`);
+    router.push(ROUTES.DOCUMENTS.detail(documentId));
   };
 
   /**
@@ -53,7 +55,7 @@ const TrashBox: React.FC = () => {
    */
   const onRestore = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    documentId: Id<"documents">
+    documentId: Id<"documents">,
   ) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
     const promise = restore({ id: documentId }); // restores the document from the archive (in trash)
@@ -81,14 +83,14 @@ const TrashBox: React.FC = () => {
 
     if (params.documentId === documentId) {
       // redirects to the documents page if the document being deleted is currently open
-      router.push("/documents");
+      router.push(ROUTES.DOCUMENTS.path);
     }
   };
 
   // shows a loading spinner if the documents are still being fetched
   if (documents === undefined) {
     return (
-      <div className="h-full flex items-center justify-center p-4">
+      <div className="flex h-full items-center justify-center p-4">
         <Spinner size="lg" />
       </div>
     );
@@ -101,12 +103,12 @@ const TrashBox: React.FC = () => {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-7 px-2 focus-visible:ring-transparent bg-secondary"
+          className="h-7 bg-secondary px-2 focus-visible:ring-transparent"
           placeholder="Filter by page title..."
         />
       </div>
       <div className="mt-2 px-1 pb-1">
-        <p className="hidden last:block text-xs text-center text-muted-foreground pb-2">
+        <p className="hidden pb-2 text-center text-muted-foreground text-xs last:block">
           No documents found.
         </p>
         {filteredDocuments?.map((document) => (
@@ -114,7 +116,7 @@ const TrashBox: React.FC = () => {
             key={document._id}
             role="button"
             onClick={() => onClick(document._id)}
-            className="text-sm rounded-md w-full hover:bg-primary/5 flex items-center text-primary justify-between"
+            className="flex w-full items-center justify-between rounded-md text-primary text-sm hover:bg-primary/5"
           >
             <span className="truncate pl-2">{document.title}</span>
             <div className="flex items-center">

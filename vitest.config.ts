@@ -1,12 +1,20 @@
+import path from "node:path";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./"),
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
+    setupFiles: ["__tests__/setup.ts"],
     include: ["__tests__/**/*.test.{ts,tsx}"],
+    testTimeout: 15000,
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],
@@ -16,6 +24,7 @@ export default defineConfig({
         "hooks/**/*.{ts,tsx}",
         "convex/documents.ts",
         "convex/schema.ts",
+        "constants/**/*.{ts,tsx}",
       ],
       exclude: ["convex/_generated/**"],
       thresholds: {

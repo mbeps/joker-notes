@@ -1,9 +1,9 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
+import type { BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
+import { useTheme } from "next-themes";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -28,11 +28,7 @@ interface EditorProps {
  * @see https://blocknotejs.org
  * @see https://docs.edgestore.dev
  */
-const Editor: React.FC<EditorProps> = ({
-  onChange,
-  editable,
-  initialContent,
-}) => {
+const Editor = ({ onChange, editable, initialContent }: EditorProps) => {
   // Get the current theme from Next.js
   const { resolvedTheme } = useTheme();
   // Get the EdgeStore hooks to manage the file storage

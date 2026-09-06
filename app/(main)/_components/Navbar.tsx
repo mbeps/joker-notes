@@ -1,15 +1,15 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
+import { MenuIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import React from "react";
-import { Title } from "./Title";
+import type React from "react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import Banner from "./Banner";
 import { Menu } from "./Menu";
-import { MenuIcon } from "lucide-react";
 import Publish from "./Publish";
+import { Title } from "./Title";
 
 /**
  * Props for the document navbar component rendered within the workspace layout.
@@ -45,15 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
   // If the document is undefined, it means it is loading.
   if (document === undefined) {
     return (
-      <nav
-        className="
-					bg-background dark:bg-[#1F1F1F] 
-					px-3 py-2 
-					w-full 
-					flex 
-					items-center justify-between
-				"
-      >
+      <nav className="flex w-full items-center justify-between bg-background px-3 py-2 dark:bg-[#1F1F1F]">
         <Title.Skeleton />
         <div className="flex items-center gap-x-2">
           <Menu.Skeleton />
@@ -69,14 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
 
   return (
     <>
-      <nav
-        className="
-					bg-background dark:bg-[#1F1F1F] 
-					px-3 py-2 
-					w-full 
-					flex items-center 
-					gap-x-4"
-      >
+      <nav className="flex w-full items-center gap-x-4 bg-background px-3 py-2 dark:bg-[#1F1F1F]">
         {isCollapsed && (
           <MenuIcon
             role="button"
@@ -84,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed, onResetWidth }) => {
             className="h-6 w-6 text-muted-foreground"
           />
         )}
-        <div className="flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between">
           <Title initialData={document} />
           <div className="flex items-center gap-x-2">
             <Publish initialData={document} />

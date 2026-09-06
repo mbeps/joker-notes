@@ -7,10 +7,10 @@ const nextConfig = {
     // Keep the same allowed remote host via a pattern.
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'files.edgestore.dev',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "files.edgestore.dev",
+        port: "",
+        pathname: "/**",
       },
     ],
   },

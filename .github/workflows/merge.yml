@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['20.x', '22.x', '24.x']
+        node-version: ['22.x', '24.x', '26.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['20.x', '22.x', '24.x']
+        node-version: ['22.x', '24.x', '26.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -78,8 +78,8 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
-      - name: Run Linter
-        run: ${{ steps.detect-package-manager.outputs.runner }} eslint '**/*.{js,ts,tsx}'
+      - name: Run Biome CI
+        run: ${{ steps.detect-package-manager.outputs.runner }} biome ci --reporter=github .
 
   build:
     needs: lint
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['20.x', '22.x', '24.x']
+        node-version: ['22.x', '24.x', '26.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -128,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['20.x', '22.x', '24.x']
+        node-version: ['22.x', '24.x', '26.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v3

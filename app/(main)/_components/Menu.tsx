@@ -1,22 +1,23 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuPositioner,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPositioner,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/constants/routes";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 /**
  * Props passed to the document action menu containing the Convex document id.
@@ -51,7 +52,7 @@ export const Menu = ({ documentId }: MenuProps) => {
       error: "Failed to archive note.",
     });
 
-    router.push("/documents");
+    router.push(ROUTES.DOCUMENTS.path);
   };
 
   return (
@@ -60,18 +61,16 @@ export const Menu = ({ documentId }: MenuProps) => {
         <MoreHorizontal className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuPositioner align="end" alignOffset={8}>
-        <DropdownMenuContent
-          className="w-60"
-        >
-        <DropdownMenuItem onClick={onArchive}>
-          <Trash className="h-4 w-4 mr-2" />
-          Delete
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <div className="text-xs text-muted-foreground p-2">
-          Last edited by: {user?.fullName}
-        </div>
-      </DropdownMenuContent>
+        <DropdownMenuContent className="w-60">
+          <DropdownMenuItem onClick={onArchive}>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <div className="p-2 text-muted-foreground text-xs">
+            Last edited by: {user?.fullName}
+          </div>
+        </DropdownMenuContent>
       </DropdownMenuPositioner>
     </DropdownMenu>
   );

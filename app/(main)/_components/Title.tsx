@@ -1,12 +1,13 @@
 "use client";
 
+import { useMutation } from "convex/react";
+import type React from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
-import React, { useRef, useState } from "react";
+import type { Doc } from "@/convex/_generated/dataModel";
 
 /**
  * Props for the editable document title component.
@@ -97,7 +98,7 @@ export const Title = ({ initialData }: TitleProps) => {
           onClick={enableInput}
           variant="ghost"
           size="sm"
-          className="font-normal h-auto p-1"
+          className="h-auto p-1 font-normal"
         >
           <span className="truncate">{initialData?.title}</span>
         </Button>

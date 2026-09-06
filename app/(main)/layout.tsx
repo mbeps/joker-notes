@@ -1,10 +1,11 @@
 "use client";
 
-import { Spinner } from "@/components/Spinner/Spinner";
 import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
-import Navigation from "./_components/Navigation";
 import SearchCommand from "@/components/Search/SearchCommand";
+import { Spinner } from "@/components/Spinner/Spinner";
+import { ROUTES } from "@/constants/routes";
+import Navigation from "./_components/Navigation";
 
 /**
  * Authenticated workspace layout that gates all `(main)` routes behind Convex auth.
@@ -18,7 +19,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -26,13 +27,13 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   // prevents unauthenticated users from accessing any page in `main`
   if (!isAuthenticated) {
-    return redirect("/");
+    return redirect(ROUTES.HOME.path);
   }
 
   return (
-    <div className="h-full flex dark:bg-[#1F1F1F]">
+    <div className="flex h-full dark:bg-[#1F1F1F]">
       <Navigation />
-      <main className="flex-1 h-full overflow-y-auto">
+      <main className="h-full flex-1 overflow-y-auto">
         <SearchCommand />
         {children}
       </main>

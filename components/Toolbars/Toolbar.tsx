@@ -1,14 +1,15 @@
 "use client";
 
-import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { ImageIcon, Smile, X } from "lucide-react";
-import React, { ElementRef, useRef, useState } from "react";
-import { Button } from "../ui/button";
-import { api } from "@/convex/_generated/api";
-import IconPicker from "../Icon/IconPicker";
+import type React from "react";
+import { type ElementRef, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import { api } from "@/convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/useCoverImage";
+import IconPicker from "../Icon/IconPicker";
+import { Button } from "../ui/button";
 
 /**
  * Props supplied to the document toolbar including the Convex document payload.
@@ -113,18 +114,18 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
   };
 
   return (
-    <div className="pl-[54px] group relative">
+    <div className="group relative pl-[54px]">
       {/* If editable document display icon picker */}
       {!!initialData.icon && !preview && (
-        <div className="flex items-center gap-x-2 group/icon pt-6">
+        <div className="group/icon flex items-center gap-x-2 pt-6">
           <IconPicker onChange={onIconSelect}>
-            <p className="text-6xl hover:opacity-75 transition">
+            <p className="text-6xl transition hover:opacity-75">
               {initialData.icon}
             </p>
           </IconPicker>
           <Button
             onClick={onRemoveIcon}
-            className="rounded-full opacity-0 group-hover/icon:opacity-100 transition text-muted-foreground text-xs"
+            className="rounded-full text-muted-foreground text-xs opacity-0 transition group-hover/icon:opacity-100"
             variant="outline"
             size="icon"
           >
@@ -134,10 +135,10 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
       )}
       {/* If not editable document */}
       {!!initialData.icon && preview && (
-        <p className="text-6xl pt-6">{initialData.icon}</p>
+        <p className="pt-6 text-6xl">{initialData.icon}</p>
       )}
       {/* if has icon and editable document display icon picker */}
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4">
+      <div className="flex items-center gap-x-1 py-4 opacity-0 group-hover:opacity-100">
         {!initialData.icon && !preview && (
           <IconPicker asChild onChange={onIconSelect}>
             <Button
@@ -145,7 +146,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
               variant="outline"
               size="sm"
             >
-              <Smile className="h-4 w-4 mr-2" />
+              <Smile className="mr-2 h-4 w-4" />
               Add icon
             </Button>
           </IconPicker>
@@ -158,7 +159,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
             variant="outline"
             size="sm"
           >
-            <ImageIcon className="h-4 w-4 mr-2" />
+            <ImageIcon className="mr-2 h-4 w-4" />
             Add cover
           </Button>
         )}
@@ -171,12 +172,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ initialData, preview }) => {
           onKeyDown={onKeyDown}
           value={value}
           onChange={(e) => onInput(e.target.value)}
-          className="text-5xl bg-transparent font-bold break-words outline-hidden text-[#3F3F3F] dark:text-[#CFCFCF] resize-none"
+          className="resize-none break-words bg-transparent font-bold text-5xl text-[#3F3F3F] outline-hidden dark:text-[#CFCFCF]"
         />
       ) : (
         <div
           onClick={enableInput}
-          className="pb-[11.5px] text-5xl font-bold break-words outline-hidden text-[#3F3F3F] dark:text-[#CFCFCF]"
+          className="break-words pb-[11.5px] font-bold text-5xl text-[#3F3F3F] outline-hidden dark:text-[#CFCFCF]"
         >
           {initialData.title}
         </div>

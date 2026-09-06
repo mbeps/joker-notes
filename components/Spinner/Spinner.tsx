@@ -1,12 +1,12 @@
-import { Loader } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
  * Defines the size variants for the spinner using class-variance-authority.
  * Keeps loader dimensions consistent across consumers.
  */
-const spinnerVariants = cva("text-muted-foreground animate-spin", {
+const spinnerVariants = cva("animate-spin text-muted-foreground", {
   variants: {
     size: {
       default: "h-4 w-4",

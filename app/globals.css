@@ -63,7 +63,8 @@
     outline-color: hsl(var(--ring) / 0.5);
   }
 
-  html, body {
+  html,
+  body {
     height: 100%;
   }
 
@@ -126,11 +127,19 @@
 }
 
 @utility gradient {
-  background-image: linear-gradient(to bottom right, rgb(59 130 246), rgb(34 197 94));
+  background-image: linear-gradient(
+    to bottom right,
+    rgb(59 130 246),
+    rgb(34 197 94)
+  );
 }
 
 @utility gradient-title {
-  background-image: linear-gradient(to bottom right, rgb(59 130 246), rgb(34 197 94));
+  background-image: linear-gradient(
+    to bottom right,
+    rgb(59 130 246),
+    rgb(34 197 94)
+  );
   font-weight: 800;
   letter-spacing: -0.05em;
   padding-right: 0.5rem;
@@ -149,22 +158,24 @@
 }
 
 @theme inline {
-  --animate-accordion-collapse: accordion-collapse var(--tw-duration, 200ms) ease-out;
-  --animate-accordion-expand: accordion-expand var(--tw-duration, 200ms) ease-out;
+  --animate-accordion-collapse: accordion-collapse var(--tw-duration, 200ms)
+    ease-out;
+  --animate-accordion-expand: accordion-expand var(--tw-duration, 200ms)
+    ease-out;
   @keyframes accordion-collapse {
-  from {
-    height: var(--accordion-panel-height, auto);
+    from {
+      height: var(--accordion-panel-height, auto);
     }
-  to {
-    height: 0;
+    to {
+      height: 0;
     }
   }
   @keyframes accordion-expand {
-  from {
-    height: 0;
+    from {
+      height: 0;
     }
-  to {
-    height: var(--accordion-panel-height, auto);
+    to {
+      height: var(--accordion-panel-height, auto);
     }
   }
 }

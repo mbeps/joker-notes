@@ -1,7 +1,7 @@
-import React from "react";
-import Heroes from "./_components/Heroes";
+import type React from "react";
 import Footer from "./_components/Footer";
 import { Heading } from "./_components/Heading";
+import Heroes from "./_components/Heroes";
 
 /**
  * Landing page that showcases Joker Notes features and funnels visitors to authentication.
@@ -11,21 +11,8 @@ import { Heading } from "./_components/Heading";
  */
 const MarketingPage: React.FC = () => {
   return (
-    <div
-      className="
-				flex flex-col 
-				min-h-full 
-			dark:bg-[#1F1F1F]"
-    >
-      <div
-        className="
-					flex flex-col flex-1 
-					items-center justify-center md:justify-start 
-					text-center 
-					gap-y-8 
-					px-6 pb-10
-				"
-      >
+    <div className="flex min-h-full flex-col dark:bg-[#1F1F1F]">
+      <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center md:justify-start">
         <Heading />
         <Heroes />
       </div>

@@ -1,7 +1,6 @@
 import { v } from "convex/values";
-
+import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
 
 /**
  * Marks a document and its descendants as archived so they disappear from the active tree.

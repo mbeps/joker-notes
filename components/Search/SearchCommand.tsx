@@ -1,12 +1,14 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useSearch } from "@/hooks/useSearch";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { File } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { ROUTES } from "@/constants/routes";
+import { api } from "@/convex/_generated/api";
+import { useSearch } from "@/hooks/useSearch";
 import {
   CommandDialog,
   CommandEmpty,
@@ -59,7 +61,7 @@ const SearchCommand: React.FC = () => {
    * @see https://nextjs.org/docs/app/api-reference/functions/use-router
    */
   const onSelect = (id: string) => {
-    router.push(`/documents/${id}`);
+    router.push(ROUTES.DOCUMENTS.detail(id));
     onClose();
   };
 
