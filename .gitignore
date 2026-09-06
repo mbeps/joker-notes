@@ -37,3 +37,5 @@ next-env.d.ts
 .vscode/settings.json
 .github/copilot-instructions.md
 .vscode/mcp.json
+
+graphify-out/**

@@ -136,15 +136,13 @@ const createContext = ({
       documentMap.set(id, { _id: id, ...doc });
       return id;
     }),
-    patch: vi.fn(
-      async (id: Id<"documents">, patch: Partial<MockDocument>) => {
-        const current = documentMap.get(id);
-        if (!current) return undefined;
-        const updated = { ...current, ...patch };
-        documentMap.set(id, updated);
-        return updated;
-      },
-    ),
+    patch: vi.fn(async (id: Id<"documents">, patch: Partial<MockDocument>) => {
+      const current = documentMap.get(id);
+      if (!current) return undefined;
+      const updated = { ...current, ...patch };
+      documentMap.set(id, updated);
+      return updated;
+    }),
     delete: vi.fn(async (id: Id<"documents">) => {
       const existing = documentMap.get(id);
       documentMap.delete(id);
@@ -168,9 +166,9 @@ describe("documents archive", () => {
 
   it("throws when the document is missing", async () => {
     const { ctx } = createContext();
-    await expect(archiveHandler(ctx, { id: makeId("missing") })).rejects.toThrow(
-      "Not found",
-    );
+    await expect(
+      archiveHandler(ctx, { id: makeId("missing") }),
+    ).rejects.toThrow("Not found");
   });
 
   it("throws when the user does not own the document", async () => {
@@ -289,9 +287,9 @@ describe("documents restore", () => {
 
   it("errors when the document is missing", async () => {
     const { ctx } = createContext();
-    await expect(restoreHandler(ctx, { id: makeId("missing") })).rejects.toThrow(
-      "Not found",
-    );
+    await expect(
+      restoreHandler(ctx, { id: makeId("missing") }),
+    ).rejects.toThrow("Not found");
   });
 
   it("prevents restoring documents owned by other users", async () => {
@@ -433,7 +431,10 @@ describe("documents getById", () => {
 
   it("blocks access for non-owners", async () => {
     const draft = createDoc("draft", { userId: "owner" });
-    const { ctx } = createContext({ identity: { subject: "other" }, documents: [draft] });
+    const { ctx } = createContext({
+      identity: { subject: "other" },
+      documents: [draft],
+    });
     await expect(
       getByIdHandler(ctx, { documentId: draft._id }),
     ).rejects.toThrow("Unauthorized");
@@ -492,9 +493,9 @@ describe("documents update", () => {
 describe("documents removeIcon", () => {
   it("requires authentication", async () => {
     const { ctx } = createContext({ identity: null });
-    await expect(
-      removeIconHandler(ctx, { id: makeId("doc") }),
-    ).rejects.toThrow("Unauthenticated");
+    await expect(removeIconHandler(ctx, { id: makeId("doc") })).rejects.toThrow(
+      "Unauthenticated",
+    );
   });
 
   it("throws when the document is missing", async () => {
@@ -540,9 +541,9 @@ describe("documents removeCoverImage", () => {
   it("prevents removing cover images from foreign documents", async () => {
     const doc = createDoc("doc", { userId: "other", coverImage: "cover" });
     const { ctx } = createContext({ documents: [doc] });
-    await expect(
-      removeCoverImageHandler(ctx, { id: doc._id }),
-    ).rejects.toThrow("Unauthorized");
+    await expect(removeCoverImageHandler(ctx, { id: doc._id })).rejects.toThrow(
+      "Unauthorized",
+    );
   });
 
   it("clears cover images for owned documents", async () => {
@@ -552,5 +553,274 @@ describe("documents removeCoverImage", () => {
     const updated = await removeCoverImageHandler(ctx, { id: doc._id });
     expect(updated?.coverImage).toBeUndefined();
     expect(documentMap.get(doc._id)?.coverImage).toBeUndefined();
+  });
+});
+
+describe("documents archive edge cases", () => {
+  it("does not archive unrelated sibling trees", async () => {
+    const rootA = createDoc("rootA");
+    const childA = createDoc("childA", { parentDocument: rootA._id });
+    const rootB = createDoc("rootB");
+    const childB = createDoc("childB", { parentDocument: rootB._id });
+    const { ctx, documentMap } = createContext({
+      documents: [rootA, childA, rootB, childB],
+    });
+
+    await archiveHandler(ctx, { id: rootA._id });
+    await flushAsync();
+
+    expect(documentMap.get(childA._id)?.isArchived).toBe(true);
+    expect(rootB.isArchived).toBe(false);
+    expect(documentMap.get(childB._id)?.isArchived).toBe(false);
+  });
+
+  it("archives a leaf document with no children", async () => {
+    const leaf = createDoc("leaf");
+    const { ctx, db } = createContext({ documents: [leaf] });
+
+    const result = await archiveHandler(ctx, { id: leaf._id });
+    await flushAsync();
+
+    expect(result?.isArchived).toBe(true);
+    expect(db.query).toHaveBeenCalledTimes(1); // only the root's child lookup
+  });
+
+  it("patches the root before recursing into children", async () => {
+    const root = createDoc("root");
+    const child = createDoc("child", { parentDocument: root._id });
+    const { ctx, db } = createContext({ documents: [root, child] });
+
+    await archiveHandler(ctx, { id: root._id });
+    await flushAsync();
+
+    const patchOrder = db.patch.mock.invocationCallOrder[0];
+    const queryOrder = db.query.mock.invocationCallOrder[0];
+    expect(patchOrder).toBeLessThan(queryOrder);
+  });
+});
+
+describe("documents restore edge cases", () => {
+  it("restores a deep tree layer by layer", async () => {
+    const a = createDoc("a", { isArchived: true });
+    const b = createDoc("b", { isArchived: true, parentDocument: a._id });
+    const c = createDoc("c", { isArchived: true, parentDocument: b._id });
+    const d = createDoc("d", { isArchived: true, parentDocument: c._id });
+    const { ctx, documentMap } = createContext({
+      documents: [a, b, c, d],
+    });
+
+    await restoreHandler(ctx, { id: a._id });
+    await flushAsync();
+
+    expect(documentMap.get(b._id)?.isArchived).toBe(false);
+    expect(documentMap.get(c._id)?.isArchived).toBe(false);
+    expect(documentMap.get(d._id)?.isArchived).toBe(false);
+  });
+
+  it("does not restore children of an unrelated archived tree", async () => {
+    const restoredRoot = createDoc("restored", { isArchived: true });
+    const otherRoot = createDoc("other", { isArchived: true });
+    const otherChild = createDoc("otherChild", {
+      isArchived: true,
+      parentDocument: otherRoot._id,
+    });
+    const { ctx, documentMap } = createContext({
+      documents: [restoredRoot, otherRoot, otherChild],
+    });
+
+    await restoreHandler(ctx, { id: restoredRoot._id });
+    await flushAsync();
+
+    expect(documentMap.get(otherChild._id)?.isArchived).toBe(true);
+  });
+});
+
+describe("documents getSidebar edge cases", () => {
+  it("returns root-level documents when no parent is given", async () => {
+    const root1 = createDoc("root1", { _creationTime: 1 });
+    const root2 = createDoc("root2", { _creationTime: 2 });
+    const nested = createDoc("nested", {
+      parentDocument: root1._id,
+      _creationTime: 3,
+    });
+    const { ctx } = createContext({ documents: [root1, root2, nested] });
+
+    const results = await getSidebarHandler(ctx, { parentDocument: undefined });
+    expect(results).toEqual([root2, root1]); // ordered desc by creation time
+  });
+
+  it("returns an empty list when the user has no matching children", async () => {
+    const foreign = createDoc("foreign", { userId: "someone_else" });
+    const { ctx } = createContext({ documents: [foreign] });
+
+    const results = await getSidebarHandler(ctx, { parentDocument: undefined });
+    expect(results).toEqual([]);
+  });
+});
+
+describe("documents getTrash edge cases", () => {
+  it("returns an empty list when nothing is archived", async () => {
+    const active = createDoc("active");
+    const { ctx } = createContext({ documents: [active] });
+
+    const results = await getTrashHandler(ctx);
+    expect(results).toEqual([]);
+  });
+
+  it("sorts archived documents newest first", async () => {
+    const older = createDoc("older", { isArchived: true, _creationTime: 1 });
+    const newer = createDoc("newer", { isArchived: true, _creationTime: 5 });
+    const { ctx } = createContext({ documents: [older, newer] });
+
+    const results = await getTrashHandler(ctx);
+    expect(results.map((doc) => doc.title)).toEqual(["newer", "older"]);
+  });
+
+  it("excludes other users' archived documents", async () => {
+    const mine = createDoc("mine", { isArchived: true });
+    const theirs = createDoc("theirs", {
+      userId: "someone_else",
+      isArchived: true,
+    });
+    const { ctx } = createContext({ documents: [mine, theirs] });
+
+    const results = await getTrashHandler(ctx);
+    expect(results).toEqual([mine]);
+  });
+});
+
+describe("documents getSearch edge cases", () => {
+  it("returns an empty list when the user has no active documents", async () => {
+    const archived = createDoc("archived", { isArchived: true });
+    const { ctx } = createContext({ documents: [archived] });
+
+    const results = await getSearchHandler(ctx);
+    expect(results).toEqual([]);
+  });
+
+  it("includes published and unpublished active documents alike", async () => {
+    const published = createDoc("published", { isPublished: true });
+    const draft = createDoc("draft", { isPublished: false });
+    const { ctx } = createContext({ documents: [published, draft] });
+
+    const results = await getSearchHandler(ctx);
+    expect(results).toHaveLength(2);
+  });
+
+  it("excludes other users' documents", async () => {
+    const mine = createDoc("mine");
+    const theirs = createDoc("theirs", { userId: "someone_else" });
+    const { ctx } = createContext({ documents: [mine, theirs] });
+
+    const results = await getSearchHandler(ctx);
+    expect(results).toEqual([mine]);
+  });
+});
+
+describe("documents getById edge cases", () => {
+  it("hides archived published documents from anonymous users", async () => {
+    const doc = createDoc("doc", { isPublished: true, isArchived: true });
+    const { ctx } = createContext({ identity: null, documents: [doc] });
+
+    await expect(getByIdHandler(ctx, { documentId: doc._id })).rejects.toThrow(
+      "Not authenticated",
+    );
+  });
+
+  it("returns published archived documents to their owner", async () => {
+    const doc = createDoc("doc", { isPublished: true, isArchived: true });
+    const { ctx } = createContext({ documents: [doc] });
+
+    const result = await getByIdHandler(ctx, { documentId: doc._id });
+    expect(result).toEqual(doc);
+  });
+});
+
+describe("documents update edge cases", () => {
+  it("updates content without touching other fields", async () => {
+    const doc = createDoc("doc", { title: "Kept", content: undefined });
+    const { ctx, db, documentMap } = createContext({ documents: [doc] });
+
+    const updated = await updateHandler(ctx, {
+      id: doc._id,
+      content: '{"blocks":[]}',
+    });
+
+    expect(db.patch).toHaveBeenCalledWith(doc._id, {
+      content: '{"blocks":[]}',
+    });
+    expect(updated?.title).toBe("Kept");
+    expect(documentMap.get(doc._id)?.content).toBe('{"blocks":[]}');
+  });
+
+  it("sets and clears the icon via update", async () => {
+    const doc = createDoc("doc");
+    const { ctx, documentMap } = createContext({ documents: [doc] });
+
+    await updateHandler(ctx, { id: doc._id, icon: "🚀" });
+    expect(documentMap.get(doc._id)?.icon).toBe("🚀");
+
+    await updateHandler(ctx, { id: doc._id, icon: undefined });
+    expect(documentMap.get(doc._id)?.icon).toBeUndefined();
+  });
+
+  it("sets and clears the cover image via update", async () => {
+    const doc = createDoc("doc");
+    const { ctx, documentMap } = createContext({ documents: [doc] });
+
+    await updateHandler(ctx, { id: doc._id, coverImage: "https://img" });
+    expect(documentMap.get(doc._id)?.coverImage).toBe("https://img");
+
+    await updateHandler(ctx, { id: doc._id, coverImage: undefined });
+    expect(documentMap.get(doc._id)?.coverImage).toBeUndefined();
+  });
+
+  it("toggles isPublished off", async () => {
+    const doc = createDoc("doc", { isPublished: true });
+    const { ctx, documentMap } = createContext({ documents: [doc] });
+
+    await updateHandler(ctx, { id: doc._id, isPublished: false });
+    expect(documentMap.get(doc._id)?.isPublished).toBe(false);
+  });
+});
+
+describe("documents create edge cases", () => {
+  it("creates a nested document under a parent", async () => {
+    const parent = createDoc("parent");
+    const { ctx, documentMap, db } = createContext({
+      documents: [parent],
+    });
+
+    const newId = await createHandler(ctx, {
+      title: "Child",
+      parentDocument: parent._id,
+    });
+
+    expect(db.insert).toHaveBeenCalledWith(
+      "documents",
+      expect.objectContaining({
+        title: "Child",
+        parentDocument: parent._id,
+        userId: "user_1",
+        isArchived: false,
+        isPublished: false,
+      }),
+    );
+    expect(documentMap.get(newId as Id<"documents">)?.parentDocument).toBe(
+      parent._id,
+    );
+  });
+
+  it("assigns ownership to the authenticated user's subject", async () => {
+    const { ctx, db } = createContext({
+      identity: { subject: "user_42" },
+    });
+
+    await createHandler(ctx, { title: "Mine", parentDocument: undefined });
+
+    expect(db.insert).toHaveBeenCalledWith(
+      "documents",
+      expect.objectContaining({ userId: "user_42" }),
+    );
   });
 });
