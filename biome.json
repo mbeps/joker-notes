@@ -20,7 +20,7 @@
       "!.vscode",
       "!wiki",
       "!graphify-out",
-      "__tests__"
+      "!__tests__"
     ],
     "ignoreUnknown": true
   },
@@ -114,28 +114,5 @@
         }
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": [
-        "**/*.test.{ts,tsx}",
-        "**/*.spec.{ts,tsx}",
-        "__tests__/**/*"
-      ],
-      "linter": {
-        "rules": {
-          "performance": {
-            "noImgElement": "off"
-          },
-          "suspicious": {
-            "noExplicitAny": "off",
-            "noThenProperty": "off"
-          },
-          "style": {
-            "noNonNullAssertion": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
