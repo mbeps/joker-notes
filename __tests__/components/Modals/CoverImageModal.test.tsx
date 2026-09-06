@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import CoverImageModal from "../../../components/Modals/CoverImageModal";
@@ -36,9 +42,7 @@ describe("CoverImageModal", () => {
     });
     render(<CoverImageModal />);
     expect(screen.getByText("Cover Image")).not.toBeNull();
-    expect(
-      screen.getByText("Click or drag image to upload"),
-    ).not.toBeNull();
+    expect(screen.getByText("Click or drag image to upload")).not.toBeNull();
   });
 
   it("uploads the file and updates the document when a file is chosen", async () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 /**
  * Props for the public layout wrapper rendered under the marketing routes.

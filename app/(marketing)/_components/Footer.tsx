@@ -1,5 +1,5 @@
+import type React from "react";
 import { Button } from "@/components/ui/button";
-import React from "react";
 import Logo from "./Logo";
 
 /**
@@ -11,18 +11,9 @@ import Logo from "./Logo";
  */
 const Footer: React.FC = () => {
   return (
-    <div className="flex items-center w-full p-6 bg-background z-50 dark:bg-[#1F1F1F]">
+    <div className="z-50 flex w-full items-center bg-background p-6 dark:bg-[#1F1F1F]">
       <Logo />
-      <div
-        className="
-					md:ml-auto 
-					w-full 
-					justify-between md:justify-end 
-					flex 
-					items-center 
-					gap-x-2 
-					text-muted-foreground"
-      >
+      <div className="flex w-full items-center justify-between gap-x-2 text-muted-foreground md:ml-auto md:justify-end">
         <Button variant="ghost" size="sm">
           Privacy Policy
         </Button>

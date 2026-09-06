@@ -1,15 +1,5 @@
 "use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverPositioner,
-} from "@/components/ui/popover";
-import { api } from "@/convex/_generated/api";
-import { useSearch } from "@/hooks/useSearch";
-import { useSettings } from "@/hooks/useSettings";
-import { cn } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import {
   ChevronsLeft,
@@ -21,8 +11,9 @@ import {
   Trash,
 } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import React, {
-  ElementRef,
+import type React from "react";
+import {
+  type ElementRef,
   useCallback,
   useEffect,
   useRef,
@@ -30,6 +21,16 @@ import React, {
 } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
+import {
+  Popover,
+  PopoverContent,
+  PopoverPositioner,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { api } from "@/convex/_generated/api";
+import { useSearch } from "@/hooks/useSearch";
+import { useSettings } from "@/hooks/useSettings";
+import { cn } from "@/lib/utils";
 import DocumentList from "./DocumentList";
 import { Item } from "./Item";
 import Navbar from "./Navbar";
@@ -48,7 +49,7 @@ const Navigation: React.FC = () => {
   const settings = useSettings();
   const search = useSearch();
   const params = useParams();
-  const pathname = usePathname();
+  const _pathname = usePathname();
   /**
    * Tracks whether the viewport should use the mobile collapsed experience.
    */
@@ -75,7 +76,7 @@ const Navigation: React.FC = () => {
       sidebarRef.current.style.width = isMobile ? "100%" : "240px";
       navbarRef.current.style.setProperty(
         "width",
-        isMobile ? "0" : "calc(100% - 240px)"
+        isMobile ? "0" : "calc(100% - 240px)",
       );
       navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
       setTimeout(() => setIsResetting(false), 300);
@@ -111,13 +112,13 @@ const Navigation: React.FC = () => {
     if (isMobile) {
       collapse();
     }
-  }, [pathname, isMobile, collapse]);
+  }, [isMobile, collapse]);
 
   /**
    * Begins sidebar resizing by listening for subsequent mouse events.
    */
   const handleMouseDown = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -143,7 +144,7 @@ const Navigation: React.FC = () => {
       navbarRef.current.style.setProperty("left", `${newWidth}px`);
       navbarRef.current.style.setProperty(
         "width",
-        `calc(100% - ${newWidth}px)`
+        `calc(100% - ${newWidth}px)`,
       );
     }
   };
@@ -162,7 +163,7 @@ const Navigation: React.FC = () => {
    */
   const handleCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`)
+      router.push(`/documents/${documentId}`),
     );
 
     toast.promise(promise, {
@@ -177,18 +178,18 @@ const Navigation: React.FC = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-40 p-3",
+          "group/sidebar relative z-40 flex h-full w-60 flex-col overflow-y-auto bg-secondary p-3",
           isCollapsed && "p-0",
-          isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "w-0 p-0"
+          isResetting && "transition-all duration-300 ease-in-out",
+          isMobile && "w-0 p-0",
         )}
       >
         <div
           onClick={collapse}
           role="button"
           className={cn(
-            "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
-            isMobile && "opacity-100"
+            "absolute top-3 right-2 h-6 w-6 rounded-sm text-muted-foreground opacity-0 transition hover:bg-neutral-300 group-hover/sidebar:opacity-100 dark:hover:bg-neutral-600",
+            isMobile && "opacity-100",
           )}
         >
           <ChevronsLeft className="h-6 w-6" />
@@ -203,13 +204,11 @@ const Navigation: React.FC = () => {
           <DocumentList />
           <Item onClick={handleCreate} icon={Plus} label="Add a page" />
           <Popover>
-            <PopoverTrigger className="w-full mt-4">
+            <PopoverTrigger className="mt-4 w-full">
               <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
             <PopoverPositioner side={isMobile ? "bottom" : "right"}>
-              <PopoverContent
-                className="p-0 w-72"
-              >
+              <PopoverContent className="w-72 p-0">
                 <TrashBox />
               </PopoverContent>
             </PopoverPositioner>
@@ -218,21 +217,21 @@ const Navigation: React.FC = () => {
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
-          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
+          className="absolute top-0 right-0 h-full w-1 cursor-ew-resize bg-primary/10 opacity-0 transition group-hover/sidebar:opacity-100"
         />
       </aside>
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-40 left-60 w-[calc(100%-240px)]",
-          isResetting && "transition-all ease-in-out duration-300",
-          isMobile && "left-0 w-full"
+          "absolute top-0 left-60 z-40 w-[calc(100%-240px)]",
+          isResetting && "transition-all duration-300 ease-in-out",
+          isMobile && "left-0 w-full",
         )}
       >
-        {!!params.documentId ? (
+        {params.documentId ? (
           <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
         ) : (
-          <nav className="bg-transparent px-3 py-2 w-full">
+          <nav className="w-full bg-transparent px-3 py-2">
             {isCollapsed && (
               <MenuIcon
                 onClick={resetWidth}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +35,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ children, onConfirm }) => {
    * Stops propagation so nested buttons do not trigger other handlers, then calls `onConfirm`.
    */
   const handleConfirm = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.stopPropagation(); // prevent event bubbling
     onConfirm(); // call onConfirm callback
@@ -43,9 +43,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ children, onConfirm }) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger 
+      <AlertDialogTrigger
         render={children as React.ReactElement}
-        onClick={(e) => e.stopPropagation()} 
+        onClick={(e) => e.stopPropagation()}
       />
       <AlertDialogContent>
         <AlertDialogHeader>

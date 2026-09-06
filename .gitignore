@@ -35,7 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vscode/settings.json
-.github/copilot-instructions.md
 .vscode/mcp.json
 
+wiki/**
 graphify-out/**
+!.github/workflows/**
+.github/**

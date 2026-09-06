@@ -1,7 +1,7 @@
-import React from "react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
 import { Poppins } from "next/font/google";
+import Image from "next/image";
+import type React from "react";
+import { cn } from "@/lib/utils";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -17,7 +17,7 @@ const font = Poppins({
  */
 const Logo: React.FC = () => {
   return (
-    <div className="hidden md:flex items-center gap-x-2">
+    <div className="hidden items-center gap-x-2 md:flex">
       {/* Light Mode Logo */}
       <Image
         src="/logos/logo-light.svg"

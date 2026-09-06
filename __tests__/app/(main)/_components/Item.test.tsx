@@ -30,8 +30,8 @@ vi.mock("sonner", () => ({
   toast: { promise: vi.fn() },
 }));
 
-import { Item } from "@/app/(main)/_components/Item";
 import { FileIcon } from "lucide-react";
+import { Item } from "@/app/(main)/_components/Item";
 
 const baseProps = { label: "My Doc", icon: FileIcon };
 
@@ -79,9 +79,8 @@ describe("Item", () => {
     const { container } = render(
       <Item {...baseProps} id="doc1" onClick={onClick} onExpand={onExpand} />,
     );
-    const chevron = container.querySelector(
-      ".lucide-chevron-right",
-    )!.parentElement!;
+    const chevron = container.querySelector(".lucide-chevron-right")!
+      .parentElement!;
     fireEvent.click(chevron);
     expect(onExpand).toHaveBeenCalledTimes(1);
     expect(onClick).not.toHaveBeenCalled();

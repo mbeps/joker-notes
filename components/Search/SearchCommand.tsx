@@ -1,12 +1,13 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useSearch } from "@/hooks/useSearch";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { File } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/convex/_generated/api";
+import { useSearch } from "@/hooks/useSearch";
 import {
   CommandDialog,
   CommandEmpty,

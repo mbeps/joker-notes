@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import type React from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
 
 /**
  * Empty state page shown when the user has not selected a document.
@@ -33,7 +33,7 @@ const DocumentPage: React.FC = () => {
    */
   const onCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`)
+      router.push(`/documents/${documentId}`),
     );
 
     toast.promise(promise, {
@@ -44,7 +44,7 @@ const DocumentPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-4">
+    <div className="flex h-full flex-col items-center justify-center space-y-4">
       <Image
         src="/empty/empty-light.png"
         height="300"
@@ -59,11 +59,11 @@ const DocumentPage: React.FC = () => {
         alt="Empty"
         className="hidden dark:block"
       />
-      <h2 className="text-lg font-medium">
+      <h2 className="font-medium text-lg">
         {`Welcome to ${user?.firstName}'s Joker`}
       </h2>
       <Button onClick={onCreate}>
-        <PlusCircle className="h-4 w-4 mr-2" />
+        <PlusCircle className="mr-2 h-4 w-4" />
         Create a note
       </Button>
     </div>

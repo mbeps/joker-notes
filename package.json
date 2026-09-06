@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "build-start": "next build && next start",
-    "lint": "eslint .",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write --unsafe .",
+    "format": "biome format --write .",
+    "ci": "biome ci .",
     "test": "vitest run --coverage",
     "test:watch": "vitest watch",
     "convex-dev": "convex dev"
@@ -47,6 +50,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.12",
     "@tailwindcss/postcss": "^4.2.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
@@ -57,8 +61,6 @@
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^4.0.18",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "^16.1.6",
     "jsdom": "^28.1.0",
     "postcss": "^8",
     "postcss-preset-mantine": "^1.18.0",

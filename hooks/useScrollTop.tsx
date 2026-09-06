@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Tracks whether the window scroll offset has crossed a threshold so sticky UI can react.

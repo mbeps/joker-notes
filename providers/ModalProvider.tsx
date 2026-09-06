@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import CoverImageModal from "@/components/Modals/CoverImageModal";
 import SettingsModal from "@/components/Modals/SettingsModal";
-import { useEffect, useState } from "react";
 
 /**
  * Mounts application wide modals only on the client to avoid hydration mismatches with window APIs.

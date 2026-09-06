@@ -1,12 +1,13 @@
-import { useCoverImage } from "@/hooks/useCoverImage";
 import { useMutation } from "convex/react";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
+import type React from "react";
+import { useState } from "react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { SingleImageDropzone } from "../Images/SingleImageDropzone";
+import type { Id } from "@/convex/_generated/dataModel";
+import { useCoverImage } from "@/hooks/useCoverImage";
 import { useEdgeStore } from "@/lib/edgestore";
+import { SingleImageDropzone } from "../Images/SingleImageDropzone";
+import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 
 /**
  * Modal that surfaces a single-image dropzone for uploading or replacing document cover art.
@@ -72,7 +73,7 @@ const CoverImageModal: React.FC = () => {
     <Dialog open={coverImage.isOpen} onOpenChange={coverImage.onClose}>
       <DialogContent>
         <DialogHeader>
-          <h2 className="text-center text-lg font-semibold">Cover Image</h2>
+          <h2 className="text-center font-semibold text-lg">Cover Image</h2>
         </DialogHeader>
         {/* Dropzone where the file is selected and then displayed (when there is image) */}
         <SingleImageDropzone

@@ -2,8 +2,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import Toolbar from "../../../components/Toolbars/Toolbar";
-import { useCoverImage } from "../../../hooks/useCoverImage";
 import type { Doc } from "../../../convex/_generated/dataModel";
+import { useCoverImage } from "../../../hooks/useCoverImage";
 
 const updateMock = vi.hoisted(() => vi.fn());
 const removeIconMock = vi.hoisted(() => vi.fn());

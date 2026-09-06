@@ -13,7 +13,7 @@ vi.mock("@clerk/nextjs", () => ({
 }));
 
 type DocResult = Record<string, unknown> | null | undefined;
-let docResult: DocResult = undefined;
+let docResult: DocResult;
 
 vi.mock("convex/react", () => ({
   useQuery: () => docResult,

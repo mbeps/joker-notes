@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button";
  * @returns Error state layout encouraging navigation back to documents.
  * @see https://nextjs.org/docs/app/building-your-application/routing/error-handling
  */
-const Error = () => {
+const RootError = () => {
   return (
-    <div className="h-full flex flex-col items-center justify-center space-y-4">
+    <div className="flex h-full flex-col items-center justify-center space-y-4">
       <Image
         src="/error/error-light.png"
         height="300"
@@ -28,12 +28,10 @@ const Error = () => {
         alt="Error"
         className="hidden dark:block"
       />
-      <h2 className="text-xl font-medium">Something went wrong!</h2>
-      <Button render={<Link href="/documents" />}>
-        Go back
-      </Button>
+      <h2 className="font-medium text-xl">Something went wrong!</h2>
+      <Button render={<Link href="/documents" />}>Go back</Button>
     </div>
   );
 };
 
-export default Error;
+export default RootError;

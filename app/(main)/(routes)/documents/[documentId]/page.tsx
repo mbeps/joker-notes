@@ -1,13 +1,14 @@
 "use client";
 
+import { useMutation, useQuery } from "convex/react";
+import dynamic from "next/dynamic";
+import type React from "react";
+import { use, useMemo } from "react";
 import { Cover } from "@/components/Images/Cover";
 import Toolbar from "@/components/Toolbars/Toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import dynamic from "next/dynamic";
-import React, { useMemo, use } from "react";
+import type { Id } from "@/convex/_generated/dataModel";
 
 /**
  * Route parameters provided by Next.js for the document page.
@@ -34,7 +35,7 @@ const DocumentPage: React.FC<DocumentPageProps> = (props) => {
    */
   const Editor = useMemo(
     () => dynamic(() => import("@/components/Editors/Editor"), { ssr: false }),
-    []
+    [],
   );
 
   /**
@@ -70,8 +71,8 @@ const DocumentPage: React.FC<DocumentPageProps> = (props) => {
     return (
       <div>
         <Cover.Skeleton />
-        <div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10">
-          <div className="space-y-4 pl-8 pt-4">
+        <div className="mx-auto mt-10 md:max-w-3xl lg:max-w-4xl">
+          <div className="space-y-4 pt-4 pl-8">
             <Skeleton className="h-14 w-[50%]" />
             <Skeleton className="h-4 w-[80%]" />
             <Skeleton className="h-4 w-[40%]" />
@@ -90,7 +91,7 @@ const DocumentPage: React.FC<DocumentPageProps> = (props) => {
   return (
     <div className="pb-40">
       <Cover url={document.coverImage} />
-      <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
+      <div className="mx-auto md:max-w-3xl lg:max-w-4xl">
         <Toolbar initialData={document} />
         <Editor onChange={onChange} initialContent={document.content} />
       </div>

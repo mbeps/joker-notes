@@ -2,7 +2,7 @@
 
 import { UploadCloudIcon, X } from "lucide-react";
 import * as React from "react";
-import { useDropzone, type DropzoneOptions } from "react-dropzone";
+import { type DropzoneOptions, useDropzone } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
 import { Spinner } from "../Spinner/Spinner";
 
@@ -85,6 +85,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     const {
       getRootProps,
       getInputProps,
+      inputRef,
       acceptedFiles,
       fileRejections,
       isFocused,
@@ -102,6 +103,8 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       },
       ...dropzoneOptions,
     });
+
+    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     // styling
     const dropZoneClassName = React.useMemo(
@@ -146,16 +149,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         {disabled && (
-          <div
-            className="
-							flex
-							items-center justify-center
-							absolute
-							inset-y-0
-							h-full w-full
-							bg-background/80
-							z-50"
-          >
+          <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-background/80">
             <Spinner />
           </div>
         )}
@@ -169,21 +163,11 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           })}
         >
           {/* Main File Input */}
-          <input
-            {...getInputProps({
-              ref: (element: HTMLInputElement | null) => {
-                if (typeof ref === "function") {
-                  ref(element);
-                } else if (ref) {
-                  ref.current = element;
-                }
-              },
-            })}
-          />
+          <input {...getInputProps()} />
 
           {imageUrl ? (
             // Image Preview
-            /* trunk-ignore(eslint/@next/next/no-img-element) */
+            // biome-ignore lint/performance/noImgElement: Blob preview URL cannot be statically optimized by Next.js Image
             <img
               className="h-full w-full rounded-md object-cover"
               src={imageUrl}
@@ -191,7 +175,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             />
           ) : (
             // Upload Icon
-            <div className="flex flex-col items-center justify-center text-xs text-gray-400">
+            <div className="flex flex-col items-center justify-center text-gray-400 text-xs">
               <UploadCloudIcon className="mb-2 h-7 w-7" />
               <div className="text-gray-400">Click or drag image to upload</div>
             </div>
@@ -200,13 +184,13 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {/* Remove Image Icon */}
           {imageUrl && !disabled && (
             <div
-              className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
+              className="group absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 transform"
               onClick={(e) => {
                 e.stopPropagation();
                 void onChange?.(undefined);
               }}
             >
-              <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+              <div className="flex h-5 w-5 items-center justify-center rounded-md border border-gray-500 border-solid bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
                 <X
                   className="text-gray-500 dark:text-gray-400"
                   width={16}
@@ -218,7 +202,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {/* Error Text */}
-        <div className="mt-1 text-xs text-red-500">{errorMessage}</div>
+        <div className="mt-1 text-red-500 text-xs">{errorMessage}</div>
       </div>
     );
   },
@@ -236,7 +220,7 @@ const Button = React.forwardRef<
     <button
       className={twMerge(
         // base
-        "focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex cursor-pointer items-center justify-center rounded-md font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         // color
         "border border-gray-400 text-gray-400 shadow-sm hover:bg-gray-100 hover:text-gray-500 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700",
         // size
@@ -268,7 +252,7 @@ function formatFileSize(bytes?: number) {
   const dm = 2;
   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
 export { SingleImageDropzone };

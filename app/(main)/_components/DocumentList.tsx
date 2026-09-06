@@ -1,13 +1,14 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { Item } from "./Item";
-import { cn } from "@/lib/utils";
 import { FileIcon } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
+import { api } from "@/convex/_generated/api";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
+import { Item } from "./Item";
 
 /**
  * Props accepted by the recursive document list renderer.
@@ -86,9 +87,9 @@ const DocumentList: React.FC<DocumentListProps> = ({
           paddingLeft: level ? `${level * 12 + 25}px` : undefined,
         }}
         className={cn(
-          "hidden text-sm font-medium text-muted-foreground/80",
+          "hidden font-medium text-muted-foreground/80 text-sm",
           expanded && "last:block",
-          level === 0 && "hidden"
+          level === 0 && "hidden",
         )}
       >
         No pages inside

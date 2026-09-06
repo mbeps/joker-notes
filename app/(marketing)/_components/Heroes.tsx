@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import type React from "react";
 
 /**
  * Presentation component that swaps marketing hero illustrations by theme and breakpoint.
@@ -10,22 +10,9 @@ import React from "react";
  */
 const Heroes: React.FC = () => {
   return (
-    <div
-      className="
-				flex flex-col 
-				items-center justify-center 
-				max-w-5xl
-			"
-    >
+    <div className="flex max-w-5xl flex-col items-center justify-center">
       <div className="flex items-center">
-        <div
-          className="
-						relative 
-						w-[300px] h-[300px] 
-						sm:w-[350px] sm:h-[350px] 
-						md:h-[400px] md:w-[400px]
-					"
-        >
+        <div className="relative h-[300px] w-[300px] sm:h-[350px] sm:w-[350px] md:h-[400px] md:w-[400px]">
           {/* Light Mode Theme */}
           <Image
             src="/documents/documents-light.png"
@@ -37,16 +24,11 @@ const Heroes: React.FC = () => {
           <Image
             src="/documents/documents-dark.png"
             fill
-            className="object-contain hidden dark:block"
+            className="hidden object-contain dark:block"
             alt="Documents"
           />
         </div>
-        <div
-          className="
-						relative 
-						h-[400px] w-[400px] 
-						hidden md:block"
-        >
+        <div className="relative hidden h-[400px] w-[400px] md:block">
           {/* Light Mode Theme */}
           <Image
             src="/reading/reading-light.png"
@@ -58,7 +40,7 @@ const Heroes: React.FC = () => {
           <Image
             src="/reading/reading-dark.png"
             fill
-            className="object-contain hidden dark:block"
+            className="hidden object-contain dark:block"
             alt="Reading"
           />
         </div>
