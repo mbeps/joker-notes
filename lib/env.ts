@@ -48,6 +48,13 @@ export function validateEnv(
   },
   isServerEnv: boolean = typeof window === "undefined",
 ): Env {
+  if (
+    process.env.SKIP_ENV_VALIDATION === "true" ||
+    process.env.SKIP_ENV_VALIDATION === "1"
+  ) {
+    return runtimeEnv as Env;
+  }
+
   const schema = isServerEnv ? serverEnvSchema : clientEnvSchema;
   const parsed = schema.safeParse(runtimeEnv);
 

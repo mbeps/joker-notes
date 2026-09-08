@@ -155,6 +155,38 @@ describe("env configuration", () => {
       expect(parsed).toBeDefined();
       expect(typeof parsed.NEXT_PUBLIC_CONVEX_URL).toBe("string");
     });
+
+    it("bypasses validation when SKIP_ENV_VALIDATION is 'true'", () => {
+      const prev = process.env.SKIP_ENV_VALIDATION;
+      try {
+        process.env.SKIP_ENV_VALIDATION = "true";
+        const dummyEnv = { INVALID_VAR: 123 };
+        const parsed = validateEnv(dummyEnv);
+        expect(parsed).toBe(dummyEnv);
+      } finally {
+        if (prev === undefined) {
+          delete process.env.SKIP_ENV_VALIDATION;
+        } else {
+          process.env.SKIP_ENV_VALIDATION = prev;
+        }
+      }
+    });
+
+    it("bypasses validation when SKIP_ENV_VALIDATION is '1'", () => {
+      const prev = process.env.SKIP_ENV_VALIDATION;
+      try {
+        process.env.SKIP_ENV_VALIDATION = "1";
+        const dummyEnv = { INVALID_VAR: 456 };
+        const parsed = validateEnv(dummyEnv);
+        expect(parsed).toBe(dummyEnv);
+      } finally {
+        if (prev === undefined) {
+          delete process.env.SKIP_ENV_VALIDATION;
+        } else {
+          process.env.SKIP_ENV_VALIDATION = prev;
+        }
+      }
+    });
   });
 });
 
