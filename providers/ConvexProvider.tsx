@@ -4,9 +4,9 @@ import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import type { ReactNode } from "react";
-import { env } from "@/lib/env";
+import { clientEnv } from "@/lib/env";
 
-const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
+const convex = new ConvexReactClient(clientEnv.NEXT_PUBLIC_CONVEX_URL);
 
 /**
  * Wraps the React tree with Clerk and Convex providers so queries and mutations share auth context.
@@ -19,7 +19,7 @@ const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
  */
 export const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
   return (
-    <ClerkProvider publishableKey={env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+    <ClerkProvider publishableKey={clientEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
         {children}
       </ConvexProviderWithClerk>

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "build-start": "next build && next start",
+    "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write --unsafe .",
     "format": "biome format --write .",
@@ -70,7 +71,7 @@
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
+    "typescript": "~5.9.3",
     "vite": "^8.2.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^5.0.0"
