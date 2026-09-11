@@ -27,6 +27,10 @@ export const serverEnvSchema = clientEnvSchema.extend({
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),
+  LOG_LEVEL: z
+    .enum(["debug", "info", "warn", "warning", "error", "fatal"])
+    .default("info")
+    .transform((val) => (val === "warn" ? "warning" : val)),
 });
 
 /**
@@ -99,6 +103,7 @@ export function validateServerEnv(
     EDGE_STORE_SECRET_KEY: process.env.EDGE_STORE_SECRET_KEY,
     CONVEX_DEPLOYMENT: process.env.CONVEX_DEPLOYMENT,
     NODE_ENV: process.env.NODE_ENV,
+    LOG_LEVEL: process.env.LOG_LEVEL,
   },
 ): ServerEnv {
   if (
