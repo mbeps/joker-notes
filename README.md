@@ -48,6 +48,7 @@ Create, customize, and manage your notes with ease:
 
 - **[Convex](https://www.convex.dev/)**: A developer-friendly database emphasizing reactivity and ease of use. It combines a relational data model with JSON-like documents, offering intuitive JavaScript APIs, automatic query optimization, and built-in reactivity for real-time applications.
 - **[EdgeStore](https://edgestore.dev/)**: A file storage solution specifically designed for Next.js, providing a type-safe way to manage file uploads and retrievals. It integrates seamlessly with Next.js, offering access control, metadata handling, lifecycle hooks, and automatic thumbnail generation, among other features.
+- **[LogTape](https://logtape.org/)**: A lightweight, structured, and non-blocking logging library for JavaScript and TypeScript with columnar ANSI formatting and environment-level control.
 
 # Requirements
 Below are the requirements to run this project:
@@ -92,6 +93,10 @@ CLERK_SECRET_KEY=""
 # EdgeStore
 EDGE_STORE_ACCESS_KEY=""
 EDGE_STORE_SECRET_KEY=""
+
+# Logging (optional, defaults to "info")
+# Supported levels: "debug" | "info" | "warn" | "warning" | "error" | "fatal"
+LOG_LEVEL="info"
 ```
 
 Replace the placeholders with your actual keys and URLs from Convex, Clerk, and EdgeStore.
@@ -115,7 +120,20 @@ export default convex;
 
 Ensure to modify the domain and applicationID if different for your setup.
 
-## 4. Running Database (Convex)
+## 4. Logging Configuration
+Joker Notes uses [LogTape](https://logtape.org/) for structured, non-blocking server telemetry with fixed-width columnar ANSI formatting.
+
+Log verbosity is controlled via the `LOG_LEVEL` environment variable in `.env.local`:
+
+| Level              | Description                                                          |
+| ------------------ | -------------------------------------------------------------------- |
+| `debug`            | Detailed query traces, request routing, and internal diagnostic logs |
+| `info` *(default)* | Standard operational events and successful service actions           |
+| `warn` / `warning` | Recoverable issues, validation warnings, or unauthorized requests    |
+| `error`            | Unhandled exceptions, database errors, or route handler failures     |
+| `fatal`            | Critical, unrecoverable system errors                                |
+
+## 5. Running Database (Convex)
 Keep the Convex database operational during development by executing the following command. 
 This is essential for real-time data interaction:
 
@@ -123,7 +141,7 @@ This is essential for real-time data interaction:
 yarn convex-dev
 ```
 
-## 5. Run the Next.JS Application
+## 6. Run the Next.JS Application
 With your environment variables configured and database running, initiate the Next.js server in another terminal window:
 
 ```sh
@@ -153,3 +171,4 @@ The application should now be running at [`http://localhost:3000`](http://localh
 - [Zod Documentation](https://zod.dev/)
 - [Convex Database Documentation](https://docs.convex.dev/quickstart/nextjs)
 - [Edge Store Documentation](https://edgestore.dev/)
+- [LogTape Documentation](https://logtape.org/)

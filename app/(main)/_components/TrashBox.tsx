@@ -1,17 +1,17 @@
 "use client";
 
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
-import { toast } from "sonner";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { Spinner } from "@/components/Spinner/Spinner";
 import { Input } from "@/components/ui/input";
 import { ROUTES } from "@/constants/routes";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 
 /**
  * Popover content that lists trashed documents with options to restore or permanently delete.
@@ -25,8 +25,7 @@ const TrashBox: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const documents = useQuery(api.documents.getTrash);
-  const restore = useMutation(api.documents.restore);
-  const remove = useMutation(api.documents.remove);
+  const { restoreDocument, deleteDocument } = useDocumentActions();
 
   // keeps track of the search query
   const [search, setSearch] = useState("");
@@ -58,13 +57,7 @@ const TrashBox: React.FC = () => {
     documentId: Id<"documents">,
   ) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
-    const promise = restore({ id: documentId }); // restores the document from the archive (in trash)
-
-    toast.promise(promise, {
-      loading: "Restoring note...",
-      success: "Note restored!",
-      error: " Failed to restore note.",
-    });
+    restoreDocument(documentId);
   };
 
   /**
@@ -73,18 +66,9 @@ const TrashBox: React.FC = () => {
    * @param documentId Identifier of the document to remove.
    */
   const onRemove = (documentId: Id<"documents">) => {
-    const promise = remove({ id: documentId }); // permanently deletes the document from the database
-
-    toast.promise(promise, {
-      loading: "Deleting note...",
-      success: "Note deleted!",
-      error: " Failed to delete note.",
+    deleteDocument(documentId, {
+      shouldRedirect: params.documentId === documentId,
     });
-
-    if (params.documentId === documentId) {
-      // redirects to the documents page if the document being deleted is currently open
-      router.push(ROUTES.DOCUMENTS.path);
-    }
   };
 
   // shows a loading spinner if the documents are still being fetched

@@ -1,13 +1,11 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import { ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/useCoverImage";
-import { useEdgeStore } from "@/lib/edgestore";
+import { useCoverImageActions } from "@/hooks/useCoverImageActions";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
@@ -31,28 +29,15 @@ interface CoverImageProps {
  * @see https://docs.convex.dev/database/writing-data
  */
 export const Cover = ({ url, preview }: CoverImageProps) => {
-  const { edgestore } = useEdgeStore();
   const params = useParams();
   const coverImage = useCoverImage();
-  /**
-   * Convex mutation that clears the cover image reference for this document.
-   */
-  const removeCoverImage = useMutation(api.documents.removeCoverImage);
+  const { removeCover } = useCoverImageActions();
 
   /**
    * Deletes the existing cover asset from Edge Store and clears it in Convex.
    */
   const onRemove = async () => {
-    if (url) {
-      // removes the image from EdgeStore
-      await edgestore.publicFiles.delete({
-        url: url,
-      });
-    }
-    // calls the `removeCoverImage` API method to remove the image from the Convex database
-    removeCoverImage({
-      id: params.documentId as Id<"documents">,
-    });
+    await removeCover(params.documentId as Id<"documents">, url);
   };
 
   return (

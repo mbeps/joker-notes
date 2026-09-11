@@ -1,11 +1,9 @@
-import { useMutation } from "convex/react";
 import { useParams } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/useCoverImage";
-import { useEdgeStore } from "@/lib/edgestore";
+import { useCoverImageActions } from "@/hooks/useCoverImageActions";
 import { SingleImageDropzone } from "../Images/SingleImageDropzone";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 
@@ -19,19 +17,16 @@ import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
  */
 const CoverImageModal: React.FC = () => {
   const params = useParams();
-  const update = useMutation(api.documents.update);
   const coverImage = useCoverImage();
-  const { edgestore } = useEdgeStore();
+  const { uploadCover, isSubmitting } = useCoverImageActions();
 
   const [file, setFile] = useState<File>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
    * Closes the modal while clearing local upload state.
    */
   const onClose = () => {
     setFile(undefined);
-    setIsSubmitting(false);
     coverImage.onClose();
   };
 
@@ -40,31 +35,13 @@ const CoverImageModal: React.FC = () => {
    * Reuses `replaceTargetUrl` so edits overwrite the existing asset.
    */
   const onChange = async (file?: File) => {
-    if (file) {
-      setIsSubmitting(true);
+    if (file && params.documentId) {
       setFile(file);
-
-      /**
-       * If the document already has a cover image, replace the existing image.
-       * This image is updated within EdgeStore which stores the images for this projects.
-       */
-      const res = await edgestore.publicFiles.upload({
+      await uploadCover(
+        params.documentId as Id<"documents">,
         file,
-        options: {
-          replaceTargetUrl: coverImage.url,
-        },
-      });
-
-      /**
-       * Update the document with the new cover image.
-       * Uses the URL from EdgeStore and updates the document with the new cover image.
-       */
-      await update({
-        id: params.documentId as Id<"documents">,
-        coverImage: res.url,
-      });
-
-      // Clear the selected file, submitting state and close the modal.
+        coverImage.url,
+      );
       onClose();
     }
   };

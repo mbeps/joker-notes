@@ -1,6 +1,5 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import {
   ChevronsLeft,
   MenuIcon,
@@ -10,7 +9,7 @@ import {
   Settings,
   Trash,
 } from "lucide-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import type React from "react";
 import {
   type ElementRef,
@@ -19,7 +18,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import {
   Popover,
@@ -27,8 +25,7 @@ import {
   PopoverPositioner,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ROUTES } from "@/constants/routes";
-import { api } from "@/convex/_generated/api";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 import { useSearch } from "@/hooks/useSearch";
 import { useSettings } from "@/hooks/useSettings";
 import { cn } from "@/lib/utils";
@@ -46,19 +43,15 @@ import UserItem from "./UserItem";
  * @see https://docs.convex.dev/database/writing-data
  */
 const Navigation: React.FC = () => {
-  const router = useRouter();
   const settings = useSettings();
   const search = useSearch();
   const params = useParams();
   const _pathname = usePathname();
+  const { createDocument } = useDocumentActions();
   /**
    * Tracks whether the viewport should use the mobile collapsed experience.
    */
   const isMobile = useMediaQuery("(max-width: 768px)");
-  /**
-   * Convex mutation used to create new documents from sidebar actions.
-   */
-  const create = useMutation(api.documents.create);
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
@@ -163,15 +156,7 @@ const Navigation: React.FC = () => {
    * Creates a new document with a default title and navigates to it once saved.
    */
   const handleCreate = () => {
-    const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(ROUTES.DOCUMENTS.detail(documentId)),
-    );
-
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "New note created!",
-      error: "Failed to create a new note.",
-    });
+    createDocument();
   };
 
   return (

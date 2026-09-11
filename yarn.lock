@@ -1370,6 +1370,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@logtape/logtape@^2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@logtape/logtape/-/logtape-2.3.4.tgz#7194088c36521cc1886309a6fdd5a75213afbb04"
+  integrity sha512-oW5Q6EOdjemL94c324j2fUn+2nRGuODwmOKmrwY6YAVkjqNWYVgkzpfbckFc4CKmDDCMk+GiwNfPybMZB3QqNQ==
+
 "@mantine/core@^9.6.0":
   version "9.6.0"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-9.6.0.tgz#9d4489de141be13c42932247c63e57615695a4bf"

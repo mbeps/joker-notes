@@ -1,5 +1,4 @@
 import { useUser } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
 import {
   ChevronDown,
   ChevronRight,
@@ -8,9 +7,7 @@ import {
   Plus,
   Trash,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type React from "react";
-import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Kbd } from "@/components/ui/kbd";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ROUTES } from "@/constants/routes";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 import { cn } from "@/lib/utils";
 
 /**
@@ -73,26 +69,15 @@ export const Item = ({
   expanded,
 }: ItemProps) => {
   const { user } = useUser();
-  const router = useRouter();
-  const create = useMutation(api.documents.create);
-  const archive = useMutation(api.documents.archive);
+  const { createDocument, archiveDocument } = useDocumentActions();
 
   /**
    * Sends the current document to the Convex trash archive and shows toast feedback.
    */
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
-    if (!id) return; // exist if the document ID is undefined
-    const promise = archive({ id }).then(() =>
-      router.push(ROUTES.DOCUMENTS.path),
-    ); // archives the document and redirects to the documents page
-
-    // displays a toast notification
-    toast.promise(promise, {
-      loading: "Moving to trash...",
-      success: "Note moved to trash!",
-      error: "Failed to archive note.",
-    });
+    if (!id) return; // exit if the document ID is undefined
+    archiveDocument(id);
   };
 
   /**
@@ -110,21 +95,15 @@ export const Item = ({
    */
   const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation(); // prevents the event from bubbling up to the parent element
-    if (!id) return; // exist if the document ID is undefined (no parent document)
-    const promise = create({ title: "Untitled", parentDocument: id }).then(
-      // creates a new document with the title "Untitled" and the current document as the parent document
-      (documentId) => {
+    if (!id) return; // exit if the document ID is undefined (no parent document)
+
+    createDocument({
+      parentDocument: id,
+      onSuccess: () => {
         if (!expanded) {
           onExpand?.(); // expands the current document if it is not expanded
         }
-        router.push(ROUTES.DOCUMENTS.detail(documentId)); // redirects to the new document
       },
-    );
-
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "New note created!",
-      error: "Failed to create a new note.",
     });
   };
 

@@ -1,14 +1,10 @@
 "use client";
 
-import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
 import type React from "react";
-import { toast } from "sonner";
 import ConfirmModal from "@/components/Modals/ConfirmModal";
 import { Button } from "@/components/ui/button";
-import { ROUTES } from "@/constants/routes";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 
 /**
  * Props supplied to the trash banner, carrying the Convex document id.
@@ -26,36 +22,20 @@ interface BannerProps {
  * @see https://docs.convex.dev/database/writing-data
  */
 const Banner: React.FC<BannerProps> = ({ documentId }) => {
-  const router = useRouter();
-  const remove = useMutation(api.documents.remove);
-  const restore = useMutation(api.documents.restore);
+  const { restoreDocument, deleteDocument } = useDocumentActions();
 
   /**
    * Permanently deletes the trashed document and navigates back to the list.
    */
   const onRemove = () => {
-    const promise = remove({ id: documentId });
-
-    toast.promise(promise, {
-      loading: "Deleting note...",
-      success: "Note deleted!",
-      error: "Failed to delete note.",
-    });
-
-    router.push(ROUTES.DOCUMENTS.path);
+    deleteDocument(documentId, { shouldRedirect: true });
   };
 
   /**
    * Restores the trashed document to the active list.
    */
   const onRestore = () => {
-    const promise = restore({ id: documentId });
-
-    toast.promise(promise, {
-      loading: "Restoring note...",
-      success: "Note restored!",
-      error: "Failed to restore note.",
-    });
+    restoreDocument(documentId);
   };
 
   return (

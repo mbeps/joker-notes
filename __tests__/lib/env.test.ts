@@ -108,8 +108,55 @@ describe("env configuration", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.NODE_ENV).toBe("development");
+        expect(result.data.LOG_LEVEL).toBe("info");
         expect(result.data.CONVEX_DEPLOYMENT).toBeUndefined();
       }
+    });
+
+    it("transforms warn to warning for LOG_LEVEL", () => {
+      const serverConfig = {
+        NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_123",
+        CLERK_SECRET_KEY: "sk_test_123",
+        EDGE_STORE_ACCESS_KEY: "access_key_123",
+        EDGE_STORE_SECRET_KEY: "secret_key_123",
+        LOG_LEVEL: "warn",
+      };
+      const result = serverEnvSchema.safeParse(serverConfig);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.LOG_LEVEL).toBe("warning");
+      }
+    });
+
+    it("accepts valid explicit LOG_LEVEL values", () => {
+      const levels = ["debug", "info", "warning", "error", "fatal"] as const;
+      for (const level of levels) {
+        const result = serverEnvSchema.safeParse({
+          NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_123",
+          CLERK_SECRET_KEY: "sk_test_123",
+          EDGE_STORE_ACCESS_KEY: "access_key_123",
+          EDGE_STORE_SECRET_KEY: "secret_key_123",
+          LOG_LEVEL: level,
+        });
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.LOG_LEVEL).toBe(level);
+        }
+      }
+    });
+
+    it("rejects invalid LOG_LEVEL values", () => {
+      const result = serverEnvSchema.safeParse({
+        NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_123",
+        CLERK_SECRET_KEY: "sk_test_123",
+        EDGE_STORE_ACCESS_KEY: "access_key_123",
+        EDGE_STORE_SECRET_KEY: "secret_key_123",
+        LOG_LEVEL: "verbose",
+      });
+      expect(result.success).toBe(false);
     });
 
     it("rejects missing server secrets", () => {

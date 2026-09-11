@@ -41,3 +41,4 @@ wiki/**
 graphify-out/**
 !.github/workflows/**
 .github/**
+GEMINI.md

@@ -1,8 +1,11 @@
 import { initEdgeStore } from "@edgestore/server";
 import { createEdgeStoreNextHandler } from "@edgestore/server/adapters/next/app";
 import type { NextRequest } from "next/server";
+import { getLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
+
+const log = getLogger(["app", "api", "edgestore"]);
 
 // Initialize EdgeStore server router with validated server environment
 const es = initEdgeStore.create();
@@ -36,12 +39,29 @@ function getHandler() {
 }
 
 /**
- * Next.js route handler routing incoming requests to Edge Store.
+ * Next.js route handler routing incoming requests to Edge Store with telemetry.
  *
  * @param req Incoming Next.js request.
  * @returns Response from Edge Store handler.
  */
-const handler = (req: NextRequest) => getHandler()(req);
+const handler = async (req: NextRequest) => {
+  log.debug("Received {method} request at '{path}'", {
+    method: req.method,
+    path: req.nextUrl.pathname,
+  });
+
+  try {
+    const response = await getHandler()(req);
+    return response;
+  } catch (err) {
+    log.error("Edge Store handler error on {method} '{path}': {error}", {
+      method: req.method,
+      path: req.nextUrl.pathname,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
+};
 
 export { handler as GET, handler as POST };
 
