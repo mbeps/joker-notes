@@ -1,15 +1,11 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import type React from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ROUTES } from "@/constants/routes";
-import { api } from "@/convex/_generated/api";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 
 /**
  * Empty state page shown when the user has not selected a document.
@@ -20,28 +16,14 @@ import { api } from "@/convex/_generated/api";
  * @see https://clerk.com/docs/references/react/use-user
  */
 const DocumentPage: React.FC = () => {
-  const router = useRouter();
   const { user } = useUser();
-  // document.api follows the structure in the convex folder
-  /**
-   * Create a new document with the title "Untitled".
-   * The `create` function is from the Convex API.
-   */
-  const create = useMutation(api.documents.create);
+  const { createDocument } = useDocumentActions();
 
   /**
    * Persists a blank document and navigates to its editor route.
    */
   const onCreate = () => {
-    const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(ROUTES.DOCUMENTS.detail(documentId)),
-    );
-
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "New note created!",
-      error: "Failed to create a new note.",
-    });
+    createDocument();
   };
 
   return (

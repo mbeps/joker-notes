@@ -1,10 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
 import { MoreHorizontal, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,9 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ROUTES } from "@/constants/routes";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useDocumentActions } from "@/hooks/useDocumentActions";
 
 /**
  * Props passed to the document action menu containing the Convex document id.
@@ -36,23 +32,14 @@ interface MenuProps {
  * @see https://clerk.com/docs/references/react/use-user
  */
 export const Menu = ({ documentId }: MenuProps) => {
-  const router = useRouter();
   const { user } = useUser();
-  const archive = useMutation(api.documents.archive);
+  const { archiveDocument } = useDocumentActions();
 
   /**
    * Archives the document and redirects back to the document list.
    */
   const onArchive = () => {
-    const promise = archive({ id: documentId });
-
-    toast.promise(promise, {
-      loading: "Moving to trash...",
-      success: "Note moved to trash!",
-      error: "Failed to archive note.",
-    });
-
-    router.push(ROUTES.DOCUMENTS.path);
+    archiveDocument(documentId);
   };
 
   return (

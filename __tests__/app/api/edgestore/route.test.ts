@@ -12,7 +12,7 @@ describe("EdgeStore route handler", () => {
     mockInnerHandler.mockResolvedValueOnce(new Response("ok", { status: 200 }));
 
     const { GET } = await import(
-      "../../../app/api/edgestore/[...edgestore]/route"
+      "@/app/api/edgestore/[...edgestore]/route"
     );
 
     const req = {
@@ -29,7 +29,7 @@ describe("EdgeStore route handler", () => {
     mockInnerHandler.mockResolvedValueOnce(new Response("created", { status: 201 }));
 
     const { POST } = await import(
-      "../../../app/api/edgestore/[...edgestore]/route"
+      "@/app/api/edgestore/[...edgestore]/route"
     );
 
     const req = {
@@ -46,7 +46,7 @@ describe("EdgeStore route handler", () => {
     mockInnerHandler.mockRejectedValueOnce(new Error("EdgeStore failure"));
 
     const { POST } = await import(
-      "../../../app/api/edgestore/[...edgestore]/route"
+      "@/app/api/edgestore/[...edgestore]/route"
     );
 
     const req = {
@@ -61,7 +61,7 @@ describe("EdgeStore route handler", () => {
     mockInnerHandler.mockRejectedValueOnce("Unknown error string");
 
     const { GET } = await import(
-      "../../../app/api/edgestore/[...edgestore]/route"
+      "@/app/api/edgestore/[...edgestore]/route"
     );
 
     const req = {

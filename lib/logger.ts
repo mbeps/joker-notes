@@ -87,7 +87,7 @@ export function configureLoggingSync(): void {
         // Root application logger
         {
           category: ["app"],
-          lowestLevel: (serverEnv.LOG_LEVEL || "info") as LogLevel,
+          lowestLevel: serverEnv.LOG_LEVEL as LogLevel,
           sinks: ["console"],
         },
       ],
