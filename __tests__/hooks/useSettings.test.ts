@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { useSettings } from "../../hooks/useSettings";
+import { useSettings } from "@/hooks/use-settings";
 
 afterEach(() => {
   useSettings.setState({ isOpen: false });

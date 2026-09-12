@@ -2,10 +2,10 @@
 
 import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
-import SearchCommand from "@/components/Search/SearchCommand";
-import { Spinner } from "@/components/Spinner/Spinner";
-import { ROUTES } from "@/constants/routes";
-import Navigation from "./_components/Navigation";
+import Navigation from "@/app/(main)/_components/navigation";
+import SearchCommand from "@/components/search/search-command";
+import { Spinner } from "@/components/spinner/spinner";
+import { ROUTES } from "@/config/routes";
 
 /**
  * Authenticated workspace layout that gates all `(main)` routes behind Convex auth.

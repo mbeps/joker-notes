@@ -5,7 +5,7 @@ import {
   getLogger as getLogTapeLogger,
   type LogLevel,
 } from "@logtape/logtape";
-import { serverEnv } from "./env";
+import { serverEnv } from "@/config/env";
 
 let initialized = false;
 

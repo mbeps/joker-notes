@@ -1,7 +1,7 @@
 "use client";
 
 import { createEdgeStoreProvider } from "@edgestore/react";
-import type { EdgeStoreRouter } from "../app/api/edgestore/[...edgestore]/route";
+import type { EdgeStoreRouter } from "@/app/api/edgestore/[...edgestore]/route";
 
 /**
  * Configures Edge Store bindings so components can read and mutate uploads within Next.js.

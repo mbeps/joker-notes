@@ -1,5 +1,5 @@
-import { NotFound } from "@/components/NotFound/NotFound";
-import { ROUTES } from "@/constants/routes";
+import { NotFound } from "@/components/not-found/not-found";
+import { ROUTES } from "@/config/routes";
 
 /**
  * Root 404 handler for Joker Notes.

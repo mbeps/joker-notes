@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import DocumentNotFound from "@/app/(main)/(routes)/documents/[documentId]/not-found";
-import { ROUTES } from "@/constants/routes";
+import DocumentNotFound from "@/app/(main)/documents/[documentId]/not-found";
+import { ROUTES } from "@/config/routes";
 
 describe("DocumentNotFound", () => {
   it("renders document 404 with link to documents using centralised route", () => {

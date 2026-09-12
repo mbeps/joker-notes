@@ -9,13 +9,13 @@ vi.mock("@clerk/nextjs", () => ({
   }),
 }));
 
-vi.mock("@/hooks/useDocumentActions", () => ({
+vi.mock("@/hooks/use-document-actions", () => ({
   useDocumentActions: () => ({
     createDocument: mockCreateDocument,
   }),
 }));
 
-import DocumentPage from "@/app/(main)/(routes)/documents/page";
+import DocumentPage from "@/app/(main)/documents/page";
 
 describe("DocumentPage", () => {
   beforeEach(() => {

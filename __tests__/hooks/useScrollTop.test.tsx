@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { useScrollTop } from "../../hooks/useScrollTop";
+import { useScrollTop } from "@/hooks/use-scroll-top";
 
 const setScrollY = (value: number) => {
   Object.defineProperty(window, "scrollY", {

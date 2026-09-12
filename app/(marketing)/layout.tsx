@@ -1,4 +1,4 @@
-import Navbar from "./_components/Navbar";
+import Navbar from "@/app/(marketing)/_components/navbar";
 
 /**
  * Layout dedicated to marketing pages that injects the marketing navbar and spacing.

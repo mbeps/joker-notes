@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { Id } from "../../convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
 import {
   archive,
   create,
@@ -12,7 +12,7 @@ import {
   removeIcon,
   restore,
   update,
-} from "../../convex/documents";
+} from "@/convex/documents";
 
 type MockDocument = {
   _id: Id<"documents">;

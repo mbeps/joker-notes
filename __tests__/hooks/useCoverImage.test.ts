@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { useCoverImage } from "../../hooks/useCoverImage";
+import { useCoverImage } from "@/hooks/use-cover-image";
 
 afterEach(() => {
   useCoverImage.setState({ isOpen: false, url: undefined });

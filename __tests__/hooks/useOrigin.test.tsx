@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { useOrigin } from "../../hooks/useOrigin";
+import { useOrigin } from "@/hooks/use-origin";
 
 describe("useOrigin", () => {
   it("resolves to window.origin after hydration", async () => {

@@ -24,7 +24,7 @@ export default defineConfig({
         "hooks/**/*.{ts,tsx}",
         "convex/documents.ts",
         "convex/schema.ts",
-        "constants/**/*.{ts,tsx}",
+        "config/**/*.{ts,tsx}",
       ],
       exclude: ["convex/_generated/**"],
       thresholds: {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { register } from "../instrumentation";
-import * as logger from "../lib/logger";
+import { register } from "@/instrumentation";
+import * as logger from "@/lib/logger";
 
 describe("instrumentation", () => {
   it("calls configureLoggingSync when NEXT_RUNTIME is nodejs", async () => {
