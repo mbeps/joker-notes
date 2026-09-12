@@ -1,0 +1,233 @@
+"use client";
+
+import { UploadCloudIcon, X } from "lucide-react";
+import * as React from "react";
+import { type DropzoneOptions, useDropzone } from "react-dropzone";
+import { twMerge } from "tailwind-merge";
+import { Spinner } from "@/components/spinner/spinner";
+
+/**
+ * Named tailwind class groupings applied to the dropzone during various states.
+ */
+const variants = {
+  base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out",
+  image:
+    "border-0 p-0 min-h-0 min-w-0 relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md",
+  active: "border-2",
+  disabled:
+    "bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700",
+  accept: "border border-blue-500 bg-blue-500 bg-opacity-10",
+  reject: "border border-red-700 bg-red-700 bg-opacity-10",
+};
+
+/**
+ * Props accepted by the single image dropzone component.
+ */
+type InputProps = {
+  width?: number;
+  height?: number;
+  className?: string;
+  value?: File | string;
+  onChange?: (file?: File) => void | Promise<void>;
+  disabled?: boolean;
+  dropzoneOptions?: Omit<DropzoneOptions, "disabled">;
+};
+
+/**
+ * Error message helpers keyed by react-dropzone rejection codes.
+ */
+const ERROR_MESSAGES = {
+  fileTooLarge(maxSize: number) {
+    return `The file is too large. Max size is ${formatFileSize(maxSize)}.`;
+  },
+  fileInvalidType() {
+    return "Invalid file type.";
+  },
+  tooManyFiles(maxFiles: number) {
+    return `You can only add ${maxFiles} file(s).`;
+  },
+  fileNotSupported() {
+    return "The file is not supported.";
+  },
+};
+
+/**
+ * File uploader built on top of react-dropzone that supports previewing a single image.
+ * Emits the selected file via `onChange` and clears it when the dismiss icon is clicked.
+ *
+ * @param dropzoneOptions Additional dropzone configuration such as max size.
+ * @param width Optional fixed width for the dropzone surface.
+ * @param height Optional fixed height for the dropzone surface.
+ * @param value Current file or URL to preview.
+ * @param className Custom class names applied to the dropzone wrapper.
+ * @param onChange Callback fired when a new file is chosen or cleared.
+ * @param disabled When true, prevents file interaction and shows a spinner overlay.
+ * @returns A dropzone element tailored for single image uploads.
+ * @see https://react-dropzone.js.org
+ */
+const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    { dropzoneOptions, width, height, value, className, disabled, onChange },
+    ref,
+  ) => {
+    const imageUrl = React.useMemo(() => {
+      if (typeof value === "string") {
+        // in case a url is passed in, use it to display the image
+        return value;
+      } else if (value) {
+        // in case a file is passed in, create a base64 url to display the image
+        return URL.createObjectURL(value);
+      }
+      return null;
+    }, [value]);
+
+    // dropzone configuration
+    const {
+      getRootProps,
+      getInputProps,
+      inputRef,
+      acceptedFiles,
+      fileRejections,
+      isFocused,
+      isDragAccept,
+      isDragReject,
+    } = useDropzone({
+      accept: { "image/*": [] },
+      multiple: false,
+      disabled,
+      onDrop: (acceptedFiles) => {
+        const file = acceptedFiles[0];
+        if (file) {
+          void onChange?.(file);
+        }
+      },
+      ...dropzoneOptions,
+    });
+
+    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+
+    // styling
+    const dropZoneClassName = React.useMemo(
+      () =>
+        twMerge(
+          variants.base,
+          isFocused && variants.active,
+          disabled && variants.disabled,
+          imageUrl && variants.image,
+          (isDragReject ?? fileRejections[0]) && variants.reject,
+          isDragAccept && variants.accept,
+          className,
+        ).trim(),
+      [
+        isFocused,
+        imageUrl,
+        fileRejections,
+        isDragAccept,
+        isDragReject,
+        disabled,
+        className,
+      ],
+    );
+
+    // error validation messages
+    const errorMessage = React.useMemo(() => {
+      if (fileRejections[0]) {
+        const { errors } = fileRejections[0];
+        if (errors[0]?.code === "file-too-large") {
+          return ERROR_MESSAGES.fileTooLarge(dropzoneOptions?.maxSize ?? 0);
+        } else if (errors[0]?.code === "file-invalid-type") {
+          return ERROR_MESSAGES.fileInvalidType();
+        } else if (errors[0]?.code === "too-many-files") {
+          return ERROR_MESSAGES.tooManyFiles(dropzoneOptions?.maxFiles ?? 0);
+        } else {
+          return ERROR_MESSAGES.fileNotSupported();
+        }
+      }
+      return undefined;
+    }, [fileRejections, dropzoneOptions]);
+
+    return (
+      <div className="relative">
+        {disabled && (
+          <div className="absolute inset-y-0 z-50 flex h-full w-full items-center justify-center bg-background/80">
+            <Spinner />
+          </div>
+        )}
+        <div
+          {...getRootProps({
+            className: dropZoneClassName,
+            style: {
+              width,
+              height,
+            },
+          })}
+        >
+          {/* Main File Input */}
+          <input {...getInputProps()} />
+
+          {imageUrl ? (
+            // Image Preview
+            // biome-ignore lint/performance/noImgElement: Blob preview URL cannot be statically optimized by Next.js Image
+            <img
+              className="h-full w-full rounded-md object-cover"
+              src={imageUrl}
+              alt={acceptedFiles[0]?.name}
+            />
+          ) : (
+            // Upload Icon
+            <div className="flex flex-col items-center justify-center text-gray-400 text-xs">
+              <UploadCloudIcon className="mb-2 h-7 w-7" />
+              <div className="text-gray-400">Click or drag image to upload</div>
+            </div>
+          )}
+
+          {/* Remove Image Icon */}
+          {imageUrl && !disabled && (
+            <div
+              className="group absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 transform"
+              onClick={(e) => {
+                e.stopPropagation();
+                void onChange?.(undefined);
+              }}
+            >
+              <div className="flex h-5 w-5 items-center justify-center rounded-md border border-gray-500 border-solid bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+                <X
+                  className="text-gray-500 dark:text-gray-400"
+                  width={16}
+                  height={16}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Error Text */}
+        <div className="mt-1 text-red-500 text-xs">{errorMessage}</div>
+      </div>
+    );
+  },
+);
+SingleImageDropzone.displayName = "SingleImageDropzone";
+
+/**
+ * Converts a byte count into a human readable file size string.
+ *
+ * @param bytes Number of bytes to format.
+ * @returns Human readable size string including units.
+ */
+function formatFileSize(bytes?: number) {
+  if (!bytes) {
+    return "0 Bytes";
+  }
+  bytes = Number(bytes);
+  if (bytes === 0) {
+    return "0 Bytes";
+  }
+  const k = 1024;
+  const dm = 2;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+}
+
+export { SingleImageDropzone };

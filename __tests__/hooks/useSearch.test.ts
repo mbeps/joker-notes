@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { useSearch } from "../../hooks/useSearch";
+import { useSearch } from "@/hooks/use-search";
 
 afterEach(() => {
   useSearch.setState({ isOpen: false });

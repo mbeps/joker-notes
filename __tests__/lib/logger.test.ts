@@ -1,7 +1,6 @@
 import {
   type LogRecord,
   configureSync,
-  getLogger as getLogTapeLogger,
 } from "@logtape/logtape";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -13,7 +12,7 @@ import {
   isLoggingInitialized,
   isTestEnvironment,
   resetLoggingState,
-} from "../../lib/logger";
+} from "@/lib/logger";
 
 vi.mock("@logtape/logtape", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@logtape/logtape")>();

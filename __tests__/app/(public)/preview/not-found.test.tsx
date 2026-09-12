@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import PreviewNotFound from "@/app/(public)/(routes)/preview/[documentId]/not-found";
-import { ROUTES } from "@/constants/routes";
+import PreviewNotFound from "@/app/(public)/preview/[documentId]/not-found";
+import { ROUTES } from "@/config/routes";
 
 describe("PreviewNotFound", () => {
   it("renders preview 404 with link to home using centralised route", () => {

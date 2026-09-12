@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import schema from "../../convex/schema";
+import schema from "@/convex/schema";
 
 type ExportedField = { fieldType: { type: string }; optional: boolean };
 type ExportedIndex = { indexDescriptor: string; fields: string[] };

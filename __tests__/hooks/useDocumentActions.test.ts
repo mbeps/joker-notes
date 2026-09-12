@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ROUTES } from "@/constants/routes";
+import { ROUTES } from "@/config/routes";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useDocumentActions } from "@/hooks/useDocumentActions";
+import { useDocumentActions } from "@/hooks/use-document-actions";
 
 const push = vi.fn();
 const mockCreate = vi.fn();

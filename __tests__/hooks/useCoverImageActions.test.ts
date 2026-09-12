@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useCoverImageActions } from "@/hooks/useCoverImageActions";
+import { useCoverImageActions } from "@/hooks/use-cover-image-actions";
 
 const mockUpload = vi.fn();
 const mockDelete = vi.fn();

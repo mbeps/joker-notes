@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ROUTES } from "@/constants/routes";
+import { ASSETS } from "@/config/assets";
+import { ROUTES } from "@/config/routes";
 
 /**
  * Client error boundary UI that invites users to retry by returning to documents.
@@ -16,14 +17,14 @@ const RootError = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center space-y-4">
       <Image
-        src="/error/error-light.png"
+        src={ASSETS.ERROR.LIGHT}
         height="300"
         width="300"
         alt="Error"
         className="dark:hidden"
       />
       <Image
-        src="/error/error-dark.png"
+        src={ASSETS.ERROR.DARK}
         height="300"
         width="300"
         alt="Error"
