@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
-  experimental: {
-    useTypeScriptCli: true,
-  },
 
   images: {
     // `domains` is deprecated in Next 14 in favor of `remotePatterns`.
