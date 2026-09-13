@@ -1,9 +1,9 @@
 "use client";
 
+import { twMerge } from "cn";
 import { UploadCloudIcon, X } from "lucide-react";
 import * as React from "react";
 import { type DropzoneOptions, useDropzone } from "react-dropzone";
-import { twMerge } from "tailwind-merge";
 import { Spinner } from "@/components/spinner/spinner";
 
 /**
