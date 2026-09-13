@@ -1,39 +1,36 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ASSETS } from "@/config/assets";
+import { ErrorState } from "@/components/error/error-state";
 import { ROUTES } from "@/config/routes";
 
 /**
- * Client error boundary UI that invites users to retry by returning to documents.
- * Follows the Next.js app router error handling contract.
+ * Props provided by Next.js App Router to error boundary components.
+ */
+interface RootErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
+/**
+ * Root error boundary for Joker Notes.
+ * Catches uncaught runtime errors across the application and provides retry/navigation options.
  *
- * @returns Error state layout encouraging navigation back to documents.
+ * @param props Error details and reset callback provided by Next.js error boundary.
+ * @param props.error The error instance thrown.
+ * @param props.reset Callback to attempt recovery by re-rendering the segment.
+ * @returns Global error UI inviting users to retry or return to their documents.
  * @see https://nextjs.org/docs/app/building-your-application/routing/error-handling
  */
-const RootError = () => {
+export default function RootError({ error, reset }: RootErrorProps) {
   return (
-    <div className="flex h-full flex-col items-center justify-center space-y-4">
-      <Image
-        src={ASSETS.ERROR.LIGHT}
-        height="300"
-        width="300"
-        alt="Error"
-        className="dark:hidden"
-      />
-      <Image
-        src={ASSETS.ERROR.DARK}
-        height="300"
-        width="300"
-        alt="Error"
-        className="hidden dark:block"
-      />
-      <h2 className="font-medium text-xl">Something went wrong!</h2>
-      <Button render={<Link href={ROUTES.DOCUMENTS.path} />}>Go back</Button>
-    </div>
+    <ErrorState
+      error={error}
+      reset={reset}
+      title="Something went wrong!"
+      description="An unexpected error occurred. Please try again or return to your documents."
+      buttonText="Go back"
+      buttonHref={ROUTES.DOCUMENTS.path}
+      imageAlt="Error"
+    />
   );
-};
-
-export default RootError;
+}
