@@ -5,9 +5,9 @@ import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import type React from "react";
 import { use, useMemo } from "react";
+import { DocumentSkeleton } from "@/components/document/document-skeleton";
 import { Cover } from "@/components/image/cover";
 import Toolbar from "@/components/toolbar/toolbar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 
@@ -69,19 +69,7 @@ const DocumentPage: React.FC<DocumentPageProps> = (props) => {
 
   // while the document is being fetched display a skeleton loading animation
   if (document === undefined) {
-    return (
-      <div>
-        <Cover.Skeleton />
-        <div className="mx-auto mt-10 md:max-w-3xl lg:max-w-4xl">
-          <div className="space-y-4 pt-4 pl-8">
-            <Skeleton className="h-14 w-[50%]" />
-            <Skeleton className="h-4 w-[80%]" />
-            <Skeleton className="h-4 w-[40%]" />
-            <Skeleton className="h-4 w-[60%]" />
-          </div>
-        </div>
-      </div>
-    );
+    return <DocumentSkeleton />;
   }
 
   // if the document does not exist trigger not-found UI
