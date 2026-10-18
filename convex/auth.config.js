@@ -10,6 +10,12 @@ const convex = {
       domain: "https://grateful-glowworm-20.clerk.accounts.dev",
       applicationID: "convex",
     },
+    {
+      type: "customJwt",
+      issuer: "https://grateful-glowworm-20.clerk.accounts.dev",
+      jwksUri:
+        "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
+    },
   ],
 };
 

@@ -17,6 +17,9 @@ export const ROUTES = {
     path: PREVIEW_BASE,
     detail: (id: string) => `${PREVIEW_BASE}/${id}`,
   },
+  MCP: {
+    path: "/api/mcp",
+  },
 } as const;
 
 export type Routes = typeof ROUTES;
