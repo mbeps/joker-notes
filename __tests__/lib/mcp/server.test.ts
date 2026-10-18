@@ -14,7 +14,7 @@ describe("lib/mcp/server", () => {
     expect(typeof instance.close).toBe("function");
   });
 
-  it("rejects legacy 2024-11-05 protocol requests with HTTP 400", async () => {
+  it("processes legacy 2024-11-05 protocol requests successfully with HTTP 200", async () => {
     const handler = createNotesMcpHandler();
 
     const req = new Request("http://localhost:3000/api/mcp", {
@@ -33,11 +33,17 @@ describe("lib/mcp/server", () => {
     });
 
     const response = await handler.fetch(req);
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(200);
 
-    const data = await response.json();
-    expect(data.error).toBeDefined();
-    expect(data.error.message).toContain("Unsupported protocol version");
+    const contentType = response.headers.get("content-type");
+    const text = await response.text();
+    expect(text).toContain('"tools"');
+    if (contentType?.includes("text/event-stream")) {
+      expect(text).toContain("event: message");
+    } else {
+      const data = JSON.parse(text);
+      expect(data.result.tools).toBeDefined();
+    }
 
     await handler.close();
   });

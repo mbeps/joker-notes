@@ -1,4 +1,4 @@
-import { getClerkIssuerUrl, MCP_SCOPES } from "@/lib/mcp/auth";
+import { getAuthServerUrl, MCP_SCOPES } from "@/lib/mcp/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -20,18 +20,20 @@ export async function OPTIONS(): Promise<Response> {
 
 /**
  * OpenID Connect Discovery 1.0 endpoint at root /.well-known/openid-configuration.
- * Consumed by AI clients querying standard OIDC metadata (e.g. ChatGPT).
+ * Consumed by AI clients querying standard OIDC metadata (e.g. ChatGPT, Gemini).
  *
+ * @param req - Optional inbound Request to infer host origin.
  * @returns JSON metadata response conforming to OpenID Connect Discovery 1.0.
  */
-export async function GET(): Promise<Response> {
-  const issuer = getClerkIssuerUrl();
+export async function GET(req?: Request): Promise<Response> {
+  const issuer = getAuthServerUrl(req);
 
   const metadata = {
     issuer,
     authorization_endpoint: `${issuer}/oauth/authorize`,
-    token_endpoint: `${issuer}/oauth/token`,
-    userinfo_endpoint: `${issuer}/oauth/userinfo`,
+    token_endpoint: `${issuer}/api/oauth/token`,
+    registration_endpoint: `${issuer}/api/oauth/register`,
+    userinfo_endpoint: `${issuer}/api/oauth/userinfo`,
     jwks_uri: `${issuer}/.well-known/jwks.json`,
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code", "refresh_token"],

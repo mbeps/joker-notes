@@ -15,7 +15,7 @@ import {
 
 describe("Discovery & Metadata Endpoints", () => {
   describe("RFC 9728 Protected Resource Metadata", () => {
-    it("returns resource metadata with offline_access and Clerk auth server", async () => {
+    it("returns resource metadata with offline_access and application auth server", async () => {
       const req = new Request(
         "http://localhost:3000/.well-known/oauth-protected-resource/api/mcp",
       );
@@ -27,9 +27,7 @@ describe("Discovery & Metadata Endpoints", () => {
 
       const data = await res.json();
       expect(data.resource).toBe("http://localhost:3000/api/mcp");
-      expect(data.authorization_servers).toContain(
-        "https://grateful-glowworm-20.clerk.accounts.dev",
-      );
+      expect(data.authorization_servers).toContain("http://localhost:3000");
       expect(data.scopes_supported).toContain("offline_access");
       expect(data.scopes_supported).toContain("openid");
     });
@@ -49,18 +47,18 @@ describe("Discovery & Metadata Endpoints", () => {
       expect(res.headers.get("access-control-allow-origin")).toBe("*");
 
       const data = await res.json();
-      expect(data.issuer).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev",
-      );
+      expect(data.issuer).toBe("http://localhost:3000");
       expect(data.authorization_endpoint).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev/oauth/authorize",
+        "http://localhost:3000/oauth/authorize",
       );
-      expect(data.token_endpoint).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev/oauth/token",
+      expect(data.token_endpoint).toBe("http://localhost:3000/api/oauth/token");
+      expect(data.registration_endpoint).toBe(
+        "http://localhost:3000/api/oauth/register",
       );
-      expect(data.jwks_uri).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
+      expect(data.userinfo_endpoint).toBe(
+        "http://localhost:3000/api/oauth/userinfo",
       );
+      expect(data.jwks_uri).toBe("http://localhost:3000/.well-known/jwks.json");
       expect(data.scopes_supported).toContain("offline_access");
     });
 
@@ -79,15 +77,18 @@ describe("Discovery & Metadata Endpoints", () => {
       expect(res.headers.get("access-control-allow-origin")).toBe("*");
 
       const data = await res.json();
-      expect(data.issuer).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev",
-      );
+      expect(data.issuer).toBe("http://localhost:3000");
       expect(data.authorization_endpoint).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev/oauth/authorize",
+        "http://localhost:3000/oauth/authorize",
       );
-      expect(data.jwks_uri).toBe(
-        "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
+      expect(data.token_endpoint).toBe("http://localhost:3000/api/oauth/token");
+      expect(data.registration_endpoint).toBe(
+        "http://localhost:3000/api/oauth/register",
       );
+      expect(data.userinfo_endpoint).toBe(
+        "http://localhost:3000/api/oauth/userinfo",
+      );
+      expect(data.jwks_uri).toBe("http://localhost:3000/.well-known/jwks.json");
       expect(data.scopes_supported).toContain("offline_access");
     });
 

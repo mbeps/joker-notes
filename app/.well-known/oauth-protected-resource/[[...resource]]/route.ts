@@ -1,5 +1,5 @@
 import {
-  getClerkIssuerUrl,
+  getAuthServerUrl,
   getMcpResourceUrl,
   MCP_SCOPES,
 } from "@/lib/mcp/auth";
@@ -32,7 +32,7 @@ export async function OPTIONS(): Promise<Response> {
 export async function GET(req: Request): Promise<Response> {
   const metadata = {
     resource: getMcpResourceUrl(req),
-    authorization_servers: [getClerkIssuerUrl()],
+    authorization_servers: [getAuthServerUrl(req)],
     scopes_supported: [...MCP_SCOPES],
     bearer_methods_supported: ["header"],
   };

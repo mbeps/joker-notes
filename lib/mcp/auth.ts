@@ -1,4 +1,4 @@
-import { verifyToken } from "@clerk/nextjs/server";
+import { createClerkClient, verifyToken } from "@clerk/nextjs/server";
 import {
   type AuthInfo,
   OAuthError,
@@ -7,6 +7,7 @@ import {
 import { ConvexHttpClient } from "convex/browser";
 
 import { serverEnv } from "@/config/env";
+import { verifyAccessToken } from "@/lib/mcp/oauth";
 
 /**
  * Supported OAuth scopes advertised in discovery metadata.
@@ -29,6 +30,10 @@ export function getSiteUrl(req?: Request): string {
     return new URL(req.url).origin.replace(/\/+$/, "");
   }
 
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
+  }
+
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL.replace(/\/+$/, "")}`;
   }
@@ -49,6 +54,16 @@ export function getClerkIssuerUrl(): string {
 }
 
 /**
+ * Resolves the application authorization server URL.
+ *
+ * @param req - Optional incoming HTTP request.
+ * @returns Fully qualified authorization server URL.
+ */
+export function getAuthServerUrl(req?: Request): string {
+  return getSiteUrl(req);
+}
+
+/**
  * Computes the public canonical resource URL for the MCP endpoint.
  *
  * @param req - Optional incoming HTTP request.
@@ -65,7 +80,7 @@ export interface McpAuthInfo extends AuthInfo {
 }
 
 /**
- * Validates incoming Bearer token using Clerk and enforces ?auth=required challenges.
+ * Validates incoming Bearer token using internal OAuth 2.1 or Clerk, enforcing ?auth=required challenges.
  *
  * @param req - Inbound HTTP Request.
  * @param bearerToken - Extracted Bearer token string if present.
@@ -89,6 +104,36 @@ export async function verifyMcpToken(
     return undefined;
   }
 
+  // 1. Try verifying as an internal OAuth 2.1 access token
+  const oauthPayload = verifyAccessToken(bearerToken);
+  if (oauthPayload) {
+    let clerkToken: string | undefined;
+    if (oauthPayload.sessionId) {
+      try {
+        const clerk = createClerkClient({
+          secretKey: serverEnv.CLERK_SECRET_KEY,
+        });
+        const sessionToken = await clerk.sessions.getToken(
+          oauthPayload.sessionId,
+          "convex",
+        );
+        clerkToken = sessionToken?.jwt;
+      } catch {
+        // Fall back gracefully to bearerToken
+      }
+    }
+
+    return {
+      token: clerkToken ?? bearerToken,
+      clientId: oauthPayload.clientId,
+      scopes: [...MCP_SCOPES],
+      extra: {
+        userId: oauthPayload.sub,
+      },
+    };
+  }
+
+  // 2. Fall back to verifying direct Clerk JWT
   try {
     const payload = await verifyToken(bearerToken, {
       secretKey: serverEnv.CLERK_SECRET_KEY,

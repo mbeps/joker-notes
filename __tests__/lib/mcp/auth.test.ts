@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   createConvexClient,
+  getAuthServerUrl,
   getClerkIssuerUrl,
   getMcpResourceUrl,
   getMcpToken,
@@ -12,9 +13,15 @@ import {
 } from "@/lib/mcp/auth";
 
 const mockSetAuth = vi.fn();
+const mockGetSessionToken = vi.fn();
 
 vi.mock("@clerk/nextjs/server", () => ({
   verifyToken: vi.fn(),
+  createClerkClient: vi.fn().mockImplementation(() => ({
+    sessions: {
+      getToken: mockGetSessionToken,
+    },
+  })),
 }));
 
 vi.mock("convex/browser", () => ({
@@ -34,9 +41,15 @@ describe("lib/mcp/auth", () => {
 
     it("falls back to default when no request is provided", () => {
       const originalVercelUrl = process.env.VERCEL_URL;
+      const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
       delete process.env.VERCEL_URL;
+      delete process.env.NEXT_PUBLIC_SITE_URL;
 
       expect(getSiteUrl()).toBe("http://localhost:3000");
+
+      process.env.NEXT_PUBLIC_SITE_URL = "https://notes.example.com/";
+      expect(getSiteUrl()).toBe("https://notes.example.com");
+      delete process.env.NEXT_PUBLIC_SITE_URL;
 
       process.env.VERCEL_URL = "my-site.vercel.app/";
       expect(getSiteUrl()).toBe("https://my-site.vercel.app");
@@ -46,6 +59,18 @@ describe("lib/mcp/auth", () => {
       } else {
         delete process.env.VERCEL_URL;
       }
+
+      if (originalSiteUrl) {
+        process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
+      }
+    });
+  });
+
+  describe("getAuthServerUrl", () => {
+    it("delegates to getSiteUrl", () => {
+      const req = new Request("https://auth.example.com/oauth/authorize");
+      expect(getAuthServerUrl(req)).toBe("https://auth.example.com");
+      expect(getAuthServerUrl()).toBe(getSiteUrl());
     });
   });
 
@@ -132,6 +157,57 @@ describe("lib/mcp/auth", () => {
       await expect(verifyMcpToken(req, "bad-token")).rejects.toMatchObject({
         code: OAuthErrorCode.InvalidToken,
       });
+    });
+
+    it("verifies internal OAuth token without sessionId", async () => {
+      const { createTokenPair } = await import("@/lib/mcp/oauth");
+      const pair = createTokenPair("user-internal-1", "chatgpt-client", "openid");
+
+      const req = new Request("https://example.com/api/mcp");
+      const result = await verifyMcpToken(req, pair.access_token);
+
+      expect(result).toBeDefined();
+      expect(result?.clientId).toBe("chatgpt-client");
+      expect(result?.extra.userId).toBe("user-internal-1");
+      expect(result?.token).toBe(pair.access_token);
+    });
+
+    it("verifies internal OAuth token with sessionId and extracts Clerk session token", async () => {
+      mockGetSessionToken.mockResolvedValueOnce({ jwt: "clerk-jwt-for-convex" });
+      const { createTokenPair } = await import("@/lib/mcp/oauth");
+      const pair = createTokenPair(
+        "user-internal-2",
+        "gemini-client",
+        "openid",
+        "session-123",
+      );
+
+      const req = new Request("https://example.com/api/mcp");
+      const result = await verifyMcpToken(req, pair.access_token);
+
+      expect(result).toBeDefined();
+      expect(result?.clientId).toBe("gemini-client");
+      expect(result?.extra.userId).toBe("user-internal-2");
+      expect(result?.token).toBe("clerk-jwt-for-convex");
+    });
+
+    it("falls back to bearerToken when Clerk session token retrieval throws", async () => {
+      mockGetSessionToken.mockRejectedValueOnce(new Error("Clerk session error"));
+      const { createTokenPair } = await import("@/lib/mcp/oauth");
+      const pair = createTokenPair(
+        "user-internal-3",
+        "gemini-client",
+        "openid",
+        "session-broken",
+      );
+
+      const req = new Request("https://example.com/api/mcp");
+      const result = await verifyMcpToken(req, pair.access_token);
+
+      expect(result).toBeDefined();
+      expect(result?.clientId).toBe("gemini-client");
+      expect(result?.extra.userId).toBe("user-internal-3");
+      expect(result?.token).toBe(pair.access_token);
     });
   });
 
