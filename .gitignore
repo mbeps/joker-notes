@@ -35,10 +35,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vscode/settings.json
-.vscode/mcp.json
 
-wiki/**
+
+AGENTS.md
+.agents/**
+.mcp.json
 graphify-out/**
-!.github/workflows/**
-.github/**
-GEMINI.md
+wiki/**
