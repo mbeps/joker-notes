@@ -3,11 +3,7 @@
 ![screenshotr_2023-12-30T19-34-34](https://github.com/mbeps/motion/assets/58662575/77c4cbda-d580-4126-83bf-b3ef12fd28b9)
 
 
-Introducing Joker Notes, a versatile and user-centric platform designed to revolutionize the way you create, manage, and publish notes. 
-Building upon the concept of intuitive and interactive platforms, Joker Notes brings together a powerful suite of features aimed at boosting productivity and enhancing user experience. 
-From seamless sign-up processes and customizable viewing options to sophisticated note organization and management, Joker Notes caters to all your note-taking needs. 
-Whether you're jotting down ideas, compiling research, or sharing insights, our platform is engineered to provide a seamless, flexible, and enjoyable note-taking journey. 
-Get ready to experience the next level of note-taking with Joker Notes.
+Joker Notes is a note-taking web application for creating, organising, and publishing rich-text notes. Organise thoughts with nested documents, media covers, and real-time synchronisation. Publish notes for public viewing or manage their lifecycle through trash recovery.
 
 # Features
 
@@ -31,6 +27,12 @@ Create, customize, and manage your notes with ease:
 - **Nested Notes and Notebooks:** Users can create structured documentation and organize their thoughts more efficiently with the ability to create nested notes and notebooks.
 - **Note Management:** Users can move notes to trash, restore them, or permanently delete them, giving full control over their note lifecycle.
 
+## Model Context Protocol (MCP)
+Joker Notes connects with AI assistants to inspect and manage notes:
+- **Stateless MCP Server:** Connect AI assistants such as Google Gemini, Claude, and ChatGPT through Streamable HTTP at `/api/mcp`.
+- **OAuth 2.1 & Interactive Consent:** Authorise AI clients securely with PKCE, Dynamic Client Registration, and an explicit consent screen.
+- **Full Note Lifecycle Management:** Allow AI assistants to search, read, create, update, archive, restore, and delete notes within user permissions.
+
 # Tech Stack
 
 ## Frontend
@@ -49,6 +51,7 @@ Create, customize, and manage your notes with ease:
 - **[Convex](https://www.convex.dev/)**: A developer-friendly database emphasizing reactivity and ease of use. It combines a relational data model with JSON-like documents, offering intuitive JavaScript APIs, automatic query optimization, and built-in reactivity for real-time applications.
 - **[EdgeStore](https://edgestore.dev/)**: A file storage solution specifically designed for Next.js, providing a type-safe way to manage file uploads and retrievals. It integrates seamlessly with Next.js, offering access control, metadata handling, lifecycle hooks, and automatic thumbnail generation, among other features.
 - **[LogTape](https://logtape.org/)**: A lightweight, structured, and non-blocking logging library for JavaScript and TypeScript with columnar ANSI formatting and environment-level control.
+- **[Model Context Protocol](https://modelcontextprotocol.io/)**: An open protocol enabling AI models to interact securely with application tools and data through Streamable HTTP.
 
 # Requirements
 Below are the requirements to run this project:
@@ -56,6 +59,32 @@ Below are the requirements to run this project:
 - Clerk Authentication configured 
 - Convex Database configured 
 - EdgeStore configured
+
+# Model Context Protocol (MCP)
+
+Joker Notes provides a stateless Model Context Protocol (MCP) server at `/api/mcp` over Streamable HTTP, supporting protocol revisions `2024-11-05` and `2026-07-28` for clients such as Google Gemini, Claude, and ChatGPT.
+
+## Authorisation & Discovery
+
+- **Server URL:** `http://localhost:3000/api/mcp` (or your deployment domain)
+- **OAuth 2.1:** PKCE (RFC 7636) and Dynamic Client Registration (RFC 7591) at `/api/oauth/register`
+- **Consent Screen:** User authorisation at `/oauth/consent` to approve or deny access
+- **Discovery Endpoints:** `/.well-known/oauth-protected-resource/api/mcp`, `/.well-known/oauth-authorization-server`, and `/.well-known/openid-configuration`
+
+## Available Tools
+
+The MCP server provides eight document management tools with tenant isolation:
+
+| Tool | Description | Parameters |
+| ---- | ----------- | ---------- |
+| `list_documents` | List active documents. Filter by parent folder or search by title. | `query` (optional string), `parentDocument` (optional string) |
+| `get_document` | Retrieve a document note and its contents by ID. | `documentId` (string) |
+| `create_document` | Create a new document note under an optional parent note. | `title` (string), `parentDocument` (optional string) |
+| `update_document` | Update a document note's title, content, icon, or publication status. | `id` (string), `title` (optional string), `content` (optional string), `icon` (optional string), `isPublished` (optional boolean) |
+| `archive_document` | Move a document and all its nested children to trash. | `id` (string) |
+| `restore_document` | Restore an archived document and its descendants from trash. | `id` (string) |
+| `delete_document` | Permanently delete a document note from the database. | `id` (string) |
+| `list_trash` | List all archived notes currently stored in trash. | None |
 
 # Running Application Locally
 
@@ -172,3 +201,4 @@ The application should now be running at [`http://localhost:3000`](http://localh
 - [Convex Database Documentation](https://docs.convex.dev/quickstart/nextjs)
 - [Edge Store Documentation](https://edgestore.dev/)
 - [LogTape Documentation](https://logtape.org/)
+- [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
