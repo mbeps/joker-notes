@@ -141,5 +141,61 @@ describe("app/oauth/consent/page", () => {
 
     window.location = originalLocation;
   });
+
+  it("handles 500 server error with empty body gracefully without crashing", async () => {
+    const { toast } = await import("sonner");
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => {
+        throw new SyntaxError("Unexpected end of JSON input");
+      },
+      text: async () => "",
+    });
+
+    render(<ConsentPage />);
+    const allowButton = screen.getByText("Allow Access");
+    fireEvent.click(allowButton);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
+        expect.stringMatching(/Server error \(status 500\)|Failed to process authorization/),
+      );
+    });
+  });
+
+  it("handles 401 unauthorized error response from API", async () => {
+    const { toast } = await import("sonner");
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+      json: async () => ({
+        error: "unauthorized",
+        error_description: "Unable to verify user authentication session",
+      }),
+      text: async () => "",
+    });
+
+    render(<ConsentPage />);
+    const allowButton = screen.getByText("Allow Access");
+    fireEvent.click(allowButton);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Unable to verify user authentication session");
+    });
+  });
+
+  it("handles network failure / fetch rejection gracefully", async () => {
+    const { toast } = await import("sonner");
+    global.fetch = vi.fn().mockRejectedValueOnce(new Error("Network connection lost"));
+
+    render(<ConsentPage />);
+    const allowButton = screen.getByText("Allow Access");
+    fireEvent.click(allowButton);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Network connection lost");
+    });
+  });
 });
 

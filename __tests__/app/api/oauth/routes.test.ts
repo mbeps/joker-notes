@@ -130,6 +130,44 @@ describe("OAuth 2.1 API Routes", () => {
 
       const res = await handleConsentDecision(req);
       expect(res.status).toBe(401);
+      const data = await res.json();
+      expect(data.error).toBe("unauthorized");
+    });
+
+    it("returns 401 JSON if Clerk auth() throws clerkMiddleware missing error", async () => {
+      const { auth } = await import("@clerk/nextjs/server");
+      vi.mocked(auth).mockRejectedValueOnce(
+        new Error("Clerk: auth() was called but Clerk can't detect usage of clerkMiddleware()."),
+      );
+
+      const req = new Request("http://localhost:3000/api/oauth/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          decision: "allow",
+          client_id: "client-1",
+          redirect_uri: "https://ai.example.com/callback",
+        }),
+      });
+
+      const res = await handleConsentDecision(req);
+      expect(res.status).toBe(401);
+      const data = await res.json();
+      expect(data.error).toBe("unauthorized");
+      expect(data.error_description).toContain("authentication session");
+    });
+
+    it("returns 400 if request body is invalid JSON", async () => {
+      const req = new Request("http://localhost:3000/api/oauth/consent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "invalid-json",
+      });
+
+      const res = await handleConsentDecision(req);
+      expect(res.status).toBe(400);
+      const data = await res.json();
+      expect(data.error).toBe("invalid_request");
     });
 
     it("returns 400 if redirect_uri is missing", async () => {

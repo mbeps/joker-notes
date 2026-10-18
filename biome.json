@@ -20,6 +20,7 @@
       "!.vscode",
       "!wiki",
       "!graphify-out",
+      "!tmp",
       "!__tests__"
     ],
     "ignoreUnknown": true
