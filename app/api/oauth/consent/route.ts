@@ -11,7 +11,22 @@ export const dynamic = "force-dynamic";
  * @returns JSON response with redirection URL.
  */
 export async function POST(req: Request): Promise<Response> {
-  const { userId, sessionId } = await auth();
+  let userId: string | null = null;
+  let sessionId: string | null | undefined = null;
+
+  try {
+    const authContext = await auth();
+    userId = authContext.userId;
+    sessionId = authContext.sessionId;
+  } catch {
+    return Response.json(
+      {
+        error: "unauthorized",
+        error_description: "Unable to verify user authentication session",
+      },
+      { status: 401 },
+    );
+  }
 
   if (!userId) {
     return Response.json(
@@ -23,17 +38,29 @@ export async function POST(req: Request): Promise<Response> {
     );
   }
 
-  try {
-    const body = (await req.json()) as {
-      decision: "allow" | "deny";
-      client_id: string;
-      redirect_uri: string;
-      scope?: string;
-      state?: string;
-      code_challenge?: string;
-      code_challenge_method?: "S256" | "plain";
-    };
+  let body: {
+    decision: "allow" | "deny";
+    client_id: string;
+    redirect_uri: string;
+    scope?: string;
+    state?: string;
+    code_challenge?: string;
+    code_challenge_method?: "S256" | "plain";
+  };
 
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json(
+      {
+        error: "invalid_request",
+        error_description: "Invalid JSON request body",
+      },
+      { status: 400 },
+    );
+  }
+
+  try {
     const {
       decision,
       client_id,

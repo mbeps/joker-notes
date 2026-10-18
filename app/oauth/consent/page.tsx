@@ -65,13 +65,26 @@ function ConsentCard() {
         }),
       });
 
-      const data = (await res.json()) as {
+      let data: {
         redirect_url?: string;
         error?: string;
-      };
+        error_description?: string;
+      } = {};
+      try {
+        data = (await res.json()) as typeof data;
+      } catch {
+        // Fallback if response is empty or not valid JSON
+        if (!res.ok) {
+          throw new Error(`Server error (status ${res.status})`);
+        }
+      }
 
       if (!res.ok || !data.redirect_url) {
-        throw new Error(data.error || "Failed to process authorization");
+        throw new Error(
+          data.error_description ||
+            data.error ||
+            "Failed to process authorization",
+        );
       }
 
       window.location.href = data.redirect_url;
