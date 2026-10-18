@@ -8,4 +8,3 @@ export const config = {
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|md|mp4|webm|png|jpg|jpeg|svg|gif|ico|woff2)).*)",
   ],
 };
-
