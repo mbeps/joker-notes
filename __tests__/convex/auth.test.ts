@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import authConfig from "@/convex/auth.config.js";
+import authConfig from "@/convex/auth.config";
 
 describe("convex auth config", () => {
   it("exports providers array with convex and customJwt providers", () => {
@@ -17,14 +17,24 @@ describe("convex auth config", () => {
 
     const customJwtProvider = authConfig.providers.find(
       (p: { type?: string }) => p.type === "customJwt",
-    );
+    ) as
+      | {
+          type: string;
+          issuer: string;
+          jwks: string;
+          algorithm: string;
+          jwksUri?: string;
+        }
+      | undefined;
     expect(customJwtProvider).toBeDefined();
     expect(customJwtProvider?.issuer).toBe(
       "https://grateful-glowworm-20.clerk.accounts.dev",
     );
-    expect(customJwtProvider?.jwksUri).toBe(
+    expect(customJwtProvider?.jwks).toBe(
       "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
     );
+    expect(customJwtProvider?.algorithm).toBe("RS256");
+    expect(customJwtProvider?.jwksUri).toBeUndefined();
   });
 });
 

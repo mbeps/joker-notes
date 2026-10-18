@@ -1,10 +1,10 @@
-// const issuerURL = process.env.ISSUER_URL
+import type { AuthConfig } from "convex/server";
 
 /**
  * Clerk auth configuration consumed by Convex for verifying user sessions.
  * See https://docs.convex.dev/auth/clerk for linking Convex and Clerk.
  */
-const convex = {
+const convex: AuthConfig = {
   providers: [
     {
       domain: "https://grateful-glowworm-20.clerk.accounts.dev",
@@ -13,8 +13,8 @@ const convex = {
     {
       type: "customJwt",
       issuer: "https://grateful-glowworm-20.clerk.accounts.dev",
-      jwksUri:
-        "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
+      jwks: "https://grateful-glowworm-20.clerk.accounts.dev/.well-known/jwks.json",
+      algorithm: "RS256",
     },
   ],
 };
