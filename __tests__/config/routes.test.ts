@@ -21,5 +21,9 @@ describe("ROUTES", () => {
   it("builds dynamic preview detail route", () => {
     expect(ROUTES.PREVIEW.detail("456")).toBe("/preview/456");
   });
+
+  it("returns the mcp static route", () => {
+    expect(ROUTES.MCP.path).toBe("/api/mcp");
+  });
 });
 

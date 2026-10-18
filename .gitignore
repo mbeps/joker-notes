@@ -41,4 +41,5 @@ AGENTS.md
 .agents/**
 .mcp.json
 graphify-out/**
+.plans/**
 wiki/**
