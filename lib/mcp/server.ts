@@ -19,7 +19,7 @@ export function createNotesMcpHandler() {
       return server;
     },
     {
-      legacy: "reject",
+      legacy: "stateless",
     },
   );
 }

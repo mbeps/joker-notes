@@ -1,4 +1,4 @@
-import { getClerkIssuerUrl, MCP_SCOPES } from "@/lib/mcp/auth";
+import { getAuthServerUrl, MCP_SCOPES } from "@/lib/mcp/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -20,18 +20,20 @@ export async function OPTIONS(): Promise<Response> {
 
 /**
  * RFC 8414 OAuth 2.0 Authorization Server Metadata endpoint (including path insertion).
- * Directs clients (e.g. Google Gemini, Claude) to Clerk OAuth endpoints with PKCE and offline_access.
+ * Directs clients (e.g. Google Gemini, Claude, ChatGPT) to app OAuth endpoints with PKCE and offline_access.
  *
+ * @param req - Optional inbound Request to infer host origin.
  * @returns JSON metadata response conforming to RFC 8414.
  */
-export async function GET(): Promise<Response> {
-  const issuer = getClerkIssuerUrl();
+export async function GET(req?: Request): Promise<Response> {
+  const issuer = getAuthServerUrl(req);
 
   const metadata = {
     issuer,
     authorization_endpoint: `${issuer}/oauth/authorize`,
-    token_endpoint: `${issuer}/oauth/token`,
-    userinfo_endpoint: `${issuer}/oauth/userinfo`,
+    token_endpoint: `${issuer}/api/oauth/token`,
+    registration_endpoint: `${issuer}/api/oauth/register`,
+    userinfo_endpoint: `${issuer}/api/oauth/userinfo`,
     jwks_uri: `${issuer}/.well-known/jwks.json`,
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code", "refresh_token"],

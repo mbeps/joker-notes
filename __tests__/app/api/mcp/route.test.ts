@@ -56,6 +56,21 @@ describe("app/api/mcp/route", () => {
       expect(response.status).toBe(405);
       expect(response.headers.get("access-control-allow-origin")).toBe("*");
     });
+
+    it("serves informative HTML page on browser GET visits with text/html", async () => {
+      const req = new Request("http://localhost:3000/api/mcp", {
+        method: "GET",
+        headers: {
+          accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
+      });
+      const response = await GET(req);
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("content-type")).toContain("text/html");
+      const html = await response.text();
+      expect(html).toContain("Joker Notes MCP Server");
+    });
   });
 
   describe("POST handler", () => {
