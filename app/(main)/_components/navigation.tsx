@@ -59,6 +59,16 @@ const Navigation: React.FC = () => {
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
+  const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
+
   /**
    * Restores the sidebar to its default width, expanding it on desktop.
    */
@@ -73,7 +83,10 @@ const Navigation: React.FC = () => {
         isMobile ? "0" : "calc(100% - 240px)",
       );
       navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
-      setTimeout(() => setIsResetting(false), 300);
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+      resetTimerRef.current = setTimeout(() => setIsResetting(false), 300);
     }
   }, [isMobile]);
 
@@ -88,7 +101,10 @@ const Navigation: React.FC = () => {
       sidebarRef.current.style.width = "0";
       navbarRef.current.style.setProperty("width", "100%");
       navbarRef.current.style.setProperty("left", "0");
-      setTimeout(() => setIsResetting(false), 300);
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+      resetTimerRef.current = setTimeout(() => setIsResetting(false), 300);
     }
   }, []);
 

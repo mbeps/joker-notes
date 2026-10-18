@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Navigation is deeply coupled to layout refs, media queries, popovers and
 // child components. We mock all children and hooks to test its own logic.
@@ -73,6 +73,10 @@ describe("Navigation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     create.mockResolvedValue("new-doc");
+  });
+
+  afterEach(() => {
+    vi.clearAllTimers();
   });
 
   it("renders the sidebar with user item and document list", () => {
