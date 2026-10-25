@@ -1,0 +1,8 @@
+allowBuilds:
+  esbuild: true
+
+overrides:
+  prosemirror-model: "^1.25.12"
+  prosemirror-transform: "^1.12.2"
+  prosemirror-view: "^1.42.6"
+

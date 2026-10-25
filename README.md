@@ -103,7 +103,7 @@ Navigate to the project's root directory.
 Install all necessary dependencies to set up your local environment:
 
 ```sh
-yarn install
+pnpm install
 ```
 
 ## 3. Set Up Environment Variables & Modify `convex-dev`
@@ -167,26 +167,26 @@ Keep the Convex database operational during development by executing the followi
 This is essential for real-time data interaction:
 
 ```sh
-yarn convex-dev
+pnpm convex-dev
 ```
 
 ## 6. Run the Next.JS Application
 With your environment variables configured and database running, initiate the Next.js server in another terminal window:
 
 ```sh
-yarn dev
+pnpm dev
 ```
 
 Alternatively you can build the project fully and run it with the followig commands:
 
 ```sh
-yarn build
-yarn start
+pnpm build
+pnpm start
 ```
 
 The application should now be running at [`http://localhost:3000`](http://localhost:3000).
 
-**Note:** It's crucial to run both `yarn convex-dev` for the Convex database and `yarn dev` for the Next.js server concurrently for the application to function properly.
+**Note:** It's crucial to run both `pnpm convex-dev` for the Convex database and `pnpm dev` for the Next.js server concurrently for the application to function properly.
 
 # References
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
