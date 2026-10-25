@@ -16,6 +16,7 @@
     "test:watch": "vitest watch",
     "convex-dev": "convex dev"
   },
+  "packageManager": "pnpm@12.15.0",
   "resolutions": {
     "prosemirror-model": "^1.25.12",
     "prosemirror-transform": "^1.12.2",
@@ -71,6 +72,7 @@
     "postcss": "^8.5.30",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
+    "prosemirror-transform": "^1.12.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
