@@ -20,6 +20,10 @@ export const ROUTES = {
   MCP: {
     path: "/api/mcp",
   },
+  ADMIN: {
+    path: "/admin",
+    usersApi: "/api/admin/users",
+  },
 } as const;
 
 export type Routes = typeof ROUTES;

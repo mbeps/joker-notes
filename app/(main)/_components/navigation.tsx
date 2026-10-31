@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "convex/react";
 import {
   ChevronsLeft,
   MenuIcon,
@@ -7,9 +8,10 @@ import {
   PlusCircle,
   Search,
   Settings,
+  Shield,
   Trash,
 } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import type React from "react";
 import {
   type ElementRef,
@@ -30,6 +32,8 @@ import {
   PopoverPositioner,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ROUTES } from "@/config/routes";
+import { api } from "@/convex/_generated/api";
 import { useDocumentActions } from "@/hooks/use-document-actions";
 import { useSearch } from "@/hooks/use-search";
 import { useSettings } from "@/hooks/use-settings";
@@ -43,10 +47,12 @@ import { cn } from "@/lib/utils";
  * @see https://docs.convex.dev/database/writing-data
  */
 const Navigation: React.FC = () => {
+  const router = useRouter();
   const settings = useSettings();
   const search = useSearch();
   const params = useParams();
-  const _pathname = usePathname();
+  const pathname = usePathname();
+  const isAdmin = useQuery(api.documents.isAdmin);
   const { createDocument } = useDocumentActions();
   /**
    * Tracks whether the viewport should use the mobile collapsed experience.
@@ -201,6 +207,14 @@ const Navigation: React.FC = () => {
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
           <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
+          {isAdmin && (
+            <Item
+              label="Admin"
+              icon={Shield}
+              onClick={() => router.push(ROUTES.ADMIN.path)}
+              active={pathname === ROUTES.ADMIN.path}
+            />
+          )}
         </div>
         <div className="mt-4 space-y-1">
           <DocumentList />

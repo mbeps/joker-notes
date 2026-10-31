@@ -3,10 +3,12 @@ import type { Id } from "@/convex/_generated/dataModel";
 import {
   archive,
   create,
+  getAdminStats,
   getById,
   getSearch,
   getSidebar,
   getTrash,
+  isAdmin,
   remove,
   removeCoverImage,
   removeIcon,
@@ -53,6 +55,8 @@ const getByIdHandler = (getById as any)._handler;
 const updateHandler = (update as any)._handler;
 const removeIconHandler = (removeIcon as any)._handler;
 const removeCoverImageHandler = (removeCoverImage as any)._handler;
+const isAdminHandler = (isAdmin as any)?._handler;
+const getAdminStatsHandler = (getAdminStats as any)?._handler;
 
 const createQueryBuilder = (map: Map<Id<"documents">, MockDocument>) => {
   let results = Array.from(map.values());
@@ -821,5 +825,312 @@ describe("documents create edge cases", () => {
       "documents",
       expect.objectContaining({ userId: "user_42" }),
     );
+  });
+
+  it("throws Unauthorized when regular user tries to create child under foreign parent", async () => {
+    const foreignParent = createDoc("foreign_parent", { userId: "other_user" });
+    const { ctx } = createContext({
+      identity: { subject: "regular_user" },
+      documents: [foreignParent],
+    });
+
+    await expect(
+      createHandler(ctx, {
+        title: "Child",
+        parentDocument: foreignParent._id,
+      }),
+    ).rejects.toThrow("Unauthorized");
+  });
+
+  it("throws Not found when creating child under nonexistent parent", async () => {
+    const { ctx } = createContext({
+      identity: { subject: "regular_user" },
+    });
+
+    await expect(
+      createHandler(ctx, {
+        title: "Child",
+        parentDocument: makeId("missing_parent"),
+      }),
+    ).rejects.toThrow("Not found");
+  });
+});
+
+describe("documents isAdmin", () => {
+  const originalAdmin = process.env.ADMIN_USER_ID;
+
+  afterEach(() => {
+    if (originalAdmin !== undefined) {
+      process.env.ADMIN_USER_ID = originalAdmin;
+    } else {
+      delete process.env.ADMIN_USER_ID;
+    }
+  });
+
+  it("returns false when user is unauthenticated", async () => {
+    const { ctx } = createContext({ identity: null });
+    const result = await isAdminHandler(ctx);
+    expect(result).toBe(false);
+  });
+
+  it("returns false when authenticated user is not an admin", async () => {
+    process.env.ADMIN_USER_ID = "admin_user";
+    const { ctx } = createContext({ identity: { subject: "regular_user" } });
+    const result = await isAdminHandler(ctx);
+    expect(result).toBe(false);
+  });
+
+  it("returns true when authenticated user is configured as admin", async () => {
+    process.env.ADMIN_USER_ID = "admin_user";
+    const { ctx } = createContext({ identity: { subject: "admin_user" } });
+    const result = await isAdminHandler(ctx);
+    expect(result).toBe(true);
+  });
+});
+
+describe("documents getAdminStats", () => {
+  const originalAdmin = process.env.ADMIN_USER_ID;
+
+  beforeEach(() => {
+    process.env.ADMIN_USER_ID = "admin_user";
+  });
+
+  afterEach(() => {
+    if (originalAdmin !== undefined) {
+      process.env.ADMIN_USER_ID = originalAdmin;
+    } else {
+      delete process.env.ADMIN_USER_ID;
+    }
+  });
+
+  it("throws Unauthorized when unauthenticated", async () => {
+    const { ctx } = createContext({ identity: null });
+    await expect(getAdminStatsHandler(ctx)).rejects.toThrow("Unauthorized");
+  });
+
+  it("throws Unauthorized when authenticated user is not an admin", async () => {
+    const { ctx } = createContext({ identity: { subject: "regular_user" } });
+    await expect(getAdminStatsHandler(ctx)).rejects.toThrow("Unauthorized");
+  });
+
+  it("returns global stats and all documents when caller is admin", async () => {
+    const doc1 = createDoc("doc1", {
+      userId: "author_a",
+      isArchived: false,
+      isPublished: true,
+      _creationTime: 10,
+    });
+    const doc2 = createDoc("doc2", {
+      userId: "author_b",
+      isArchived: true,
+      isPublished: false,
+      _creationTime: 20,
+    });
+    const doc3 = createDoc("doc3", {
+      userId: "author_a",
+      isArchived: false,
+      isPublished: false,
+      _creationTime: 30,
+    });
+
+    const { ctx } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [doc1, doc2, doc3],
+    });
+
+    const result = await getAdminStatsHandler(ctx);
+
+    expect(result.stats).toEqual({
+      totalDocuments: 3,
+      activeDocuments: 2,
+      archivedDocuments: 1,
+      publishedDocuments: 1,
+      authorCount: 2,
+    });
+    expect(result.documents).toHaveLength(3);
+  });
+});
+
+describe("documents admin cross-user capabilities", () => {
+  const originalAdmin = process.env.ADMIN_USER_ID;
+
+  beforeEach(() => {
+    process.env.ADMIN_USER_ID = "admin_user";
+  });
+
+  afterEach(() => {
+    if (originalAdmin !== undefined) {
+      process.env.ADMIN_USER_ID = originalAdmin;
+    } else {
+      delete process.env.ADMIN_USER_ID;
+    }
+  });
+
+  it("allows admin to view all active documents across users in getSidebar", async () => {
+    const docA = createDoc("docA", {
+      userId: "author_a",
+      parentDocument: undefined,
+      _creationTime: 1,
+    });
+    const docB = createDoc("docB", {
+      userId: "author_b",
+      parentDocument: undefined,
+      _creationTime: 2,
+    });
+    const archived = createDoc("archived", {
+      userId: "author_a",
+      parentDocument: undefined,
+      isArchived: true,
+    });
+
+    const { ctx } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [docA, docB, archived],
+    });
+
+    const results = await getSidebarHandler(ctx, { parentDocument: undefined });
+    expect(results).toEqual([docB, docA]);
+  });
+
+  it("allows admin to view all active documents across users in getSearch", async () => {
+    const docA = createDoc("docA", { userId: "author_a" });
+    const docB = createDoc("docB", { userId: "author_b" });
+    const archived = createDoc("archived", {
+      userId: "author_a",
+      isArchived: true,
+    });
+
+    const { ctx } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [docA, docB, archived],
+    });
+
+    const results = await getSearchHandler(ctx);
+    expect(results).toHaveLength(2);
+    expect(results.map((d: any) => d.title)).toContain("docA");
+    expect(results.map((d: any) => d.title)).toContain("docB");
+  });
+
+  it("allows admin to view all archived documents across users in getTrash", async () => {
+    const archivedA = createDoc("archivedA", {
+      userId: "author_a",
+      isArchived: true,
+      _creationTime: 1,
+    });
+    const archivedB = createDoc("archivedB", {
+      userId: "author_b",
+      isArchived: true,
+      _creationTime: 2,
+    });
+    const active = createDoc("active", { userId: "author_a" });
+
+    const { ctx } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [archivedA, archivedB, active],
+    });
+
+    const results = await getTrashHandler(ctx);
+    expect(results).toEqual([archivedB, archivedA]);
+  });
+
+  it("allows admin to view unpublished foreign documents via getById", async () => {
+    const draft = createDoc("draft", {
+      userId: "foreign_author",
+      isPublished: false,
+    });
+    const { ctx } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [draft],
+    });
+
+    const result = await getByIdHandler(ctx, { documentId: draft._id });
+    expect(result).toEqual(draft);
+  });
+
+  it("inherits parent author userId when admin creates child note under foreign parent", async () => {
+    const parent = createDoc("foreign_parent", { userId: "foreign_author" });
+    const { ctx, documentMap } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [parent],
+    });
+
+    const childId = await createHandler(ctx, {
+      title: "Admin Child Note",
+      parentDocument: parent._id,
+    });
+
+    const createdChild = documentMap.get(childId as Id<"documents">);
+    expect(createdChild?.userId).toBe("foreign_author");
+    expect(createdChild?.parentDocument).toBe(parent._id);
+  });
+
+  it("cascades foreign children archival when admin archives a foreign parent", async () => {
+    const foreignRoot = createDoc("foreign_root", { userId: "foreign_author" });
+    const foreignChild = createDoc("foreign_child", {
+      userId: "foreign_author",
+      parentDocument: foreignRoot._id,
+    });
+
+    const { ctx, documentMap } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [foreignRoot, foreignChild],
+    });
+
+    await archiveHandler(ctx, { id: foreignRoot._id });
+    await flushAsync();
+
+    expect(documentMap.get(foreignRoot._id)?.isArchived).toBe(true);
+    expect(documentMap.get(foreignChild._id)?.isArchived).toBe(true);
+  });
+
+  it("cascades foreign children restoration when admin restores a foreign parent", async () => {
+    const foreignRoot = createDoc("foreign_root", {
+      userId: "foreign_author",
+      isArchived: true,
+    });
+    const foreignChild = createDoc("foreign_child", {
+      userId: "foreign_author",
+      parentDocument: foreignRoot._id,
+      isArchived: true,
+    });
+
+    const { ctx, documentMap } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [foreignRoot, foreignChild],
+    });
+
+    await restoreHandler(ctx, { id: foreignRoot._id });
+    await flushAsync();
+
+    expect(documentMap.get(foreignRoot._id)?.isArchived).toBe(false);
+    expect(documentMap.get(foreignChild._id)?.isArchived).toBe(false);
+  });
+
+  it("allows admin to update, removeIcon, removeCoverImage, and remove foreign documents", async () => {
+    const foreignDoc = createDoc("foreign_doc", {
+      userId: "foreign_author",
+      icon: "⚡",
+      coverImage: "https://cover.jpg",
+    });
+
+    const { ctx, documentMap } = createContext({
+      identity: { subject: "admin_user" },
+      documents: [foreignDoc],
+    });
+
+    const updated = await updateHandler(ctx, {
+      id: foreignDoc._id,
+      title: "Admin Renamed",
+    });
+    expect(updated?.title).toBe("Admin Renamed");
+
+    const noIcon = await removeIconHandler(ctx, { id: foreignDoc._id });
+    expect(noIcon?.icon).toBeUndefined();
+
+    const noCover = await removeCoverImageHandler(ctx, { id: foreignDoc._id });
+    expect(noCover?.coverImage).toBeUndefined();
+
+    await removeHandler(ctx, { id: foreignDoc._id });
+    expect(documentMap.has(foreignDoc._id)).toBe(false);
   });
 });

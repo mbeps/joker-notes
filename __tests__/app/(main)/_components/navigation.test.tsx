@@ -8,6 +8,7 @@ const create = vi.fn();
 const searchOnOpen = vi.fn();
 const settingsOnOpen = vi.fn();
 const mockParams: Record<string, string> = {};
+let mockIsAdmin: boolean | undefined = false;
 
 vi.mock("next/navigation", () => ({
   useParams: () => mockParams,
@@ -17,6 +18,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("convex/react", () => ({
   useMutation: () => create,
+  useQuery: () => mockIsAdmin,
 }));
 
 vi.mock("usehooks-ts", () => ({
@@ -132,6 +134,30 @@ describe("Navigation", () => {
     delete mockParams.documentId;
     render(<Navigation />);
     expect(screen.queryByText("navbar")).not.toBeInTheDocument();
+  });
+
+  describe("Admin navigation link", () => {
+    it("does not render Admin item when isAdmin is undefined", () => {
+      mockIsAdmin = undefined;
+      render(<Navigation />);
+      expect(screen.queryByTestId("item-Admin")).not.toBeInTheDocument();
+    });
+
+    it("does not render Admin item when isAdmin is false", () => {
+      mockIsAdmin = false;
+      render(<Navigation />);
+      expect(screen.queryByTestId("item-Admin")).not.toBeInTheDocument();
+    });
+
+    it("renders Admin item and navigates to admin route on click when isAdmin is true", () => {
+      mockIsAdmin = true;
+      render(<Navigation />);
+      const adminItem = screen.getByTestId("item-Admin");
+      expect(adminItem).toBeInTheDocument();
+
+      adminItem.click();
+      expect(push).toHaveBeenCalledWith(ROUTES.ADMIN.path);
+    });
   });
 });
 

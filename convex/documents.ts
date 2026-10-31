@@ -1,10 +1,16 @@
 import { v } from "convex/values";
+import {
+  canAccessAdminPanel,
+  canViewAllDocuments,
+  createAuthUser,
+  hasPermission,
+} from "../lib/access-control";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 
 /**
  * Marks a document and its descendants as archived so they disappear from the active tree.
- * Only the owning Clerk user can invoke this mutation.
+ * Only the owning user or a global administrator can invoke this mutation.
  *
  * @param {Id<"documents">} id Document identifier to archive.
  * @returns {Promise<Doc<"documents"> | undefined>} Updated document after archiving.
@@ -24,11 +30,7 @@ export const archive = mutation({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
     /**
      * Fetches the currently opened document from the database.
@@ -40,32 +42,33 @@ export const archive = mutation({
       throw new Error("Not found");
     }
 
-    // cannot delete a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot archive a document without permission
+    if (!hasPermission(user, "documents", "delete", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
     /**
      * Recursively archives all children documents.
-     * This goes layer by layer.
-     * It first archives the current root document, then goes to the next layer and archives all its children documents.
-     * @param documentId (string): document ID to archive
+     * Cascades using the document owner's userId to preserve hierarchy consistency.
+     *
+     * @param documentId Document ID to archive children for.
      */
     const recursiveArchive = async (documentId: Id<"documents">) => {
       const children = await ctx.db
         .query("documents")
         .withIndex("by_user_parent", (q) =>
-          q.eq("userId", userId).eq("parentDocument", documentId),
+          q
+            .eq("userId", existingDocument.userId)
+            .eq("parentDocument", documentId),
         )
         .collect();
 
-      // async needs to use for loop
       for (const child of children) {
         await ctx.db.patch(child._id, {
           isArchived: true,
         });
 
-        await recursiveArchive(child._id); // goes layer by layer
+        await recursiveArchive(child._id);
       }
     };
 
@@ -80,8 +83,8 @@ export const archive = mutation({
 });
 
 /**
- * Returns the visible child documents for the authenticated user and optional parent.
- * Filters out archived notes so the sidebar only shows active branches.
+ * Returns visible child documents for the authenticated user and optional parent.
+ * Global administrators receive notes across all authors; normal users see only their own.
  *
  * @param {{ parentDocument?: Id<"documents"> }} args Query arguments containing an optional parent document id.
  * @returns {Promise<Doc<"documents">[]>} Active child documents sorted by creation date.
@@ -94,7 +97,6 @@ export const getSidebar = query({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -103,21 +105,23 @@ export const getSidebar = query({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
-    /**
-     * Fetches all documents from the database which belong to the currently logged in user.
-     * The documents are sorted by the date they were created.
-     * Archived (in trash) documents are not fetched.
-     */
+    if (canViewAllDocuments(user)) {
+      const documents = await ctx.db
+        .query("documents")
+        .filter((q) => q.eq(q.field("parentDocument"), args.parentDocument))
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .order("desc")
+        .collect();
+
+      return documents;
+    }
+
     const documents = await ctx.db
       .query("documents")
       .withIndex("by_user_parent", (q) =>
-        q.eq("userId", userId).eq("parentDocument", args.parentDocument),
+        q.eq("userId", user.id).eq("parentDocument", args.parentDocument),
       )
       .filter((q) => q.eq(q.field("isArchived"), false))
       .order("desc")
@@ -129,7 +133,7 @@ export const getSidebar = query({
 
 /**
  * Inserts a new document owned by the current Clerk user, optionally under a parent.
- * Initializes notes as unpublished and active so they appear immediately in the UI.
+ * Child documents created under an existing parent inherit the parent document's userId.
  *
  * @param {{ title: string; parentDocument?: Id<"documents"> }} args Mutation arguments including the new title.
  * @returns {Promise<Id<"documents">>} Identifier of the newly created document.
@@ -143,7 +147,6 @@ export const create = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -152,26 +155,24 @@ export const create = mutation({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
+    let documentUserId = user.id;
 
-    /**
-     * Inserts a new document into the database.
-     * By default, the document is not archived (in trash) and not published.
-     * The document takes:
-     * 1. title (string): title of the document
-     * 2. parentDocument (string): ID of the parent document
-     * 3. userId (string): ID of the user who created the document
-     * 4. isArchived (boolean): whether the document is archived (in trash)
-     * 5. isPublished (boolean): whether the document is published
-     */
+    if (args.parentDocument) {
+      const parent = await ctx.db.get(args.parentDocument);
+      if (!parent) {
+        throw new Error("Not found");
+      }
+      if (!hasPermission(user, "documents", "update", parent)) {
+        throw new Error("Unauthorized");
+      }
+      documentUserId = parent.userId;
+    }
+
     const document = await ctx.db.insert("documents", {
       title: args.title,
       parentDocument: args.parentDocument,
-      userId,
+      userId: documentUserId,
       isArchived: false,
       isPublished: false,
     });
@@ -181,17 +182,16 @@ export const create = mutation({
 });
 
 /**
- * Lists archived documents for the signed-in user so the trash view can render.
+ * Lists archived documents for the signed-in user or all users if administrator.
  * Results are sorted newest first to surface recent deletions.
  *
- * @returns {Promise<Doc<"documents">[]>} Archived documents owned by the authenticated user.
+ * @returns {Promise<Doc<"documents">[]>} Archived documents.
  * @see https://docs.convex.dev/database/queries
  */
 export const getTrash = query({
   handler: async (ctx) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -200,20 +200,21 @@ export const getTrash = query({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
-    /**
-     * Fetches all documents from the database which belong to the currently logged in user.
-     * The documents are sorted by the date they were created.
-     * Only archived (in trash) documents are fetched.
-     */
+    if (canViewAllDocuments(user)) {
+      const documents = await ctx.db
+        .query("documents")
+        .filter((q) => q.eq(q.field("isArchived"), true))
+        .order("desc")
+        .collect();
+
+      return documents;
+    }
+
     const documents = await ctx.db
       .query("documents")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", user.id))
       .filter((q) => q.eq(q.field("isArchived"), true))
       .order("desc")
       .collect();
@@ -223,8 +224,9 @@ export const getTrash = query({
 });
 
 /**
- * Reverses the archive operation for a document tree and re-exposes it to the owner.
+ * Reverses the archive operation for a document tree.
  * Automatically lifts the note out of nested parents that remain archived.
+ * Cascades restorations using the target document's userId.
  *
  * @param {Id<"documents">} id Document identifier to restore.
  * @returns {Promise<Doc<"documents"> | undefined>} Updated document after restoration.
@@ -235,7 +237,6 @@ export const restore = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -244,10 +245,7 @@ export const restore = mutation({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
     /**
      * Fetches the currently opened document from the database.
@@ -259,22 +257,24 @@ export const restore = mutation({
       throw new Error("Not found");
     }
 
-    // cannot restore a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot restore a document without permission
+    if (!hasPermission(user, "documents", "update", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
     /**
      * Restores the document and all its children documents.
-     * This goes layer by layer.
-     * It first restores the current root document, then goes to the next layer and restores all its children documents.
-     * @param documentId (string): document ID to restore
+     * Cascades using the document owner's userId.
+     *
+     * @param documentId Document ID to restore.
      */
     const recursiveRestore = async (documentId: Id<"documents">) => {
       const children = await ctx.db
         .query("documents")
         .withIndex("by_user_parent", (q) =>
-          q.eq("userId", userId).eq("parentDocument", documentId),
+          q
+            .eq("userId", existingDocument.userId)
+            .eq("parentDocument", documentId),
         )
         .collect();
 
@@ -308,8 +308,7 @@ export const restore = mutation({
 });
 
 /**
- * Permanently removes a document that belongs to the authenticated user.
- * Use after archival when the note should no longer exist in storage.
+ * Permanently removes a document that belongs to the user or if caller is administrator.
  *
  * @param {Id<"documents">} id Document identifier to delete.
  * @returns {Promise<void>} Resolves when the document has been removed.
@@ -320,7 +319,6 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -329,11 +327,7 @@ export const remove = mutation({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
     /**
      * Fetches the currently opened document from the database.
@@ -345,14 +339,11 @@ export const remove = mutation({
       throw new Error("Not found");
     }
 
-    // cannot delete a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot delete a document without permission
+    if (!hasPermission(user, "documents", "delete", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
-    /**
-     * Deletes the document from the database.
-     */
     const document = await ctx.db.delete(args.id);
 
     return document;
@@ -360,17 +351,15 @@ export const remove = mutation({
 });
 
 /**
- * Returns all non-archived documents for the current user so the client can filter locally.
- * Keeps search fast by relying on indexed queries in Convex.
+ * Returns all non-archived documents for the current user (or across all users if admin).
  *
- * @returns {Promise<Doc<"documents">[]>} Active documents owned by the authenticated user.
+ * @returns {Promise<Doc<"documents">[]>} Active documents.
  * @see https://docs.convex.dev/database/queries#indexes
  */
 export const getSearch = query({
   handler: async (ctx) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -379,19 +368,21 @@ export const getSearch = query({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
-    /**
-     * Fetches all documents from the database which belong to the currently logged in user.
-     * Does not fetch archived (in trash) documents.
-     */
+    if (canViewAllDocuments(user)) {
+      const documents = await ctx.db
+        .query("documents")
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .order("desc")
+        .collect();
+
+      return documents;
+    }
+
     const documents = await ctx.db
       .query("documents")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_user", (q) => q.eq("userId", user.id))
       .filter((q) => q.eq(q.field("isArchived"), false))
       .order("desc")
       .collect();
@@ -402,7 +393,7 @@ export const getSearch = query({
 
 /**
  * Loads a document by id, exposing published entries publicly while guarding private ones.
- * Ensures only the owner can read unpublished content.
+ * Administrators are permitted to inspect any private or archived document.
  *
  * @param {Id<"documents">} documentId Document identifier to fetch.
  * @returns {Promise<Doc<"documents">>} The requested document if access is allowed.
@@ -413,13 +404,11 @@ export const getById = query({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
     /**
      * Fetches the currently opened document from the database.
-     * The document is fetched by its ID.
      */
     const document = await ctx.db.get(args.documentId);
 
@@ -428,7 +417,7 @@ export const getById = query({
       throw new Error("Not found");
     }
 
-    // cannot fetch a document that is not published or archived (in trash)
+    // public published documents are accessible without authentication
     if (document.isPublished && !document.isArchived) {
       return document;
     }
@@ -438,28 +427,23 @@ export const getById = query({
       throw new Error("Not authenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
-    // cannot fetch a document that does not belong to the user
-    if (document.userId !== userId) {
+    // verify permission for private or archived note
+    if (!hasPermission(user, "documents", "view", document)) {
       throw new Error("Unauthorized");
     }
 
-    // returns the document
     return document;
   },
 });
 
 /**
- * Applies partial updates to a document owned by the current user.
+ * Applies partial updates to a document.
  * Supports updating metadata, content, and publishing status in one call.
  *
- * @param {{ id: Id<"documents">; title?: string; content?: string; coverImage?: string; icon?: string; isPublished?: boolean }} args Mutation arguments describing the desired updates.
- * @returns {Promise<Doc<"documents">>} Updated document reflecting the changes.
+ * @param {{ id: Id<"documents">; title?: string; content?: string; coverImage?: string; icon?: string; isPublished?: boolean }} args Mutation arguments describing updates.
+ * @returns {Promise<Doc<"documents">>} Updated document reflecting changes.
  * @see https://docs.convex.dev/database/writing-data#update-records
  */
 export const update = mutation({
@@ -474,7 +458,6 @@ export const update = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -483,18 +466,11 @@ export const update = mutation({
       throw new Error("Unauthenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
-
-    // keeps id the same and updates the rest
+    const user = createAuthUser(identity.subject);
     const { id, ...rest } = args;
 
     /**
      * Fetches the currently opened document from the database.
-     * The document is fetched by its ID.
      */
     const existingDocument = await ctx.db.get(args.id);
 
@@ -503,22 +479,11 @@ export const update = mutation({
       throw new Error("Not found");
     }
 
-    // cannot update a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot update a document without permission
+    if (!hasPermission(user, "documents", "update", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
-    /**
-     * Updates the document in the database.
-     * The document is updated with the following fields:
-     * 1. title (string): title of the document
-     * 2. content (string): content of the document
-     * 3. coverImage (string): cover image of the document
-     * 4. icon (string): icon of the document
-     * 5. isPublished (boolean): whether the document is published
-     *
-     * The ID of the document is kept the same.
-     */
     const document = await ctx.db.patch(args.id, {
       ...rest,
     });
@@ -528,8 +493,7 @@ export const update = mutation({
 });
 
 /**
- * Clears the icon metadata on a document after validating ownership.
- * Useful when reverting to plain text titles in the UI.
+ * Clears the icon metadata on a document after validating permission.
  *
  * @param {Id<"documents">} id Document identifier whose icon should be removed.
  * @returns {Promise<Doc<"documents">>} Updated document with the icon cleared.
@@ -540,7 +504,6 @@ export const removeIcon = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -549,15 +512,10 @@ export const removeIcon = mutation({
       throw new Error("Unauthenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
     /**
      * Fetches the currently opened document from the database.
-     * The document is fetched by its ID.
      */
     const existingDocument = await ctx.db.get(args.id);
 
@@ -566,18 +524,11 @@ export const removeIcon = mutation({
       throw new Error("Not found");
     }
 
-    // cannot update a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot update a document without permission
+    if (!hasPermission(user, "documents", "update", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
-    /**
-     * Removes the icon for a document in the database.
-     * The document is updated with the following fields:
-     * 1. icon (string): icon of the document
-     *
-     * The ID and the rest of the fields of the document are kept the same.
-     */
     const document = await ctx.db.patch(args.id, {
       icon: undefined,
     });
@@ -587,8 +538,7 @@ export const removeIcon = mutation({
 });
 
 /**
- * Unsets the cover image URL for a document once the owner removes the asset.
- * Keeps the remaining metadata intact.
+ * Unsets the cover image URL for a document once permission is confirmed.
  *
  * @param {Id<"documents">} id Document identifier whose cover image should be removed.
  * @returns {Promise<Doc<"documents">>} Updated document with the cover image cleared.
@@ -599,7 +549,6 @@ export const removeCoverImage = mutation({
   handler: async (ctx, args) => {
     /**
      * Fetches the currently logged in user.
-     * This user is provided by Clerk and is stored in the identity within Convex.
      */
     const identity = await ctx.auth.getUserIdentity();
 
@@ -608,15 +557,10 @@ export const removeCoverImage = mutation({
       throw new Error("Unauthenticated");
     }
 
-    /**
-     * Extracts the user ID from the identity from the currently logged in user.
-     * This identity is provided by Clerk.
-     */
-    const userId = identity.subject;
+    const user = createAuthUser(identity.subject);
 
     /**
      * Fetches the currently opened document from the database.
-     * The document is fetched by its ID.
      */
     const existingDocument = await ctx.db.get(args.id);
 
@@ -625,22 +569,84 @@ export const removeCoverImage = mutation({
       throw new Error("Not found");
     }
 
-    // cannot update a document that does not belong to the user
-    if (existingDocument.userId !== userId) {
+    // cannot update a document without permission
+    if (!hasPermission(user, "documents", "update", existingDocument)) {
       throw new Error("Unauthorized");
     }
 
-    /**
-     * Removes the cover image for a document in the database.
-     * The document is updated with the following fields:
-     * 1. coverImage (string): cover image of the document
-     *
-     * The ID and the rest of the fields of the document are kept the same.
-     */
     const document = await ctx.db.patch(args.id, {
       coverImage: undefined,
     });
 
     return document;
+  },
+});
+
+/**
+ * Determines whether the currently authenticated user possesses global administrator privileges.
+ *
+ * @returns {Promise<boolean>} True if the authenticated user is an administrator, false otherwise.
+ * @see https://docs.convex.dev/functions/query
+ */
+export const isAdmin = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return false;
+    }
+
+    const user = createAuthUser(identity.subject);
+    return canAccessAdminPanel(user);
+  },
+});
+
+/**
+ * Aggregates global system statistics and all documents across authors for administrator inspection.
+ * Restricted strictly to users with administrator privileges.
+ *
+ * @returns {Promise<{ stats: { totalDocuments: number; activeDocuments: number; archivedDocuments: number; publishedDocuments: number; authorCount: number }; documents: Doc<"documents">[] }>} Global workspace metrics and documents.
+ * @throws {Error} When user is unauthenticated or not an administrator.
+ * @see https://docs.convex.dev/functions/query
+ */
+export const getAdminStats = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = createAuthUser(identity.subject);
+    if (!canAccessAdminPanel(user)) {
+      throw new Error("Unauthorized");
+    }
+
+    const documents = await ctx.db.query("documents").order("desc").collect();
+    const authors = new Set<string>();
+    let activeDocuments = 0;
+    let archivedDocuments = 0;
+    let publishedDocuments = 0;
+
+    for (const doc of documents) {
+      authors.add(doc.userId);
+      if (doc.isArchived) {
+        archivedDocuments++;
+      } else {
+        activeDocuments++;
+        if (doc.isPublished) {
+          publishedDocuments++;
+        }
+      }
+    }
+
+    return {
+      stats: {
+        totalDocuments: documents.length,
+        activeDocuments,
+        archivedDocuments,
+        publishedDocuments,
+        authorCount: authors.size,
+      },
+      documents,
+    };
   },
 });

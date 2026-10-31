@@ -44,6 +44,7 @@ describe("env configuration", () => {
       const validClient = {
         NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_123",
+        NEXT_PUBLIC_ADMIN_USER_ID: "user_admin_123",
       };
       const result = clientEnvSchema.safeParse(validClient);
       expect(result.success).toBe(true);
@@ -54,6 +55,7 @@ describe("env configuration", () => {
         expect(result.data.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY).toBe(
           "pk_test_123",
         );
+        expect(result.data.NEXT_PUBLIC_ADMIN_USER_ID).toBe("user_admin_123");
       }
     });
 
@@ -85,12 +87,14 @@ describe("env configuration", () => {
         EDGE_STORE_ACCESS_KEY: "access_key_123",
         EDGE_STORE_SECRET_KEY: "secret_key_123",
         CONVEX_DEPLOYMENT: "dev:hearty-grasshopper-879",
+        ADMIN_USER_ID: "user_admin_123",
         NODE_ENV: "production" as const,
       };
       const result = serverEnvSchema.safeParse(validServer);
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.CONVEX_DEPLOYMENT).toBe("dev:hearty-grasshopper-879");
+        expect(result.data.ADMIN_USER_ID).toBe("user_admin_123");
         expect(result.data.NODE_ENV).toBe("production");
       }
     });

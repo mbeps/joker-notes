@@ -10,6 +10,7 @@ import { z } from "zod";
 export const clientEnvSchema = z.object({
   NEXT_PUBLIC_CONVEX_URL: z.string().url(),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  NEXT_PUBLIC_ADMIN_USER_ID: z.string().optional(),
 });
 
 /**
@@ -24,6 +25,7 @@ export const serverEnvSchema = clientEnvSchema.extend({
   EDGE_STORE_ACCESS_KEY: z.string().min(1),
   EDGE_STORE_SECRET_KEY: z.string().min(1),
   CONVEX_DEPLOYMENT: z.string().min(1).optional(),
+  ADMIN_USER_ID: z.string().optional(),
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),
@@ -63,6 +65,8 @@ export function validateEnv(
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_ADMIN_USER_ID: process.env.NEXT_PUBLIC_ADMIN_USER_ID,
+    ADMIN_USER_ID: process.env.ADMIN_USER_ID,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     EDGE_STORE_ACCESS_KEY: process.env.EDGE_STORE_ACCESS_KEY,
     EDGE_STORE_SECRET_KEY: process.env.EDGE_STORE_SECRET_KEY,
@@ -114,6 +118,7 @@ export function validateClientEnv(
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_ADMIN_USER_ID: process.env.NEXT_PUBLIC_ADMIN_USER_ID,
   },
 ): ClientEnv {
   return validateEnv(runtimeEnv, false);
@@ -134,6 +139,8 @@ export function validateServerEnv(
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_ADMIN_USER_ID: process.env.NEXT_PUBLIC_ADMIN_USER_ID,
+    ADMIN_USER_ID: process.env.ADMIN_USER_ID,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     EDGE_STORE_ACCESS_KEY: process.env.EDGE_STORE_ACCESS_KEY,
     EDGE_STORE_SECRET_KEY: process.env.EDGE_STORE_SECRET_KEY,
