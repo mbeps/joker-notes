@@ -25,5 +25,13 @@ describe("ROUTES", () => {
   it("returns the mcp static route", () => {
     expect(ROUTES.MCP.path).toBe("/api/mcp");
   });
+
+  it("returns the admin static route", () => {
+    expect(ROUTES.ADMIN.path).toBe("/admin");
+  });
+
+  it("returns the admin users API route", () => {
+    expect(ROUTES.ADMIN.usersApi).toBe("/api/admin/users");
+  });
 });
 

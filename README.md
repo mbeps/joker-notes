@@ -7,7 +7,8 @@ Joker Notes is a note-taking web application for creating, organising, and publi
 
 # Features
 
-Our platform, Joker Notes, offers a variety of features aimed at enhancing productivity and user experience through an intuitive and feature-rich notes application. Here are the key features:
+Joker Notes is a rich-text note-taking application similar to Notion for creating, organising, and publishing notes.
+Features nested hierarchical documents, real-time reactive synchronisation, trash recovery, and public note sharing.
 
 ## Authentication & Account Management
 Joker Notes ensures a secure and seamless user experience with robust authentication options:
@@ -26,6 +27,18 @@ Create, customize, and manage your notes with ease:
 - **Publishing Notes:** Users have the option to publish their notes, making them publicly visible (but not editable) to share their content with others.
 - **Nested Notes and Notebooks:** Users can create structured documentation and organize their thoughts more efficiently with the ability to create nested notes and notebooks.
 - **Note Management:** Users can move notes to trash, restore them, or permanently delete them, giving full control over their note lifecycle.
+
+## Global Admin Dashboard
+A protected administrative dashboard at `/admin` visible only to users configured as global administrators in `config/env.ts`.
+- Displays compact metric cards (Total, Active, Published, Authors) with value-on-the-right layout.
+- Shows author emails (resolved from Clerk via `/api/admin/users`) instead of UUIDs.
+- Table columns: Note title, Author email, Status, Subpage count, Created date, Actions.
+- Per-row actions: Open note, Archive/Restore (state-dependent), Delete (with confirmation).
+- Search filters by title or author email.
+- Author emails are resolved server-side from the Clerk Backend `UserApi` (`/api/admin/users`).
+- Metric cards and table rows use Base UI `Tooltip` for action descriptions.
+- Metric cards are compact single-row cards (icon + label left, value right).
+- Admin-only API route at `/api/admin/users` resolves user IDs to primary emails.
 
 ## Model Context Protocol (MCP)
 Joker Notes connects with AI assistants to inspect and manage notes:
@@ -75,18 +88,30 @@ Joker Notes provides a stateless Model Context Protocol (MCP) server at `/api/mc
 
 The MCP server provides eight document management tools with tenant isolation:
 
-| Tool | Description | Parameters |
-| ---- | ----------- | ---------- |
-| `list_documents` | List active documents. Filter by parent folder or search by title. | `query` (optional string), `parentDocument` (optional string) |
-| `get_document` | Retrieve a document note and its contents by ID. | `documentId` (string) |
-| `create_document` | Create a new document note under an optional parent note. | `title` (string), `parentDocument` (optional string) |
-| `update_document` | Update a document note's title, content, icon, or publication status. | `id` (string), `title` (optional string), `content` (optional string), `icon` (optional string), `isPublished` (optional boolean) |
-| `archive_document` | Move a document and all its nested children to trash. | `id` (string) |
-| `restore_document` | Restore an archived document and its descendants from trash. | `id` (string) |
-| `delete_document` | Permanently delete a document note from the database. | `id` (string) |
-| `list_trash` | List all archived notes currently stored in trash. | None |
+| Tool               | Description                                                           | Parameters                                                                                                                        |
+| ------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `list_documents`   | List active documents. Filter by parent folder or search by title.    | `query` (optional string), `parentDocument` (optional string)                                                                     |
+| `get_document`     | Retrieve a document note and its contents by ID.                      | `documentId` (string)                                                                                                             |
+| `create_document`  | Create a new document note under an optional parent note.             | `title` (string), `parentDocument` (optional string)                                                                              |
+| `update_document`  | Update a document note's title, content, icon, or publication status. | `id` (string), `title` (optional string), `content` (optional string), `icon` (optional string), `isPublished` (optional boolean) |
+| `archive_document` | Move a document and all its nested children to trash.                 | `id` (string)                                                                                                                     |
+| `restore_document` | Restore an archived document and its descendants from trash.          | `id` (string)                                                                                                                     |
+| `delete_document`  | Permanently delete a document note from the database.                 | `id` (string)                                                                                                                     |
+| `list_trash`       | List all archived notes currently stored in trash.                    | None                                                                                                                              |
 
-# Running Application Locally
+## Global Admin Dashboard
+A protected administrative dashboard at `/admin` visible only to users configured as global administrators in `config/env.ts`.
+- Displays compact metric cards (Total, Active, Published, Authors) with value-on-the-right layout.
+- Shows author emails (resolved from Clerk via `/api/admin/users`) instead of UUIDs.
+- Table columns: Note title, Author email, Status, Subpage count, Created date, Actions.
+- Per-row actions: Open note, Archive/Restore (state-dependent), Delete (with confirmation).
+- Search filters by title or author email.
+- Author emails are resolved server-side from the Clerk Backend `UserApi` (`/api/admin/users`).
+- Metric cards and table rows use Base UI `Tooltip` for action descriptions.
+- Metric cards are compact single-row cards (icon + label left, value right).
+- Admin-only API route at `/api/admin/users` resolves user IDs to primary emails.
+
+## Model Context Protocol (MCP)
 
 To successfully run Joker Notes on your local environment, follow these detailed instructions. 
 Ensure all prerequisites like Node.js are installed beforehand.
